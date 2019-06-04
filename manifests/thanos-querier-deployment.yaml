@@ -17,6 +17,6 @@ spec:
       - args:
         - query
         - --query.replica-label=replica
-        - --store=thanos-store.monitoring.svc.cluster.local:10901
+        - --store=dnssrv+thanos-store.monitoring.svc.cluster.local:10901
         image: improbable/thanos:v0.5.0-rc.0
         name: thanos-querier
