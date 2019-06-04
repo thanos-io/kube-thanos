@@ -36,7 +36,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local args = [
           'query',
           '--query.replica-label=replica',
-          '--store=%s.%s.svc.cluster.local:%d' % [
+          '--store=dnssrv+%s.%s.svc.cluster.local:%d' % [
             $.thanos.store.service.metadata.name,
             $._config.namespace,
             $._config.store.ports.grpc,
