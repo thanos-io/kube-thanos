@@ -36,17 +36,12 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local args = [
           'query',
           '--query.replica-label=replica',
-        ] + [
-          '--store=%s-%d.%s.%s.svc.cluster.local:%d' % [
-            $.thanos.store.service.metadata.name,
-            i,
+          '--store=%s.%s.svc.cluster.local:%d' % [
             $.thanos.store.service.metadata.name,
             $._config.namespace,
             $._config.store.ports.grpc,
-          ]
-          for i in std.range(0, $._config.store.replicas - 1)
+          ],
         ];
-
 
         local c =
           container.new($._config.querier.name, $._config.images.thanos) +
