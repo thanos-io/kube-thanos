@@ -3,7 +3,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 local kt =
   (import 'kube-thanos/kube-thanos-querier.libsonnet') +
   (import 'kube-thanos/kube-thanos-store.libsonnet') +
-  (import 'kube-thanos/kube-thanos-pvc.libsonnet') +
+  // (import 'kube-thanos/kube-thanos-pvc.libsonnet') + // Uncomment this line to enable PVCs
   {
     _config+:: {
       namespace: 'monitoring',

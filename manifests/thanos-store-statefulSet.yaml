@@ -38,14 +38,7 @@ spec:
         - mountPath: /var/thanos/store
           name: data
           readOnly: false
-      volumes: []
-  volumeClaimTemplates:
-  - metadata:
-      name: data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 10Gi
-      storageClassName: standard
+      volumes:
+      - emptyDir: {}
+        name: data
+  volumeClaimTemplates: []
