@@ -6,7 +6,7 @@ local kt =
   (import 'kube-thanos/kube-thanos-pvc.libsonnet') +
   {
     _config+:: {
-      namespace: 'thanos',
+      namespace: 'monitoring',
 
       images+: {
         thanos: 'improbable/thanos:v0.5.0-rc.0',
