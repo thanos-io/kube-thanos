@@ -4,7 +4,7 @@ metadata:
   name: thanos-querier
   namespace: monitoring
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: thanos-querier
@@ -17,8 +17,6 @@ spec:
       - args:
         - query
         - --query.replica-label=replica
-        - --store=thanos-store-0.thanos-store.monitoring.svc.cluster.local:10901
-        - --store=thanos-store-1.thanos-store.monitoring.svc.cluster.local:10901
-        - --store=thanos-store-2.thanos-store.monitoring.svc.cluster.local:10901
+        - --store=thanos-store.monitoring.svc.cluster.local:10901
         image: improbable/thanos:v0.5.0-rc.0
         name: thanos-querier
