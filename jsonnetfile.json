@@ -1,0 +1,14 @@
+{
+    "dependencies": [
+        {
+            "name": "kube-thanos",
+            "source": {
+                "git": {
+                    "remote": ".",
+                    "subdir": "jsonnet/kube-thanos"
+                }
+            },
+            "version": "."
+        }
+    ]
+}
