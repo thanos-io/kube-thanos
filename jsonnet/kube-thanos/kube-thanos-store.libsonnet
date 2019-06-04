@@ -4,7 +4,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
   _config+:: {
     store+: {
       name: 'thanos-store',
-      replicas: 1,
       labels: { app: $._config.store.name },
       ports: {
         grpc: 10901,
@@ -59,7 +58,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             containerVolumeMount.new('data', '/var/thanos/store', false),
           ]);
 
-        sts.new($._config.store.name, $._config.store.replicas, c, [], $._config.store.labels) +
+        sts.new($._config.store.name, 3, c, [], $._config.store.labels) +
         sts.mixin.metadata.withNamespace($._config.namespace) +
         sts.mixin.metadata.withLabels($._config.store.labels) +
         sts.mixin.spec.withServiceName($.thanos.store.service.metadata.name) +

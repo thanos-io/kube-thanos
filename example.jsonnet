@@ -1,4 +1,6 @@
 local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
+local sts = k.apps.v1.statefulSet;
+local deployment = k.apps.v1.deployment;
 
 local kt =
   (import 'kube-thanos/kube-thanos-querier.libsonnet') +
@@ -19,9 +21,16 @@ local kt =
           key: 'thanos.yaml',
         },
       },
+    },
 
+    thanos+:: {
+      querier+:{
+        deployment+:
+          deployment.mixin.spec.withReplicas(3),
+      },
       store+: {
-        replicas: 3,
+        statefulSet+:
+          sts.mixin.spec.withReplicas(5),
       },
     },
   };
