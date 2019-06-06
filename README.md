@@ -81,7 +81,7 @@ local kt =
       namespace: 'monitoring',
 
       images+: {
-        thanos: 'improbable/thanos:v0.5.0-rc.0',
+        thanos: 'improbable/thanos:v0.5.0',
       },
 
       thanos+: {
