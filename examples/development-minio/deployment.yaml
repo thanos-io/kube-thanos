@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: monitoring
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        image: minio/minio
+        args:
+        - server
+        - /storage
+        env:
+        - name: MINIO_ACCESS_KEY
+          value: "minio"
+        - name: MINIO_SECRET_KEY
+          value: "minio123"
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: storage
+          mountPath: "/storage"
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: minio
