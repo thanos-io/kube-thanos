@@ -1,0 +1,36 @@
+---
+kind: pipeline
+name: build
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: vendor
+  pull: always
+  image: quay.io/coreos/jsonnet-ci:latest
+  commands:
+  - make --always-make vendor
+  - git diff --exit-code
+  environment:
+    GO111MODULE: on
+  when:
+    event:
+      exclude:
+      - tag
+
+- name: generate
+  pull: always
+  image: quay.io/coreos/jsonnet-ci:latest
+  commands:
+  - make --always-make generate
+  - git diff --exit-code
+  environment:
+    GO111MODULE: on
+  when:
+    event:
+      exclude:
+      - tag
+
+...
