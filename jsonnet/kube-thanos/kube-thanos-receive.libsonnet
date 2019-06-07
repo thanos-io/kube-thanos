@@ -41,17 +41,17 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.new($._config.store.name, $._config.images.thanos) +
           container.withArgs([
             'receive',
-            '--remote-write.address="0.0.0.0:%d"' % $._config.receive.ports.remoteWrite,
+            '--remote-write.address=0.0.0.0:%d' % $._config.receive.ports.remoteWrite,
             // '--data-dir=/var/thanos/store',
-            // '--objstore.config=$(OBJSTORE_CONFIG)',
+            '--objstore.config=$(OBJSTORE_CONFIG)',
           ]) +
-          // container.withEnv([
-          //   containerEnv.fromSecretRef(
-          //     'OBJSTORE_CONFIG',
-          //     $._config.thanos.objectStorageConfig.name,
-          //     $._config.thanos.objectStorageConfig.key,
-          //   ),
-          // ]) +
+          container.withEnv([
+            containerEnv.fromSecretRef(
+              'OBJSTORE_CONFIG',
+              $._config.thanos.objectStorageConfig.name,
+              $._config.thanos.objectStorageConfig.key,
+            ),
+          ]) +
           container.withPorts([
             { name: 'grpc', containerPort: $._config.receive.ports.grpc },
             { name: 'remote-write', containerPort: $._config.receive.ports.remoteWrite },
@@ -75,7 +75,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         spec+: {
           template+: {
             spec+: {
-              containers+: [
+              containers: [
                 super.containers[0] +
                 { args+: [
                   '--store=dnssrv+%s.%s.svc.cluster.local:%d' % [

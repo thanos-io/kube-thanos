@@ -19,7 +19,14 @@ spec:
       containers:
       - args:
         - receive
-        - --remote-write.address="0.0.0.0:19291"
+        - --remote-write.address=0.0.0.0:19291
+        - --objstore.config=$(OBJSTORE_CONFIG)
+        env:
+        - name: OBJSTORE_CONFIG
+          valueFrom:
+            secretKeyRef:
+              key: thanos.yaml
+              name: thanos-objectstorage
         image: improbable/thanos:v0.5.0
         name: thanos-store
         ports:
