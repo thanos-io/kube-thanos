@@ -6,6 +6,7 @@ local kt =
   (import 'kube-thanos/kube-thanos-querier.libsonnet') +
   (import 'kube-thanos/kube-thanos-store.libsonnet') +
   // (import 'kube-thanos/kube-thanos-pvc.libsonnet') + // Uncomment this line to enable PVCs
+  // (import 'kube-thanos/kube-thanos-receive.libsonnet') +
   {
     _config+:: {
       namespace: 'monitoring',
@@ -24,7 +25,7 @@ local kt =
     },
 
     thanos+:: {
-      querier+:{
+      querier+: {
         deployment+:
           deployment.mixin.spec.withReplicas(3),
       },
@@ -37,3 +38,4 @@ local kt =
 
 { ['thanos-querier-' + name]: kt.thanos.querier[name] for name in std.objectFields(kt.thanos.querier) } +
 { ['thanos-store-' + name]: kt.thanos.store[name] for name in std.objectFields(kt.thanos.store) }
+// { ['thanos-receive-' + name]: kt.thanos.receive[name] for name in std.objectFields(kt.thanos.receive) }

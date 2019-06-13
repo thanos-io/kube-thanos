@@ -41,6 +41,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withArgs([
             'store',
             '--data-dir=/var/thanos/store',
+            '--grpc-address=0.0.0.0:%d' % $._config.store.ports.grpc,
             '--objstore.config=$(OBJSTORE_CONFIG)',
           ]) +
           container.withEnv([
