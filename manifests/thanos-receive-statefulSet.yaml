@@ -21,12 +21,17 @@ spec:
         - receive
         - --remote-write.address=0.0.0.0:19291
         - --objstore.config=$(OBJSTORE_CONFIG)
+        - --labels=replica="$(POD_NAME)"
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         image: improbable/thanos:v0.5.0
         name: thanos-store
         ports:
