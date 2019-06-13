@@ -42,6 +42,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withArgs([
             'receive',
             '--remote-write.address=0.0.0.0:%d' % $._config.receive.ports.remoteWrite,
+            '--grpc-address=0.0.0.0:%d' % $._config.receive.ports.grpc,
             '--objstore.config=$(OBJSTORE_CONFIG)',
           ]) +
           container.withEnv([
