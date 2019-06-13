@@ -42,7 +42,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withArgs([
             'receive',
             '--remote-write.address=0.0.0.0:%d' % $._config.receive.ports.remoteWrite,
-            // '--data-dir=/var/thanos/store',
             '--objstore.config=$(OBJSTORE_CONFIG)',
           ]) +
           container.withEnv([
@@ -56,18 +55,12 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             { name: 'grpc', containerPort: $._config.receive.ports.grpc },
             { name: 'remote-write', containerPort: $._config.receive.ports.remoteWrite },
           ]);
-        // container.withVolumeMounts([
-        //   containerVolumeMount.new('data', '/var/thanos/store', false),
-        // ]);
 
         sts.new($._config.receive.name, 3, c, [], $._config.receive.labels) +
         sts.mixin.metadata.withNamespace($._config.namespace) +
         sts.mixin.metadata.withLabels($._config.receive.labels) +
         sts.mixin.spec.withServiceName($.thanos.receive.service.metadata.name) +
         sts.mixin.spec.selector.withMatchLabels($._config.receive.labels),
-      // sts.mixin.spec.template.spec.withVolumes([
-      //   volume.fromEmptyDir('data'),
-      // ]),
     },
 
     querier+: {
