@@ -1,17 +1,15 @@
 local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
 {
-  _config+:: {
-    store+: {
-      pvc+: {
-        class: 'standard',
-        size: '10Gi',
-      },
-    },
-  },
-
   thanos+:: {
     store+: {
+      variables+:: {
+        pvc+: {
+          class: 'standard',
+          size: '10Gi',
+        },
+      },
+
       statefulSet+:
         local sts = k.apps.v1.statefulSet;
         local pvc = sts.mixin.spec.volumeClaimTemplatesType;
@@ -32,10 +30,10 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
                   accessModes: [
                     'ReadWriteOnce',
                   ],
-                  storageClassName: $._config.store.pvc.class,
+                  storageClassName: $.thanos.store.variables.pvc.class,
                   resources: {
                     requests: {
-                      storage: $._config.store.pvc.size,
+                      storage: $.thanos.store.variables.pvc.size,
                     },
                   },
                 },
