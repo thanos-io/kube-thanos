@@ -9,9 +9,11 @@ local kt =
   // (import 'kube-thanos/kube-thanos-receive.libsonnet') +
   {
     thanos+:: {
-      variables+: {
-        images+: {
-          thanos: 'improbable/thanos:v0.5.0',
+      variables+:: {
+        image: 'improbable/thanos:v0.5.0',
+        objectStorageConfig+: {
+          name: 'thanos-objectstorage',
+          key: 'thanos.yaml',
         },
       },
 

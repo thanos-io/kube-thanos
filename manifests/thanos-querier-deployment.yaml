@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app: thanos-querier
   name: thanos-querier
   namespace: monitoring
 spec:

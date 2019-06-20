@@ -74,8 +74,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
                 { args+: [
                   '--store=dnssrv+%s.%s.svc.cluster.local:%d' % [
                     $.thanos.receive.service.metadata.name,
-                    $._config.namespace,
-                    $._config.receive.ports.grpc,
+                    $.thanos.receive.service.metadata.namespace,
+                    $.thanos.receive.service.spec.ports[0].port,
                   ],
                 ] },
               ],
