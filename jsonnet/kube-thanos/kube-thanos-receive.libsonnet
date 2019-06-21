@@ -33,6 +33,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             '--grpc-address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[0].port,
             '--remote-write.address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[1].port,
             '--objstore.config=$(OBJSTORE_CONFIG)',
+            '--tsdb.path=/var/thanos/tsdb',
           ]) +
           container.withEnv([
             containerEnv.fromSecretRef(
@@ -44,13 +45,19 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withPorts([
             { name: 'grpc', containerPort: $.thanos.receive.service.spec.ports[0].port },
             { name: 'remote-write', containerPort: $.thanos.receive.service.spec.ports[1].port },
+          ]) +
+          container.withVolumeMounts([
+            containerVolumeMount.new('data', '/var/thanos/tsdb', false),
           ]);
 
         sts.new('thanos-receive', 3, c, [], $.thanos.receive.statefulSet.metadata.labels) +
         sts.mixin.metadata.withNamespace('monitoring') +
         sts.mixin.metadata.withLabels({ app: $.thanos.receive.statefulSet.metadata.name }) +
         sts.mixin.spec.withServiceName($.thanos.receive.service.metadata.name) +
-        sts.mixin.spec.selector.withMatchLabels($.thanos.receive.statefulSet.metadata.labels),
+        sts.mixin.spec.selector.withMatchLabels($.thanos.receive.statefulSet.metadata.labels) +
+        sts.mixin.spec.template.spec.withVolumes([
+          volume.fromEmptyDir('data'),
+        ]),
     },
 
     querier+: {
