@@ -1,31 +1,28 @@
 local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
 {
-  _config+:: {
-    store+: {
-      name: 'thanos-store',
-      labels: { app: $._config.store.name },
-      ports: {
-        grpc: 10901,
-      },
-    },
-  },
-
   thanos+:: {
     store: {
+      variables+:: {
+        objectStorageConfig+: {
+          name: $.thanos.variables.objectStorageConfig.name,
+          key: $.thanos.variables.objectStorageConfig.key,
+        },
+      },
+
       service:
         local service = k.core.v1.service;
         local ports = service.mixin.spec.portsType;
 
         service.new(
-          $._config.store.name,
-          $._config.store.labels,
+          'thanos-store',
+          $.thanos.store.statefulSet.metadata.labels,
           [
-            ports.newNamed('grpc', $._config.store.ports.grpc, $._config.store.ports.grpc),
+            ports.newNamed('grpc', 10901, 10901),
           ]
         ) +
-        service.mixin.metadata.withNamespace($._config.namespace) +
-        service.mixin.metadata.withLabels($._config.store.labels) +
+        service.mixin.metadata.withNamespace('monitoring') +
+        service.mixin.metadata.withLabels({ app: $.thanos.store.service.metadata.name }) +
         service.mixin.spec.withClusterIp('None'),
 
       statefulSet:
@@ -35,38 +32,57 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local containerEnv = container.envType;
         local containerVolumeMount = container.volumeMountsType;
 
-
         local c =
-          container.new($._config.store.name, $._config.images.thanos) +
+          container.new($.thanos.store.statefulSet.metadata.name, $.thanos.variables.image) +
           container.withArgs([
             'store',
             '--data-dir=/var/thanos/store',
-            '--grpc-address=0.0.0.0:%d' % $._config.store.ports.grpc,
+            '--grpc-address=0.0.0.0:%d' % $.thanos.store.service.spec.ports[0].port,
             '--objstore.config=$(OBJSTORE_CONFIG)',
           ]) +
           container.withEnv([
             containerEnv.fromSecretRef(
               'OBJSTORE_CONFIG',
-              $._config.thanos.objectStorageConfig.name,
-              $._config.thanos.objectStorageConfig.key,
+              $.thanos.store.variables.objectStorageConfig.name,
+              $.thanos.store.variables.objectStorageConfig.key,
             ),
           ]) +
           container.withPorts([
-            { name: 'grpc', containerPort: 10901 },
-            { name: 'http', containerPort: 10902 },
+            { name: 'grpc', containerPort: $.thanos.store.service.spec.ports[0].port },
           ]) +
           container.withVolumeMounts([
             containerVolumeMount.new('data', '/var/thanos/store', false),
           ]);
 
-        sts.new($._config.store.name, 3, c, [], $._config.store.labels) +
-        sts.mixin.metadata.withNamespace($._config.namespace) +
-        sts.mixin.metadata.withLabels($._config.store.labels) +
+        sts.new('thanos-store', 3, c, [], $.thanos.store.statefulSet.metadata.labels) +
+        sts.mixin.metadata.withNamespace('monitoring') +
+        sts.mixin.metadata.withLabels({ app: $.thanos.store.statefulSet.metadata.name }) +
         sts.mixin.spec.withServiceName($.thanos.store.service.metadata.name) +
-        sts.mixin.spec.selector.withMatchLabels($._config.store.labels) +
+        sts.mixin.spec.selector.withMatchLabels($.thanos.store.statefulSet.metadata.labels) +
         sts.mixin.spec.template.spec.withVolumes([
           volume.fromEmptyDir('data'),
         ]),
+    },
+
+    querier+: {
+      deployment+: {
+        spec+: {
+          template+: {
+            spec+: {
+              containers: [
+                super.containers[0]
+                { args+: [
+                  '--store=dnssrv+%s.%s.svc.cluster.local:%d' % [
+                    $.thanos.store.service.metadata.name,
+                    $.thanos.store.service.metadata.namespace,
+                    $.thanos.store.service.spec.ports[0].port,
+                  ],
+                ] },
+              ],
+            },
+          },
+        },
+      },
     },
   },
 }

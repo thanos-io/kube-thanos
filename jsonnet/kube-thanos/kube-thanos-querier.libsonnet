@@ -1,17 +1,6 @@
 local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
 {
-  _config+:: {
-    querier+: {
-      name: 'thanos-querier',
-      labels: { app: $._config.querier.name },
-      ports: {
-        grpc: 10901,
-        http: 10902,
-      },
-    },
-  },
-
   thanos+:: {
     querier+: {
       service:
@@ -19,37 +8,28 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local ports = service.mixin.spec.portsType;
 
         service.new(
-          $._config.querier.name,
-          $._config.querier.labels,
+          'thanos-querier',
+          $.thanos.querier.deployment.metadata.labels,
           [
-            ports.newNamed('grpc', $._config.querier.ports.grpc, $._config.querier.ports.grpc),
-            ports.newNamed('http', 9090, $._config.querier.ports.http),
+            ports.newNamed('grpc', 10901, 10901),
+            ports.newNamed('http', 9090, 10902),
           ]
         ) +
-        service.mixin.metadata.withNamespace($._config.namespace) +
-        service.mixin.metadata.withLabels($._config.querier.labels),
+        service.mixin.metadata.withNamespace('monitoring') +
+        service.mixin.metadata.withLabels({ app: $.thanos.querier.service.metadata.name }),
 
       deployment:
         local deployment = k.apps.v1.deployment;
         local container = deployment.mixin.spec.template.spec.containersType;
 
-        local args = [
-          'query',
-          '--query.replica-label=replica',
-          '--store=dnssrv+%s.%s.svc.cluster.local:%d' % [
-            $.thanos.store.service.metadata.name,
-            $._config.namespace,
-            $._config.store.ports.grpc,
-          ],
-        ];
-
         local c =
-          container.new($._config.querier.name, $._config.images.thanos) +
-          container.withArgs(args);
+          container.new($.thanos.querier.deployment.metadata.name, $.thanos.variables.image) +
+          container.withArgs(['query', '--query.replica-label=replica']);
 
-        deployment.new($._config.querier.name, 1, c, $._config.querier.labels) +
-        deployment.mixin.metadata.withNamespace($._config.namespace) +
-        deployment.mixin.spec.selector.withMatchLabels($._config.querier.labels),
+        deployment.new('thanos-querier', 1, c, $.thanos.querier.deployment.metadata.labels) +
+        deployment.mixin.metadata.withNamespace('monitoring') +
+        deployment.mixin.metadata.withLabels({ app: $.thanos.querier.deployment.metadata.name }) +
+        deployment.mixin.spec.selector.withMatchLabels($.thanos.querier.deployment.metadata.labels),
     },
   },
 }

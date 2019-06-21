@@ -33,8 +33,6 @@ spec:
         ports:
         - containerPort: 10901
           name: grpc
-        - containerPort: 10902
-          name: http
         volumeMounts:
         - mountPath: /var/thanos/store
           name: data

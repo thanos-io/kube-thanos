@@ -1,17 +1,6 @@
 local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
 {
-  _config+:: {
-    receive+: {
-      name: 'thanos-receive',
-      labels: { app: $._config.receive.name },
-      ports: {
-        grpc: 10901,
-        remoteWrite: 19291,
-      },
-    },
-  },
-
   thanos+:: {
     receive: {
       service:
@@ -19,15 +8,15 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local ports = service.mixin.spec.portsType;
 
         service.new(
-          $._config.receive.name,
-          $._config.receive.labels,
+          'thanos-receive',
+          $.thanos.receive.statefulSet.metadata.labels,
           [
-            ports.newNamed('grpc', $._config.receive.ports.grpc, $._config.receive.ports.grpc),
-            ports.newNamed('remote-write', $._config.receive.ports.remoteWrite, $._config.receive.ports.remoteWrite),
+            ports.newNamed('grpc', 10901, 10901),
+            ports.newNamed('remote-write', 19291, 19291),
           ]
         ) +
-        service.mixin.metadata.withNamespace($._config.namespace) +
-        service.mixin.metadata.withLabels($._config.receive.labels) +
+        service.mixin.metadata.withNamespace('monitoring') +
+        service.mixin.metadata.withLabels({ app: $.thanos.receive.service.metadata.name }) +
         service.mixin.spec.withClusterIp('None'),
 
       statefulSet:
@@ -38,30 +27,30 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local containerVolumeMount = container.volumeMountsType;
 
         local c =
-          container.new($._config.store.name, $._config.images.thanos) +
+          container.new($.thanos.receive.statefulSet.metadata.name, $.thanos.variables.image) +
           container.withArgs([
             'receive',
-            '--remote-write.address=0.0.0.0:%d' % $._config.receive.ports.remoteWrite,
-            '--grpc-address=0.0.0.0:%d' % $._config.receive.ports.grpc,
+            '--grpc-address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[0].port,
+            '--remote-write.address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[1].port,
             '--objstore.config=$(OBJSTORE_CONFIG)',
           ]) +
           container.withEnv([
             containerEnv.fromSecretRef(
               'OBJSTORE_CONFIG',
-              $._config.thanos.objectStorageConfig.name,
-              $._config.thanos.objectStorageConfig.key,
+              $.thanos.variables.objectStorageConfig.name,
+              $.thanos.variables.objectStorageConfig.key,
             ),
           ]) +
           container.withPorts([
-            { name: 'grpc', containerPort: $._config.receive.ports.grpc },
-            { name: 'remote-write', containerPort: $._config.receive.ports.remoteWrite },
+            { name: 'grpc', containerPort: $.thanos.receive.service.spec.ports[0].port },
+            { name: 'remote-write', containerPort: $.thanos.receive.service.spec.ports[1].port },
           ]);
 
-        sts.new($._config.receive.name, 3, c, [], $._config.receive.labels) +
-        sts.mixin.metadata.withNamespace($._config.namespace) +
-        sts.mixin.metadata.withLabels($._config.receive.labels) +
+        sts.new('thanos-receive', 3, c, [], $.thanos.receive.statefulSet.metadata.labels) +
+        sts.mixin.metadata.withNamespace('monitoring') +
+        sts.mixin.metadata.withLabels({ app: $.thanos.receive.statefulSet.metadata.name }) +
         sts.mixin.spec.withServiceName($.thanos.receive.service.metadata.name) +
-        sts.mixin.spec.selector.withMatchLabels($._config.receive.labels),
+        sts.mixin.spec.selector.withMatchLabels($.thanos.receive.statefulSet.metadata.labels),
     },
 
     querier+: {
@@ -70,12 +59,12 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           template+: {
             spec+: {
               containers: [
-                super.containers[0] +
+                super.containers[0]
                 { args+: [
                   '--store=dnssrv+%s.%s.svc.cluster.local:%d' % [
                     $.thanos.receive.service.metadata.name,
-                    $._config.namespace,
-                    $._config.receive.ports.grpc,
+                    $.thanos.receive.service.metadata.namespace,
+                    $.thanos.receive.service.spec.ports[0].port,
                   ],
                 ] },
               ],
