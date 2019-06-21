@@ -78,23 +78,15 @@ local kt =
   // (import 'kube-thanos/kube-thanos-pvc.libsonnet') + // Uncomment this line to enable PVCs
   // (import 'kube-thanos/kube-thanos-receive.libsonnet') +
   {
-    _config+:: {
-      namespace: 'monitoring',
-
-      images+: {
-        thanos: 'improbable/thanos:v0.5.0',
-      },
-
-      thanos+: {
-        // MAKE SURE TO CREATE THE SECRET FIRST
+    thanos+:: {
+      variables+:: {
+        image: 'improbable/thanos:v0.5.0',
         objectStorageConfig+: {
           name: 'thanos-objectstorage',
           key: 'thanos.yaml',
         },
       },
-    },
 
-    thanos+:: {
       querier+: {
         deployment+:
           deployment.mixin.spec.withReplicas(3),
