@@ -72,10 +72,9 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
               containers: [
                 super.containers[0]
                 { args+: [
-                  '--store=dnssrv+%s.%s.svc.cluster.local:%d' % [
+                  '--store=dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [
                     $.thanos.store.service.metadata.name,
                     $.thanos.store.service.metadata.namespace,
-                    $.thanos.store.service.spec.ports[0].port,
                   ],
                 ] },
               ],
