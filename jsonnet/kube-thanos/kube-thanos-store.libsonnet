@@ -19,6 +19,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           $.thanos.store.statefulSet.metadata.labels,
           [
             ports.newNamed('grpc', 10901, 10901),
+            ports.newNamed('http', 10902, 10902),
           ]
         ) +
         service.mixin.metadata.withNamespace('monitoring') +

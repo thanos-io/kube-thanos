@@ -77,6 +77,8 @@ local kt =
   (import 'kube-thanos/kube-thanos-store.libsonnet') +
   // (import 'kube-thanos/kube-thanos-pvc.libsonnet') + // Uncomment this line to enable PVCs
   // (import 'kube-thanos/kube-thanos-receive.libsonnet') +
+  // (import 'kube-thanos/kube-thanos-sidecar.libsonnet') +
+  // (import 'kube-thanos/kube-thanos-servicemonitors.libsonnet') +
   {
     thanos+:: {
       variables+:: {
