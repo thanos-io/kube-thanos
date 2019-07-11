@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: thanos-store
+  name: thanos-store
+  namespace: monitoring
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: thanos-store
+  serviceName: thanos-store
+  template:
+    metadata:
+      labels:
+        app: thanos-store
+    spec:
+      containers:
+      - args:
+        - store
+        - --data-dir=/var/thanos/store
+        - --grpc-address=0.0.0.0:10901
+        - --objstore.config=$(OBJSTORE_CONFIG)
+        env:
+        - name: OBJSTORE_CONFIG
+          valueFrom:
+            secretKeyRef:
+              key: thanos.yaml
+              name: thanos-objectstorage
+        image: improbable/thanos:v0.5.0
+        name: thanos-store
+        ports:
+        - containerPort: 10901
+          name: grpc
+        volumeMounts:
+        - mountPath: /var/thanos/store
+          name: data
+          readOnly: false
+      volumes: []
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+      storageClassName: standard

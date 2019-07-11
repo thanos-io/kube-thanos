@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: thanos-querier
+  name: thanos-querier
+  namespace: monitoring
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: thanos-querier
+  template:
+    metadata:
+      labels:
+        app: thanos-querier
+    spec:
+      containers:
+      - args:
+        - query
+        - --query.replica-label=replica
+        - --store=dnssrv+_grpc._tcp.thanos-store.monitoring.svc.cluster.local
+        - --store=dnssrv+_grpc._tcp.thanos-receive.monitoring.svc.cluster.local
+        - --store=dnssrv+_grpc._tcp.prometheus-k8s.monitoring.svc.cluster.local
+        image: improbable/thanos:v0.5.0
+        name: thanos-querier

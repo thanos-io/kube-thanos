@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: thanos-receive
+  name: thanos-receive
+  namespace: monitoring
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: thanos-receive
+  serviceName: thanos-receive
+  template:
+    metadata:
+      labels:
+        app: thanos-receive
+    spec:
+      containers:
+      - args:
+        - receive
+        - --grpc-address=0.0.0.0:10901
+        - --remote-write.address=0.0.0.0:10902
+        - --objstore.config=$(OBJSTORE_CONFIG)
+        - --tsdb.path=/var/thanos/tsdb
+        env:
+        - name: OBJSTORE_CONFIG
+          valueFrom:
+            secretKeyRef:
+              key: thanos.yaml
+              name: thanos-objectstorage
+        image: improbable/thanos:v0.5.0
+        name: thanos-receive
+        ports:
+        - containerPort: 10901
+          name: grpc
+        - containerPort: 10902
+          name: remote-write
+        volumeMounts:
+        - mountPath: /var/thanos/tsdb
+          name: data
+          readOnly: false
+      volumes:
+      - emptyDir: {}
+        name: data
+  volumeClaimTemplates: []
