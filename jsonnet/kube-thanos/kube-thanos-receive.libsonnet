@@ -32,7 +32,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withArgs([
             'receive',
             '--grpc-address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[0].port,
-            '--remote-write.address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[1].port,
+            '--remote-write.address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[2].port,
             '--objstore.config=$(OBJSTORE_CONFIG)',
             '--tsdb.path=/var/thanos/tsdb',
           ]) +
@@ -45,7 +45,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           ]) +
           container.withPorts([
             { name: 'grpc', containerPort: $.thanos.receive.service.spec.ports[0].port },
-            { name: 'remote-write', containerPort: $.thanos.receive.service.spec.ports[1].port },
+            { name: 'http', containerPort: $.thanos.receive.service.spec.ports[1].port },
+            { name: 'remote-write', containerPort: $.thanos.receive.service.spec.ports[2].port },
           ]) +
           container.withVolumeMounts([
             containerVolumeMount.new('data', '/var/thanos/tsdb', false),
