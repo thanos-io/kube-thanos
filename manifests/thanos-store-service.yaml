@@ -11,5 +11,8 @@ spec:
   - name: grpc
     port: 10901
     targetPort: 10901
+  - name: http
+    port: 10902
+    targetPort: 10902
   selector:
     app: thanos-store

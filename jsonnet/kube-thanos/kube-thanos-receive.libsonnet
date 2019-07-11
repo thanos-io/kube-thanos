@@ -12,6 +12,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           $.thanos.receive.statefulSet.metadata.labels,
           [
             ports.newNamed('grpc', 10901, 10901),
+            ports.newNamed('http', 10902, 10902),
             ports.newNamed('remote-write', 19291, 19291),
           ]
         ) +
