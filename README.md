@@ -103,6 +103,9 @@ local kt =
 { ['thanos-querier-' + name]: kt.thanos.querier[name] for name in std.objectFields(kt.thanos.querier) } +
 { ['thanos-store-' + name]: kt.thanos.store[name] for name in std.objectFields(kt.thanos.store) }
 // { ['thanos-receive-' + name]: kt.thanos.receive[name] for name in std.objectFields(kt.thanos.receive) }
+
+
+
 ```
 
 And here's the [build.sh](build.sh) script (which uses `vendor/` to render all manifests in a json structure of `{filename: manifest-content}`):
@@ -122,9 +125,15 @@ set -o pipefail
 rm -rf manifests
 mkdir manifests
 
-                                               # optional, but we would like to generate yaml, not json
+# optional, but we would like to generate yaml, not json
 jsonnet -J vendor -m manifests "${1-example.jsonnet}" | xargs -I{} sh -c 'cat {} | gojsontoyaml > {}.yaml; rm -f {}' -- {}
 
+# The following script generates all components, mostly used for testing
+
+rm -rf examples/all/manifests
+mkdir examples/all/manifests
+
+jsonnet -J vendor -m examples/all/manifests "${1-all.jsonnet}" | xargs -I{} sh -c 'cat {} | gojsontoyaml > {}.yaml; rm -f {}' -- {}
 ```
 
 > Note you need `jsonnet` (`go get github.com/google/go-jsonnet/cmd/jsonnet`) and `gojsontoyaml` (`go get github.com/brancz/gojsontoyaml`) installed to run `build.sh`. If you just want json output, not yaml, then you can skip the pipe and everything afterwards.
