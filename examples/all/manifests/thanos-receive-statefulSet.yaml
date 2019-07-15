@@ -23,7 +23,8 @@ spec:
         - --remote-write.address=0.0.0.0:19291
         - --objstore.config=$(OBJSTORE_CONFIG)
         - --tsdb.path=/var/thanos/tsdb
-        - --labels=receive=$(NAME)
+        - --labels=replica=$(NAME)
+        - --labels=receive="true"
         env:
         - name: NAME
           valueFrom:
