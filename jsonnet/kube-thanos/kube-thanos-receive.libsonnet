@@ -62,7 +62,13 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         sts.mixin.spec.selector.withMatchLabels($.thanos.receive.statefulSet.metadata.labels) +
         sts.mixin.spec.template.spec.withVolumes([
           volume.fromEmptyDir('data'),
-        ]),
+        ]) +
+        {
+          spec+: {
+            volumeClaimTemplates:: null,
+          },
+        },
+
     },
 
     querier+: {

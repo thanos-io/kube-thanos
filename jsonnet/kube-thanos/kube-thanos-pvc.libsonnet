@@ -21,7 +21,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
                 volumes: [],
               },
             },
-            volumeClaimTemplates: [
+            volumeClaimTemplates::: [
               {
                 metadata: {
                   name: 'data',

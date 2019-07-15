@@ -51,4 +51,3 @@ spec:
       volumes:
       - emptyDir: {}
         name: data
-  volumeClaimTemplates: []
