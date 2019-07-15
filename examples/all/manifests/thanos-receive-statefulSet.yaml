@@ -20,10 +20,15 @@ spec:
       - args:
         - receive
         - --grpc-address=0.0.0.0:10901
-        - --remote-write.address=0.0.0.0:10902
+        - --remote-write.address=0.0.0.0:19291
         - --objstore.config=$(OBJSTORE_CONFIG)
         - --tsdb.path=/var/thanos/tsdb
+        - --labels=receive=$(NAME)
         env:
+        - name: NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
         - name: OBJSTORE_CONFIG
           valueFrom:
             secretKeyRef:
@@ -35,6 +40,8 @@ spec:
         - containerPort: 10901
           name: grpc
         - containerPort: 10902
+          name: http
+        - containerPort: 19291
           name: remote-write
         volumeMounts:
         - mountPath: /var/thanos/tsdb
