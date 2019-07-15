@@ -35,7 +35,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             '--remote-write.address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[2].port,
             '--objstore.config=$(OBJSTORE_CONFIG)',
             '--tsdb.path=/var/thanos/tsdb',
-            '--labels=receive=$(NAME)',
+            '--labels=replica=$(NAME)',
+            '--labels=receive="true"',
           ]) +
           container.withEnv([
             containerEnv.fromFieldPath('NAME', 'metadata.name'),
