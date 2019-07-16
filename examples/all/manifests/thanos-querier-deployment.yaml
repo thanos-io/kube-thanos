@@ -19,8 +19,15 @@ spec:
       - args:
         - query
         - --query.replica-label=replica
+        - --grpc-address=0.0.0.0:10901
+        - --http-address=0.0.0.0:9090
         - --store=dnssrv+_grpc._tcp.thanos-store.monitoring.svc.cluster.local
         - --store=dnssrv+_grpc._tcp.thanos-receive.monitoring.svc.cluster.local
         - --store=dnssrv+_grpc._tcp.prometheus-k8s.monitoring.svc.cluster.local
         image: improbable/thanos:v0.5.0
         name: thanos-querier
+        ports:
+        - containerPort: 10901
+          name: grpc
+        - containerPort: 9090
+          name: http
