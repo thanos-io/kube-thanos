@@ -32,6 +32,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withArgs([
             'receive',
             '--grpc-address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[0].port,
+            '--http-address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[1].port,
             '--remote-write.address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[2].port,
             '--objstore.config=$(OBJSTORE_CONFIG)',
             '--tsdb.path=/var/thanos/tsdb',

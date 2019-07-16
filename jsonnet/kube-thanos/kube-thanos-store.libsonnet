@@ -39,6 +39,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             'store',
             '--data-dir=/var/thanos/store',
             '--grpc-address=0.0.0.0:%d' % $.thanos.store.service.spec.ports[0].port,
+            '--http-address=0.0.0.0:%d' % $.thanos.store.service.spec.ports[1].port,
             '--objstore.config=$(OBJSTORE_CONFIG)',
           ]) +
           container.withEnv([
@@ -50,6 +51,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           ]) +
           container.withPorts([
             { name: 'grpc', containerPort: $.thanos.store.service.spec.ports[0].port },
+            { name: 'http', containerPort: $.thanos.store.service.spec.ports[1].port },
           ]) +
           container.withVolumeMounts([
             containerVolumeMount.new('data', '/var/thanos/store', false),

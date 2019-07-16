@@ -24,11 +24,21 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
         local c =
           container.new($.thanos.querier.deployment.metadata.name, $.thanos.variables.image) +
-          container.withArgs(['query', '--query.replica-label=replica']);
+          container.withArgs([
+            'query',
+            '--query.replica-label=replica',
+            '--grpc-address=0.0.0.0:%d' % $.thanos.querier.service.spec.ports[0].port,
+            '--http-address=0.0.0.0:%d' % $.thanos.querier.service.spec.ports[1].port,
+          ]) +
+          container.withPorts([
+            { name: 'grpc', containerPort: $.thanos.querier.service.spec.ports[0].port },
+            { name: 'http', containerPort: $.thanos.querier.service.spec.ports[1].port },
+          ]);
 
         deployment.new('thanos-querier', 1, c, $.thanos.querier.deployment.metadata.labels) +
         deployment.mixin.metadata.withNamespace('monitoring') +
         deployment.mixin.metadata.withLabels({ app: $.thanos.querier.deployment.metadata.name }) +
+
         deployment.mixin.spec.selector.withMatchLabels($.thanos.querier.deployment.metadata.labels),
     },
   },
