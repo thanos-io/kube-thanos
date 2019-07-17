@@ -34,6 +34,36 @@
               severity: 'warning',
             },
           },
+          {
+            alert: 'ThanosStoreSeriesGateLatencyHigh',
+            annotations: {
+              message: '',
+            },
+            expr: |||
+              histogram_quantile(0.99,
+                sum(thanos_bucket_store_series_gate_duration_seconds{%(thanosStoreSelector)s}) by (le)
+              ) > 1
+            ||| % $._config,
+            'for': '10m',
+            labels: {
+              severity: 'warning',
+            },
+          },
+          {
+            alert: 'ThanosStoreObjstoreOperationLatencyHigh',
+            annotations: {
+              message: '',
+            },
+            expr: |||
+              histogram_quantile(0.99,
+                sum(thanos_objstore_bucket_operation_duration_seconds{%(thanosQuerierSelector)s}) by (le)
+              ) > 1
+            ||| % $._config,
+            'for': '10m',
+            labels: {
+              severity: 'warning',
+            },
+          },
         ],
       },
     ],
