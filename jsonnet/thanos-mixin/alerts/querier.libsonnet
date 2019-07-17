@@ -5,6 +5,23 @@
         name: 'thanos-querier.rules',
         rules: [
           {
+            alert: 'ThanosQuerierGrpcErrorRate',
+            annotations: {
+              message: 'Thanos Querier is returning Internal/Unavailable errors.',
+            },
+            expr: |||
+              sum(
+                rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m])
+                /
+                rate(grpc_server_started_total{%(thanosQuerierSelector)s}[5m])
+              ) > 0.05
+            ||| % $._config,
+            'for': '5m',
+            labels: {
+              severity: 'warning',
+            },
+          },
+          {
             alert: 'ThanosQuerierHighDNSFailures',
             annotations: {
               message: 'Thanos Queriers have {{ $value }} of failing DNS queries.',

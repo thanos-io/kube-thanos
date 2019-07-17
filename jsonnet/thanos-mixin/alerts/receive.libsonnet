@@ -7,7 +7,7 @@
           {
             alert: 'ThanosReceiveHttpRequestLatencyHigh',
             annotations: {
-              message: 'TODO',
+              message: 'Thanos Receive has a 99th percentile latency of {{ $value }} seconds for HTTP requests.',
             },
             expr: |||
               histogram_quantile(0.99,
@@ -22,14 +22,14 @@
           {
             alert: 'ThanosReceiveHighForwardRequestFailures',
             annotations: {
-              message: 'TODO',
+              message: 'Thanos Receive has {{ $value }} of failing forward requests.',
             },
             expr: |||
               sum(
                 rate(thanos_receive_forward_requests_total{result="error", %(thanosReceiveSelector)s}[5m])
               /
-                rate(thanos_receive_forward_requests_total{result="success", %(thanosReceiveSelector)s}[5m])
-              ) > 1
+                rate(thanos_receive_forward_requests_total{%(thanosReceiveSelector)s}[5m])
+              ) > 0.05
             ||| % $._config,
             'for': '15m',
             labels: {
@@ -39,14 +39,14 @@
           {
             alert: 'ThanosReceiveHighHashringFileRefreshFailures',
             annotations: {
-              message: 'TODO',
+              message: 'Thanos Receive has {{ $value }} of failing hashring file refreshes.',
             },
             expr: |||
               sum(
                 rate(thanos_receive_hashrings_file_errors_total{%(thanosReceiveSelector)s}[5m])
               /
                 rate(thanos_receive_hashrings_file_refreshes_total{%(thanosReceiveSelector)s}[5m])
-              ) > 1
+              ) >= 0
             ||| % $._config,
             'for': '15m',
             labels: {
