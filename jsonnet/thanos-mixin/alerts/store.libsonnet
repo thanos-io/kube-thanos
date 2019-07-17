@@ -11,7 +11,7 @@
             },
             expr: |||
               rate(
-                grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosStoreSelector)}[5m]
+                grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosStoreSelector)s}[5m]
               ) > 0
             ||| % $._config,
             'for': '5m',
@@ -26,7 +26,7 @@
             },
             expr: |||
               rate(
-                thanos_objstore_bucket_operation_failures_total{%(thanosStoreSelector)}[5m]
+                thanos_objstore_bucket_operation_failures_total{%(thanosStoreSelector)s}[5m]
               ) > 0
             ||| % $._config,
             'for': '5m',
