@@ -37,7 +37,7 @@
           {
             alert: 'ThanosStoreSeriesGateLatencyHigh',
             annotations: {
-              message: '',
+              message: 'TODO',
             },
             expr: |||
               histogram_quantile(0.99,
@@ -50,9 +50,26 @@
             },
           },
           {
+            alert: 'ThanosStoreObjstoreHighOperationFailures',
+            annotations: {
+              message: 'TODO',
+            },
+            expr: |||
+              sum(
+                rate(thanos_objstore_bucket_operation_failures_total{%(thanosStoreSelector)s}[5m])
+              /
+                rate(thanos_objstore_bucket_operations_total{%(thanosStoreSelector)s}[5m])
+              ) > 1
+            ||| % $._config,
+            'for': '15m',
+            labels: {
+              severity: 'warning',
+            },
+          },
+          {
             alert: 'ThanosStoreObjstoreOperationLatencyHigh',
             annotations: {
-              message: '',
+              message: 'TODO',
             },
             expr: |||
               histogram_quantile(0.99,
