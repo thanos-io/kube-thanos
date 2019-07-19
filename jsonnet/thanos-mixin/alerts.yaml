@@ -1,0 +1,134 @@
+groups:
+- name: thanos-querier.rules
+  rules:
+  - alert: ThanosQuerierGrpcErrorRate
+    annotations:
+      message: Thanos Querier is returning Internal/Unavailable errors.
+    expr: |
+      sum(
+        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job="thanos-querier"}[5m])
+        /
+        rate(grpc_server_started_total{job="thanos-querier"}[5m])
+      ) > 0.05
+    for: 5m
+    labels:
+      severity: warning
+  - alert: ThanosQuerierHighDNSFailures
+    annotations:
+      message: Thanos Queriers have {{ $value }} of failing DNS queries.
+    expr: |
+      sum(
+        rate(thanos_querier_store_apis_dns_failures_total{job="thanos-querier"}[5m])
+      /
+        rate(thanos_querier_store_apis_dns_lookups_total{job="thanos-querier"}[5m])
+      ) > 1
+    for: 15m
+    labels:
+      severity: warning
+  - alert: ThanosQuerierInstantLatencyHigh
+    annotations:
+      message: Thanos Querier has a 99th percentile latency of {{ $value }} seconds
+        for instant queries.
+    expr: |
+      histogram_quantile(0.99,
+        sum(thanos_query_api_instant_query_duration_seconds_bucket{job="thanos-querier"}) by (le)
+      ) > 1
+    for: 10m
+    labels:
+      severity: warning
+  - alert: ThanosQuerierRangeLatencyHigh
+    annotations:
+      message: Thanos Querier has a 99th percentile latency of {{ $value }} seconds
+        for instant queries.
+    expr: |
+      histogram_quantile(0.99,
+        sum(thanos_query_api_range_query_duration_seconds_bucket{job="thanos-querier"}) by (le)
+      ) > 1
+    for: 10m
+    labels:
+      severity: warning
+- name: thanos-receive.rules
+  rules:
+  - alert: ThanosReceiveHttpRequestLatencyHigh
+    annotations:
+      message: Thanos Receive has a 99th percentile latency of {{ $value }} seconds
+        for HTTP requests.
+    expr: |
+      histogram_quantile(0.99,
+        sum(thanos_http_request_duration_seconds{job="thanos-receive"}) by (le)
+      ) > 1
+    for: 10m
+    labels:
+      severity: warning
+  - alert: ThanosReceiveHighForwardRequestFailures
+    annotations:
+      message: Thanos Receive has {{ $value }} of failing forward requests.
+    expr: |
+      sum(
+        rate(thanos_receive_forward_requests_total{result="error", job="thanos-receive"}[5m])
+      /
+        rate(thanos_receive_forward_requests_total{job="thanos-receive"}[5m])
+      ) > 0.05
+    for: 15m
+    labels:
+      severity: warning
+  - alert: ThanosReceiveHighHashringFileRefreshFailures
+    annotations:
+      message: Thanos Receive has {{ $value }} of failing hashring file refreshes.
+    expr: |
+      sum(
+        rate(thanos_receive_hashrings_file_errors_total{job="thanos-receive"}[5m])
+      /
+        rate(thanos_receive_hashrings_file_refreshes_total{job="thanos-receive"}[5m])
+      ) >= 0
+    for: 15m
+    labels:
+      severity: warning
+- name: thanos-store.rules
+  rules:
+  - alert: ThanosStoreGrpcErrorRate
+    annotations:
+      message: Thanos Store is returning Internal/Unavailable errors.
+    expr: |
+      sum(
+        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job="thanos-store"}[5m])
+        /
+        rate(grpc_server_started_total{job="thanos-store"}[5m])
+      ) > 0.05
+    for: 5m
+    labels:
+      severity: warning
+  - alert: ThanosStoreSeriesGateLatencyHigh
+    annotations:
+      message: Thanos Store has a 99th percentile latency of {{ $value }} seconds
+        for store series gate requests.
+    expr: |
+      histogram_quantile(0.99,
+        sum(thanos_bucket_store_series_gate_duration_seconds{job="thanos-store"}) by (le)
+      ) > 2
+    for: 10m
+    labels:
+      severity: warning
+  - alert: ThanosStoreBucketHighOperationFailures
+    annotations:
+      message: Thanos Store Bucket has {{ $value }} of failing operations.
+    expr: |
+      sum(
+        rate(thanos_objstore_bucket_operation_failures_total{job="thanos-store"}[5m])
+      /
+        rate(thanos_objstore_bucket_operations_total{job="thanos-store"}[5m])
+      ) > 0.05
+    for: 15m
+    labels:
+      severity: warning
+  - alert: ThanosStoreObjstoreOperationLatencyHigh
+    annotations:
+      message: Thanos Store Bucket has a 99th percentile latency of {{ $value }} seconds
+        for bucket operations.
+    expr: |
+      histogram_quantile(0.99,
+        sum(thanos_objstore_bucket_operation_duration_seconds{job="thanos-querier"}) by (le)
+      ) > 15
+    for: 10m
+    labels:
+      severity: warning
