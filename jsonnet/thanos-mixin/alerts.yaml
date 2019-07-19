@@ -55,8 +55,8 @@ groups:
         for HTTP requests.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_http_request_duration_seconds{job="thanos-receive"}) by (le)
-      ) > 1
+        sum(thanos_http_request_duration_seconds_bucket{job="thanos-receive"}) by (le)
+      ) > 10
     for: 10m
     labels:
       severity: warning
@@ -104,7 +104,7 @@ groups:
         for store series gate requests.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_bucket_store_series_gate_duration_seconds{job="thanos-store"}) by (le)
+        sum(thanos_bucket_store_series_gate_duration_seconds_bucket{job="thanos-store"}) by (le)
       ) > 2
     for: 10m
     labels:
@@ -127,7 +127,7 @@ groups:
         for bucket operations.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_objstore_bucket_operation_duration_seconds{job="thanos-querier"}) by (le)
+        sum(thanos_objstore_bucket_operation_duration_seconds_bucket{job="thanos-store"}) by (le)
       ) > 15
     for: 10m
     labels:
