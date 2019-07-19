@@ -46,7 +46,7 @@
             expr: |||
               histogram_quantile(0.99,
                 sum(thanos_query_api_instant_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (le)
-              ) > 1
+              ) > 10
             ||| % $._config,
             'for': '10m',
             labels: {
@@ -61,7 +61,7 @@
             expr: |||
               histogram_quantile(0.99,
                 sum(thanos_query_api_range_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (le)
-              ) > 1
+              ) > 10
             ||| % $._config,
             'for': '10m',
             labels: {
