@@ -32,7 +32,7 @@ groups:
     expr: |
       histogram_quantile(0.99,
         sum(thanos_query_api_instant_query_duration_seconds_bucket{job="thanos-querier"}) by (le)
-      ) > 1
+      ) > 10
     for: 10m
     labels:
       severity: warning
@@ -43,7 +43,7 @@ groups:
     expr: |
       histogram_quantile(0.99,
         sum(thanos_query_api_range_query_duration_seconds_bucket{job="thanos-querier"}) by (le)
-      ) > 1
+      ) > 10
     for: 10m
     labels:
       severity: warning
