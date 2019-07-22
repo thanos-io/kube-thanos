@@ -46,7 +46,7 @@
                 rate(thanos_receive_hashrings_file_errors_total{%(thanosReceiveSelector)s}[5m])
               /
                 rate(thanos_receive_hashrings_file_refreshes_total{%(thanosReceiveSelector)s}[5m])
-              ) >= 0
+              ) > 0
             ||| % $._config,
             'for': '15m',
             labels: {
