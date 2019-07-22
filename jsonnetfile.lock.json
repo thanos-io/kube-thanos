@@ -8,7 +8,7 @@
                     "subdir": "jsonnet/kube-thanos"
                 }
             },
-            "version": "34e77108eb7aaf1beee9297d7c0e0c6c1af9159b"
+            "version": "a973b06ed653fe1eab713e4ff854919689d72543"
         },
         {
             "name": "ksonnet",
