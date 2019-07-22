@@ -80,7 +80,7 @@ groups:
         rate(thanos_receive_hashrings_file_errors_total{job="thanos-receive"}[5m])
       /
         rate(thanos_receive_hashrings_file_refreshes_total{job="thanos-receive"}[5m])
-      ) >= 0
+      ) > 0
     for: 15m
     labels:
       severity: warning
