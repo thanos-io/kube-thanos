@@ -11,8 +11,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           'thanos-querier',
           $.thanos.querier.deployment.metadata.labels,
           [
-            ports.newNamed('grpc', 10901, 10901),
-            ports.newNamed('http', 9090, 10902),
+            ports.newNamed('grpc', 10901, 'grpc'),
+            ports.newNamed('http', 9090, 'http'),
           ]
         ) +
         service.mixin.metadata.withNamespace('monitoring') +
