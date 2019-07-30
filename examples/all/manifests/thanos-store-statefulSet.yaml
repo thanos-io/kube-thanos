@@ -2,19 +2,19 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: thanos-store
+    app.kubernetes.io/name: thanos-store
   name: thanos-store
   namespace: monitoring
 spec:
   replicas: 5
   selector:
     matchLabels:
-      app: thanos-store
+      app.kubernetes.io/name: thanos-store
   serviceName: thanos-store
   template:
     metadata:
       labels:
-        app: thanos-store
+        app.kubernetes.io/name: thanos-store
     spec:
       containers:
       - args:

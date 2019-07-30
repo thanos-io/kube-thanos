@@ -8,4 +8,4 @@ spec:
   - port: http
   selector:
     matchLabels:
-      app: thanos-store
+      app.kubernetes.io/name: thanos-store

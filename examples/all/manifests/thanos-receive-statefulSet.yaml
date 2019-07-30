@@ -2,19 +2,19 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app: thanos-receive
+    app.kubernetes.io/name: thanos-receive
   name: thanos-receive
   namespace: monitoring
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: thanos-receive
+      app.kubernetes.io/name: thanos-receive
   serviceName: thanos-receive
   template:
     metadata:
       labels:
-        app: thanos-receive
+        app.kubernetes.io/name: thanos-receive
     spec:
       containers:
       - args:
