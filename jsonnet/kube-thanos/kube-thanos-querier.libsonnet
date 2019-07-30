@@ -16,7 +16,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           ]
         ) +
         service.mixin.metadata.withNamespace('monitoring') +
-        service.mixin.metadata.withLabels({ app: $.thanos.querier.service.metadata.name }),
+        service.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.querier.service.metadata.name }),
 
       deployment:
         local deployment = k.apps.v1.deployment;
@@ -37,7 +37,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
         deployment.new('thanos-querier', 1, c, $.thanos.querier.deployment.metadata.labels) +
         deployment.mixin.metadata.withNamespace('monitoring') +
-        deployment.mixin.metadata.withLabels({ app: $.thanos.querier.deployment.metadata.name }) +
+        deployment.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.querier.deployment.metadata.name }) +
 
         deployment.mixin.spec.selector.withMatchLabels($.thanos.querier.deployment.metadata.labels),
     },
