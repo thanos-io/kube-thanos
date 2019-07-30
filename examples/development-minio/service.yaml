@@ -10,4 +10,4 @@ spec:
       targetPort: 9000
       protocol: TCP
   selector:
-    app: minio
+    app.kubernetes.io/name: minio

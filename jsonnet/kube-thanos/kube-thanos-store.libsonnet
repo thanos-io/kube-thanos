@@ -23,7 +23,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           ]
         ) +
         service.mixin.metadata.withNamespace('monitoring') +
-        service.mixin.metadata.withLabels({ app: $.thanos.store.service.metadata.name }) +
+        service.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.store.service.metadata.name }) +
         service.mixin.spec.withClusterIp('None'),
 
       statefulSet:
@@ -59,7 +59,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
         sts.new('thanos-store', 3, c, [], $.thanos.store.statefulSet.metadata.labels) +
         sts.mixin.metadata.withNamespace('monitoring') +
-        sts.mixin.metadata.withLabels({ app: $.thanos.store.statefulSet.metadata.name }) +
+        sts.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.store.statefulSet.metadata.name }) +
         sts.mixin.spec.withServiceName($.thanos.store.service.metadata.name) +
         sts.mixin.spec.selector.withMatchLabels($.thanos.store.statefulSet.metadata.labels) +
         sts.mixin.spec.template.spec.withVolumes([

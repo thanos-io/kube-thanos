@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: thanos-querier
+    app.kubernetes.io/name: thanos-querier
   name: thanos-querier
   namespace: monitoring
 spec:
@@ -14,4 +14,4 @@ spec:
     port: 9090
     targetPort: http
   selector:
-    app: thanos-querier
+    app.kubernetes.io/name: thanos-querier

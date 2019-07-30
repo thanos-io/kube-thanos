@@ -8,4 +8,4 @@ spec:
   - port: http
   selector:
     matchLabels:
-      app: thanos-receive
+      app.kubernetes.io/name: thanos-receive

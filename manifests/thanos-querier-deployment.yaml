@@ -2,18 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: thanos-querier
+    app.kubernetes.io/name: thanos-querier
   name: thanos-querier
   namespace: monitoring
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: thanos-querier
+      app.kubernetes.io/name: thanos-querier
   template:
     metadata:
       labels:
-        app: thanos-querier
+        app.kubernetes.io/name: thanos-querier
     spec:
       containers:
       - args:

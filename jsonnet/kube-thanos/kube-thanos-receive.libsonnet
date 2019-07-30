@@ -17,7 +17,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           ]
         ) +
         service.mixin.metadata.withNamespace('monitoring') +
-        service.mixin.metadata.withLabels({ app: $.thanos.receive.service.metadata.name }) +
+        service.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.receive.service.metadata.name }) +
         service.mixin.spec.withClusterIp('None'),
 
       statefulSet:
@@ -58,7 +58,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
         sts.new('thanos-receive', 3, c, [], $.thanos.receive.statefulSet.metadata.labels) +
         sts.mixin.metadata.withNamespace('monitoring') +
-        sts.mixin.metadata.withLabels({ app: $.thanos.receive.statefulSet.metadata.name }) +
+        sts.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.receive.statefulSet.metadata.name }) +
         sts.mixin.spec.withServiceName($.thanos.receive.service.metadata.name) +
         sts.mixin.spec.selector.withMatchLabels($.thanos.receive.statefulSet.metadata.labels) +
         sts.mixin.spec.template.spec.withVolumes([
