@@ -17,7 +17,7 @@ generate-in-docker:
 	$(CONTAINER_CMD) make $(MFLAGS) generate
 
 .PHONY: generate
-generate: manifests jsonnet/thanos-mixin/alerts.yaml **.md
+generate: manifests jsonnet/thanos-mixin/alerts.yaml dashboards **.md
 
 **.md: $(shell find examples) build.sh example.jsonnet
 	embedmd -w `find . -name "*.md" | grep -v vendor`
@@ -29,13 +29,17 @@ manifests: vendor example.jsonnet build.sh
 jsonnet/thanos-mixin/alerts.yaml: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/alerts/*
 	jsonnet jsonnet/thanos-mixin/alerts.jsonnet | gojsontoyaml > $@
 
+dashboards: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/dashboards/*
+	@mkdir -p dashboards
+	jsonnet -J vendor -m dashboards jsonnet/thanos-mixin/dashboards.jsonnet
+
 vendor: jsonnetfile.json jsonnetfile.lock.json
 	rm -rf vendor
 	jb install
 
 .PHONY: fmt
 fmt:
-	find . -name 'vendor' -prune -o -name '*.libsonnet' -o -name '*.jsonnet' -print | \
+	find . -name 'vendor' -prune -o -name '*.libsonnet' -print -o -name '*.jsonnet' -print | \
 		xargs -n 1 -- $(JSONNET_FMT) -i
 
 .PHONY: lint
@@ -46,3 +50,4 @@ lint: fmt jsonnet/thanos-mixin/alerts.yaml
 clean:
 	rm -rf manifests/
 	rm -rf jsonnet/thanos-mixin/alerts.yaml
+	rm -rf dashboards/
