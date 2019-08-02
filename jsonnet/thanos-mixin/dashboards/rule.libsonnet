@@ -6,6 +6,8 @@ local g = import 'grafana-builder/grafana.libsonnet';
       g.dashboard(
         '%(dashboardNamePrefix)sRule' % $._config.grafanaThanos,
       )
+      .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
+      .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
       .addRow(
         g.row('Load')
         .addPanel(

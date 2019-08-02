@@ -45,7 +45,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_server_handled_total{namespace=\"$namespace\",grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable\", job=\"thanos-querier\"}[$__range])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n) > 0.05\n",
+                     "expr": "sum(\n  rate(grpc_server_handled_total{namespace=\"$namespace\",grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable\", job=\"thanos-querier\"}[$__range])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n) by (grpc_code, grpc_method, pod)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_code}} {{grpc_method}} {{pod}}",
@@ -121,10 +121,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(thanos_querier_store_apis_dns_failures_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n/\n  rate(thanos_querier_store_apis_dns_lookups_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n) > 1\n",
+                     "expr": "sum(\n  rate(thanos_querier_store_apis_dns_failures_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n/\n  rate(thanos_querier_store_apis_dns_lookups_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n) by (namespace)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
+                     "legendFormat": "{{ namespace }}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -304,7 +304,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Query 99 Quantile",
+               "title": "Query 99th Quantile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -380,7 +380,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Prometheus Query 99 Quantile",
+               "title": "Prometheus Query 99th Quantile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
