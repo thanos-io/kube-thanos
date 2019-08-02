@@ -87,6 +87,13 @@ local g = import 'grafana-builder/grafana.libsonnet';
             '{{pod}}'
           )
         )
+      )
+      .addRow(
+        g.row('Store Status')
+        .addPanel(
+          g.panel('Connected Stores') +
+          g.statPanel('thanos_store_nodes_grpc_connections{namespace="$namespace"}', 'none')
+        )
         .addPanel(
           g.panel('Gossip Info') +
           g.tablePanel(

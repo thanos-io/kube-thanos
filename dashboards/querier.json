@@ -369,7 +369,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-telemeter\",kubernetes_pod_name=~\"$pod\",quantile=\"0.99\"}",
+                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"thanos-prometheus\",kubernetes_pod_name=~\"$pod\",quantile=\"0.99\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{pod}} {{slice}}",
@@ -452,7 +452,7 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 4,
+               "span": 6,
                "stack": false,
                "steppedLine": false,
                "targets": [
@@ -528,12 +528,12 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 4,
+               "span": 6,
                "stack": false,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_queries{namespace=\"$namespace\",job=\"prometheus-telemeter\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "prometheus_engine_queries{namespace=\"$namespace\",job=\"thanos-prometheus\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{pod}}",
@@ -576,7 +576,19 @@
                      "show": false
                   }
                ]
-            },
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Load",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": false,
+         "height": "250px",
+         "panels": [
             {
                "aliasColors": { },
                "bars": false,
@@ -584,6 +596,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
+               "format": "none",
                "id": 8,
                "legend": {
                   "avg": false,
@@ -604,7 +617,82 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 4,
+               "span": 6,
+               "stack": false,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "thanos_store_nodes_grpc_connections{namespace=\"$namespace\"}",
+                     "format": "time_series",
+                     "instant": true,
+                     "intervalFactor": 2,
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "70,80",
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Connected Stores",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "singlestat",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 9,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 6,
                "stack": false,
                "steppedLine": false,
                "styles": [
@@ -707,7 +795,7 @@
          "repeatIteration": null,
          "repeatRowId": null,
          "showTitle": true,
-         "title": "Load",
+         "title": "Store Status",
          "titleSize": "h6"
       },
       {
@@ -721,7 +809,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 9,
+               "id": 10,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -797,7 +885,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 10,
+               "id": 11,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -873,7 +961,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 11,
+               "id": 12,
                "legend": {
                   "avg": false,
                   "current": false,
