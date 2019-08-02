@@ -6,9 +6,35 @@ local g = import 'grafana-builder/grafana.libsonnet';
       g.dashboard(
         '%(dashboardNamePrefix)sQuerier' % $._config.grafanaThanos,
       )
-      .addTemplate('thanos', 'thanos', 'thanos')
+      .addTemplate('thanos', 'thanos', 'thanos')  // TODO: !!
       .addRow(
         g.row('Thanos Query')
+        .addPanel(
+          g.panel('GRPC Error rate') +
+          g.queryPanel(  // TODO: Maybe something else
+            |||
+              sum(
+                rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m])
+                /
+                rate(grpc_server_started_total{%(thanosQuerierSelector)s}[5m])
+              ) > 0.05
+            ||| % $._config,
+            '{{grpc_code}} {{grpc_method}} {{kubernetes_pod_name}}'
+          )
+        )
+        .addPanel(
+          g.panel('DNS Failure Rate') +
+          g.queryPanel(  // TODO: Maybe something else
+            |||
+              sum(
+                rate(thanos_querier_store_apis_dns_failures_total{%(thanosQuerierSelector)s}[5m])
+              /
+                rate(thanos_querier_store_apis_dns_lookups_total{%(thanosQuerierSelector)s}[5m])
+              ) > 1
+            ||| % $._config,
+            ''
+          )
+        )
         .addPanel(
           g.panel('Request RPS') +
           g.queryPanel(
@@ -19,16 +45,16 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Response Time Quantile [$interval]') +
           g.queryPanel(
-            'histogram_quantile(0.9999, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (grpc_method,kubernetes_pod_name, le))' % $._config,
+            'histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (grpc_method,kubernetes_pod_name, le))' % $._config,
             '99.99 {{grpc_method}} {{kubernetes_pod_name}}'
           )
         )
         .addPanel(
-          g.panel('Thanos Query 99.99 Quantile [$interval]') +
+          g.panel('Thanos Query 99 Quantile [$interval]') +
           g.queryPanel(
             [
-              'histogram_quantile(0.9999, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
-              'histogram_quantile(0.9999, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
 
             ],
             [
