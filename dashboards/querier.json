@@ -48,7 +48,7 @@
                      "expr": "sum(\n  rate(grpc_server_handled_total{namespace=\"$namespace\",grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable\", job=\"thanos-querier\"}[$__range])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n) > 0.05\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}} {{grpc_method}} {{kubernetes_pod_name}}",
+                     "legendFormat": "{{grpc_code}} {{grpc_method}} {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -212,7 +212,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$__range])) by (grpc_method,kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 {{grpc_method}} {{kubernetes_pod_name}}",
+                     "legendFormat": "99 {{grpc_method}} {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -288,7 +288,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$__range])) by (kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 {{grpc_method}} {{kubernetes_pod_name}}",
+                     "legendFormat": "99 {{grpc_method}} {{pod}}",
                      "legendLink": null,
                      "step": 10
                   },
@@ -296,7 +296,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$__range])) by (kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "range_query {{kubernetes_pod_name}}",
+                     "legendFormat": "range_query {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -369,10 +369,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\",quantile=\"0.99\"}",
+                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-telemeter\",kubernetes_pod_name=~\"$pod\",quantile=\"0.99\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{kubernetes_pod_name}} {{slice}}",
+                     "legendFormat": "{{pod}} {{slice}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -460,7 +460,7 @@
                      "expr": "sum(rate(grpc_client_handled_total{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$__range])) by (kubernetes_pod_name, grpc_code, grpc_method)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}} {{grpc_method}} {{kubernetes_pod_name}}",
+                     "legendFormat": "{{grpc_code}} {{grpc_method}} {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -533,10 +533,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_queries{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "prometheus_engine_queries{namespace=\"$namespace\",job=\"prometheus-telemeter\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{kubernetes_pod_name}}",
+                     "legendFormat": "{{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -749,7 +749,7 @@
                      "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{kubernetes_pod_name}}",
+                     "legendFormat": "{{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -825,7 +825,7 @@
                      "expr": "go_goroutines{namespace=\"$namespace\",job=\"thanos-querier\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{kubernetes_pod_name}}",
+                     "legendFormat": "{{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -901,7 +901,7 @@
                      "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{quantile}} {{kubernetes_pod_name}}",
+                     "legendFormat": "{{quantile}} {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }

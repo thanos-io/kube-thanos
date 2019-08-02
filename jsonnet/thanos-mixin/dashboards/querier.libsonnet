@@ -1,3 +1,5 @@
+local grafana = import 'grafonnet/grafana.libsonnet';
+local template = grafana.template;
 local g = import 'grafana-builder/grafana.libsonnet';
 
 {
@@ -21,7 +23,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
                 rate(grpc_server_started_total{namespace="$namespace",%(thanosQuerierSelector)s}[$__range])
               ) > 0.05
             ||| % $._config,
-            '{{grpc_code}} {{grpc_method}} {{kubernetes_pod_name}}'
+            '{{grpc_code}} {{grpc_method}} {{pod}}'
           )
         )
         .addPanel(
@@ -44,7 +46,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.panel('Response Time Quantile [$__range]') +
           g.queryPanel(
             'histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$__range])) by (grpc_method,kubernetes_pod_name, le))' % $._config,
-            '99 {{grpc_method}} {{kubernetes_pod_name}}'
+            '99 {{grpc_method}} {{pod}}'
           )
         )
         .addPanel(
@@ -56,16 +58,16 @@ local g = import 'grafana-builder/grafana.libsonnet';
 
             ],
             [
-              '99 {{grpc_method}} {{kubernetes_pod_name}}',
-              'range_query {{kubernetes_pod_name}}',
+              '99 {{grpc_method}} {{pod}}',
+              'range_query {{pod}}',
             ]
           )
         )
         .addPanel(
           g.panel('Prometheus Query 99 Quantile') +
           g.queryPanel(
-            'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod",quantile="0.99"}' % $._config,
-            '{{kubernetes_pod_name}} {{slice}}'
+            'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,kubernetes_pod_name=~"$pod",quantile="0.99"}' % $._config,
+            '{{pod}} {{slice}}'
           )
         )
       )
@@ -75,14 +77,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.panel('Request RPS') +
           g.queryPanel(
             'sum(rate(grpc_client_handled_total{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$__range])) by (kubernetes_pod_name, grpc_code, grpc_method)' % $._config,
-            '{{grpc_code}} {{grpc_method}} {{kubernetes_pod_name}}'
+            '{{grpc_code}} {{grpc_method}} {{pod}}'
           )
         )
         .addPanel(
           g.panel('Prometheus Queries/s') +
           g.queryPanel(
-            'prometheus_engine_queries{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-            '{{kubernetes_pod_name}}'
+            'prometheus_engine_queries{namespace="$namespace",%(thanosPrometheusSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+            '{{pod}}'
           )
         )
         .addPanel(
