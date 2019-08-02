@@ -11,7 +11,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addRow(
         g.row('Operations')
         .addPanel(
-          g.panel('Operations/s [$__range]') +
+          g.panel('Operations/s') +
           g.queryPanel(
             [
               'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$__range])) by (namespace)' % $._config,
@@ -29,14 +29,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
           )
         )
         .addPanel(
-          g.panel('Operation Failures/s [$__range]') +
+          g.panel('Operation Failures/s') +
           g.queryPanel(
             [
-              'sum(rate(prometheus_tsdb_compactions_failed_total{namespsace=~"$namespsace",%(thanosCompactSelector)s}[$__range])) by (namespsace)' % $._config,
-              'sum(rate(thanos_objstore_bucket_operation_failures_total{namespsace=~"$namespsace",%(thanosCompactSelector)s}[$__range])) by (namespsace)' % $._config,
-              'sum(rate(thanos_compact_garbage_collection_failures_total{namespsace=~"$namespsace",%(thanosCompactSelector)s}[$__range])) by (namespsace)' % $._config,
-              'sum(rate(thanos_compact_group_compactions_failures_total{namespsace=~"$namespsace",%(thanosCompactSelector)s}[$__range])) by (namespsace)' % $._config,
-              'sum(rate(thanos_compact_sync_meta_failures_total{namespsace=~"$namespsace",%(thanosCompactSelector)s}[$__range])) by (namespsace)' % $._config,
+              'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$__range])) by (namespace)' % $._config,
+              'sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$__range])) by (namespace)' % $._config,
+              'sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$__range])) by (namespace)' % $._config,
+              'sum(rate(thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$__range])) by (namespace)' % $._config,
+              'sum(rate(thanos_compact_sync_meta_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$__range])) by (namespace)' % $._config,
             ], [
               'compaction {{namespace}}',
               'bucket ops {{namespace}}',
@@ -47,7 +47,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
           )
         )
         .addPanel(
-          g.panel('Operation Time Quantile [$__range]') +
+          g.panel('Operation Time Quantile') +
           g.queryPanel(
             [
               'histogram_quantile(0.99, sum(rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace=~"$namespace",%(thanosCompactSelector)s}[$__range])) by (namespace,le))' % $._config,
@@ -62,27 +62,28 @@ local g = import 'grafana-builder/grafana.libsonnet';
             ],
           )
         )
-      ).addRow(
+      )
+      .addRow(
         g.row('Resources')
         .addPanel(
           g.panel('Memory Used') +
           g.queryPanel(
-            'go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosCompactSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-            '{{pod}}'
+            'go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosCompactSelector)s}' % $._config,
+            '{{namespace}} {{kubernetes_pod_name}}'
           )
         )
         .addPanel(
           g.panel('Goroutines') +
           g.queryPanel(
             'go_goroutines{namespace="$namespace",%(thanosCompactSelector)s}' % $._config,
-            '{{pod}}'
+            '{{namespace}} {{kubernetes_pod_name}}'
           )
         )
         .addPanel(
           g.panel('GC Time Quantiles') +
           g.queryPanel(
-            'go_gc_duration_seconds{namespace="$namespace",%(thanosCompactSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-            '{{quantile}} {{pod}}'
+            'go_gc_duration_seconds{namespace="$namespace",%(thanosCompactSelector)s, quantile="1"}' % $._config,
+            '{{namespace}} {{kubernetes_pod_name}}'
           )
         )
       ) + { tags: $._config.grafanaThanos.dashboardTags },

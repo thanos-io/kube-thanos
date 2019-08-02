@@ -220,7 +220,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Response Time Quantile [$__range]",
+               "title": "Response Time Quantile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -304,7 +304,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Query 99 Quantile [$__range]",
+               "title": "Query 99 Quantile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -582,7 +582,7 @@
          "repeatIteration": null,
          "repeatRowId": null,
          "showTitle": true,
-         "title": "Load",
+         "title": "Operations",
          "titleSize": "h6"
       },
       {

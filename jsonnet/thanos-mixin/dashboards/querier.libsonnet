@@ -43,14 +43,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addRow(
         g.row('Latency')
         .addPanel(
-          g.panel('Response Time Quantile [$__range]') +
+          g.panel('Response Time Quantile') +
           g.queryPanel(
             'histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$__range])) by (grpc_method,kubernetes_pod_name, le))' % $._config,
             '99 {{grpc_method}} {{pod}}'
           )
         )
         .addPanel(
-          g.panel('Query 99 Quantile [$__range]') +
+          g.panel('Query 99 Quantile') +
           g.queryPanel(
             [
               'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$__range])) by (kubernetes_pod_name, le))' % $._config,
@@ -72,7 +72,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
       )
       .addRow(
-        g.row('Load')
+        g.row('Operations')
         .addPanel(
           g.panel('Request RPS') +
           g.queryPanel(
