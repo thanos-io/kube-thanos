@@ -6,6 +6,7 @@
     thanosRuleSelector: 'job="thanos-rule"',
     thanosCompactSelector: 'job="thanos-compact"',
     thanosSidecarSelector: 'job="thanos-sidecar"',
+    thanosPrometheusSelector: 'job="thanos-prometheus"',
 
     clusterLabel: 'cluster',
     showMultiCluster: false,
