@@ -7,6 +7,9 @@
     thanosCompactSelector: 'job="thanos-compact"',
     thanosSidecarSelector: 'job="thanos-sidecar"',
 
+    clusterLabel: 'cluster',
+    showMultiCluster: false,
+
     // Config for the Grafana dashboards in the thanos-mixin
     grafanaThanos: {
       dashboardNamePrefix: 'Thanos / ',
