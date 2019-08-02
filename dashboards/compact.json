@@ -23,7 +23,9 @@
    ],
    "schemaVersion": 14,
    "style": "dark",
-   "tags": [ ],
+   "tags": [
+      "thanos-mixin"
+   ],
    "templating": {
       "list": [
          {
@@ -72,7 +74,7 @@
       ]
    },
    "timezone": "",
-   "title": "compact",
+   "title": "Thanos / Compact",
    "uid": "651943d05a8123e32867b4673963f42b",
    "version": 0
 }

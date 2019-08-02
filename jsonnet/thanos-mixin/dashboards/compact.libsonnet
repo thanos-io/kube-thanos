@@ -3,9 +3,9 @@ local g = import 'grafana-builder/grafana.libsonnet';
 {
   grafanaDashboards+:: {
     'compact.json': g.dashboard(
-      'compact'
+      '%(dashboardNamePrefix)sCompact' % $._config.grafanaThanos,
     ).addRow(
       g.row('Thanos Compact')
-    ),
+    ) + { tags: $._config.grafanaThanos.dashboardTags },
   },
 }

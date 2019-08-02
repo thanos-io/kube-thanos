@@ -23,7 +23,9 @@
    ],
    "schemaVersion": 14,
    "style": "dark",
-   "tags": [ ],
+   "tags": [
+      "thanos-mixin"
+   ],
    "templating": {
       "list": [
          {
@@ -72,7 +74,7 @@
       ]
    },
    "timezone": "",
-   "title": "receive",
+   "title": "Thanos / Receive",
    "uid": "916a852b00ccc5ed81056644718fa4fb",
    "version": 0
 }

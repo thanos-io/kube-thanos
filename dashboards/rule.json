@@ -23,7 +23,9 @@
    ],
    "schemaVersion": 14,
    "style": "dark",
-   "tags": [ ],
+   "tags": [
+      "thanos-mixin"
+   ],
    "templating": {
       "list": [
          {
@@ -72,7 +74,7 @@
       ]
    },
    "timezone": "",
-   "title": "rule",
+   "title": "Thanos / Rule",
    "uid": "35da848f5f92b2dc612e0c3a0577b8a1",
    "version": 0
 }

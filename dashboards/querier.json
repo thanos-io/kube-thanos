@@ -45,7 +45,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_client_handled_total{$labelselector=\"$labelvalue\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, grpc_code, grpc_method)",
+                     "expr": "sum(rate(grpc_client_handled_total{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, grpc_code, grpc_method)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_code}} {{grpc_method}} {{kubernetes_pod_name}}",
@@ -121,7 +121,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.9999, sum(rate(grpc_client_handling_seconds_bucket{$labelselector=\"$labelvalue\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (grpc_method,kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.9999, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (grpc_method,kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99.99 {{grpc_method}} {{kubernetes_pod_name}}",
@@ -197,7 +197,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.9999, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{$labelselector=\"$labelvalue\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.9999, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99.99 {{grpc_method}} {{kubernetes_pod_name}}",
@@ -205,7 +205,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.9999, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{$labelselector=\"$labelvalue\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.9999, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "range_query {{kubernetes_pod_name}}",
@@ -281,7 +281,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_query_duration_seconds{$labelselector=\"$labelvalue\",kubernetes_pod_name=~\"$pod\",quantile=\"0.99\"}",
+                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\",quantile=\"0.99\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{kubernetes_pod_name}} {{slice}}",
@@ -357,7 +357,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_queries{$labelselector=\"$labelvalue\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "prometheus_engine_queries{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{kubernetes_pod_name}}",
@@ -480,7 +480,7 @@
                ],
                "targets": [
                   {
-                     "expr": "min(thanos_store_node_info{$labelselector=\"$labelvalue\"}) by (external_labels)",
+                     "expr": "min(thanos_store_node_info{namespace=\"$namespace\",job=\"thanos-querier\"}) by (external_labels)",
                      "format": "table",
                      "instant": true,
                      "intervalFactor": 2,
@@ -558,7 +558,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_memstats_heap_alloc_bytes{$labelselector=\"$labelvalue\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{kubernetes_pod_name}}",
@@ -634,7 +634,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_goroutines{$labelselector=\"$labelvalue\"}",
+                     "expr": "go_goroutines{namespace=\"$namespace\",job=\"thanos-querier\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{kubernetes_pod_name}}",
@@ -710,7 +710,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_gc_duration_seconds{$labelselector=\"$labelvalue\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{quantile}} {{kubernetes_pod_name}}",
@@ -765,7 +765,9 @@
    ],
    "schemaVersion": 14,
    "style": "dark",
-   "tags": [ ],
+   "tags": [
+      "thanos-mixin"
+   ],
    "templating": {
       "list": [
          {
@@ -837,7 +839,7 @@
       ]
    },
    "timezone": "",
-   "title": "querier",
+   "title": "Thanos / Querier",
    "uid": "98fde97ddeaf2981041745f1f2ba68c2",
    "version": 0
 }

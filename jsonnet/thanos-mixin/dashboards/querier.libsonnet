@@ -4,7 +4,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
   grafanaDashboards+:: {
     'querier.json':
       g.dashboard(
-        'querier'
+        '%(dashboardNamePrefix)sQuerier' % $._config.grafanaThanos,
       )
       .addTemplate('thanos', 'thanos', 'thanos')
       .addRow(
@@ -12,14 +12,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Request RPS') +
           g.queryPanel(
-            'sum(rate(grpc_client_handled_total{$labelselector="$labelvalue",kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, grpc_code, grpc_method)',
+            'sum(rate(grpc_client_handled_total{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, grpc_code, grpc_method)' % $._config,
             '{{grpc_code}} {{grpc_method}} {{kubernetes_pod_name}}'
           )
         )
         .addPanel(
           g.panel('Response Time Quantile [$interval]') +
           g.queryPanel(
-            'histogram_quantile(0.9999, sum(rate(grpc_client_handling_seconds_bucket{$labelselector="$labelvalue",kubernetes_pod_name=~"$pod"}[$interval])) by (grpc_method,kubernetes_pod_name, le))',
+            'histogram_quantile(0.9999, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (grpc_method,kubernetes_pod_name, le))' % $._config,
             '99.99 {{grpc_method}} {{kubernetes_pod_name}}'
           )
         )
@@ -27,8 +27,8 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.panel('Thanos Query 99.99 Quantile [$interval]') +
           g.queryPanel(
             [
-              'histogram_quantile(0.9999, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{$labelselector="$labelvalue",kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))',
-              'histogram_quantile(0.9999, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{$labelselector="$labelvalue",kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))',
+              'histogram_quantile(0.9999, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.9999, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
 
             ],
             [
@@ -40,21 +40,21 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Prometheus Query 99 Quantile') +
           g.queryPanel(
-            'prometheus_engine_query_duration_seconds{$labelselector="$labelvalue",kubernetes_pod_name=~"$pod",quantile="0.99"}',
+            'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod",quantile="0.99"}' % $._config,
             '{{kubernetes_pod_name}} {{slice}}'
           )
         )
         .addPanel(
           g.panel('Prometheus Queries/s') +
           g.queryPanel(
-            'prometheus_engine_queries{$labelselector="$labelvalue",kubernetes_pod_name=~"$pod"}',
+            'prometheus_engine_queries{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
             '{{kubernetes_pod_name}}'
           )
         )
         .addPanel(
           g.panel('Gossip Info') +
           g.tablePanel(
-            ['min(thanos_store_node_info{$labelselector="$labelvalue"}) by (external_labels)'],
+            ['min(thanos_store_node_info{namespace="$namespace",%(thanosQuerierSelector)s}) by (external_labels)' % $._config],
             {
               'Value #A': {
                 alias: 'Peer',
@@ -81,24 +81,24 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Memory Used') +
           g.queryPanel(
-            'go_memstats_heap_alloc_bytes{$labelselector="$labelvalue",kubernetes_pod_name=~"$pod"}',
+            'go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
             '{{kubernetes_pod_name}}'
           )
         )
         .addPanel(
           g.panel('Goroutines') +
           g.queryPanel(
-            'go_goroutines{$labelselector="$labelvalue"}',
+            'go_goroutines{namespace="$namespace",%(thanosQuerierSelector)s}' % $._config,
             '{{kubernetes_pod_name}}'
           )
         )
         .addPanel(
           g.panel('GC Time Quantiles') +
           g.queryPanel(
-            'go_gc_duration_seconds{$labelselector="$labelvalue",kubernetes_pod_name=~"$pod"}',
+            'go_gc_duration_seconds{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
             '{{quantile}} {{kubernetes_pod_name}}'
           )
         )
-      ),
+      ) + { tags: $._config.grafanaThanos.dashboardTags },
   },
 }
