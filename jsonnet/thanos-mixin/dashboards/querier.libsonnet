@@ -10,7 +10,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
       )
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
-      .addTemplate('pod', 'kube_pod_info{namespace="$namespace"}', 'pod')
+      //   .addTemplate('pod', 'kube_pod_info{namespace="$namespace"}', 'pod')
       .addRow(
         g.row('Errors')
         .addPanel(
@@ -121,24 +121,41 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.panel('Memory Used') +
           g.queryPanel(
             'go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-            '{{kubernetes_pod_name}}'
+            '{{pod}}'
           )
         )
         .addPanel(
           g.panel('Goroutines') +
           g.queryPanel(
             'go_goroutines{namespace="$namespace",%(thanosQuerierSelector)s}' % $._config,
-            '{{kubernetes_pod_name}}'
+            '{{pod}}'
           )
         )
         .addPanel(
           g.panel('GC Time Quantiles') +
           g.queryPanel(
             'go_gc_duration_seconds{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-            '{{quantile}} {{kubernetes_pod_name}}'
+            '{{quantile}} {{pod}}'
           )
         )
       )
+      + {
+        templating+: {
+          list+: [
+            template.new(
+              'pod',
+              '$datasource',
+              'label_values(kube_pod_info{namespace="$namespace"}, pod)',
+              label='pod',
+              refresh=1,
+              sort=2,
+              current='all',
+              allValues='.*',
+              includeAll=true
+            ),
+          ],
+        },
+      }
       + { tags: $._config.grafanaThanos.dashboardTags },
   },
 }

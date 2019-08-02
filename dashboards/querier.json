@@ -1019,14 +1019,14 @@
             "useTags": false
          },
          {
-            "allValue": null,
+            "allValue": ".*",
             "current": {
-               "text": "prod",
-               "value": "prod"
+               "text": "all",
+               "value": "$__all"
             },
             "datasource": "$datasource",
             "hide": 0,
-            "includeAll": false,
+            "includeAll": true,
             "label": "pod",
             "multi": false,
             "name": "pod",
