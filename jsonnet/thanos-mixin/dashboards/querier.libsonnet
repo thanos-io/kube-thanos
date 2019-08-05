@@ -92,7 +92,10 @@ local g = import 'grafana-builder/grafana.libsonnet';
         g.row('Store Status')
         .addPanel(
           g.panel('Connected Stores') +
-          g.statPanel('thanos_store_nodes_grpc_connections{namespace="$namespace"}', 'none')
+          g.statPanel(
+            'sum(thanos_store_nodes_grpc_connections{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"})' % $._config,
+            'none'
+          )
         )
         .addPanel(
           g.panel('Gossip Info') +

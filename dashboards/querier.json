@@ -622,7 +622,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "thanos_store_nodes_grpc_connections{namespace=\"$namespace\"}",
+                     "expr": "sum(thanos_store_nodes_grpc_connections{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"})",
                      "format": "time_series",
                      "instant": true,
                      "intervalFactor": 2,
