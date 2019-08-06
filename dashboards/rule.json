@@ -45,7 +45,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$__range])) by (grpc_code, grpc_method, namespace)",
+                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) by (grpc_code, grpc_method, namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_code}} {{namespace}}/{{grpc_method}}",
@@ -121,7 +121,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$__range])) by (grpc_method, le, namespace))",
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (grpc_method, le, namespace))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 {{namespace}}/{{grpc_method}}",
@@ -209,7 +209,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "rate(thanos_alert_sender_alerts_sent_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$__range])",
+                     "expr": "rate(thanos_alert_sender_alerts_sent_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{alertmanager}}",
@@ -285,7 +285,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "rate(thanos_alert_sender_alerts_dropped_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$__range])",
+                     "expr": "rate(thanos_alert_sender_alerts_dropped_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{alertmanager}}",
@@ -361,7 +361,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$__range])) by (alertmanager, le, namespace))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (alertmanager, le, namespace))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 {{namespace}}/{{alertmanager}}",
@@ -449,7 +449,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{ namespace }}",
@@ -525,7 +525,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{ namespace }}",
@@ -601,7 +601,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$__range])) by (namespace,le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 {{namespace}}",
@@ -960,6 +960,21 @@
             "tagsQuery": "",
             "type": "query",
             "useTags": false
+         },
+         {
+            "auto": true,
+            "auto_count": 300,
+            "auto_min": "10s",
+            "current": {
+               "text": "5m",
+               "value": "5m"
+            },
+            "hide": 0,
+            "label": "interval",
+            "name": "interval",
+            "query": "5m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+            "refresh": 2,
+            "type": "interval"
          }
       ]
    },

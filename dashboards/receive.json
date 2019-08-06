@@ -45,10 +45,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$__range])) by (namespace, handler, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (namespace, handler, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespsace}} {{handler}}",
+                     "legendFormat": "{{namespace}} {{handler}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -121,7 +121,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"error\"}[$__range])\n/\n  rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$__range])\n)\n",
+                     "expr": "sum(\n  rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"error\"}[$interval])\n/\n  rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])\n)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "",
@@ -361,7 +361,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(thanos_receive_hashrings_file_errors_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$__range])\n/\n  rate(thanos_receive_hashrings_file_refreshes_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$__range])\n)\n",
+                     "expr": "sum(\n  rate(thanos_receive_hashrings_file_errors_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])\n/\n  rate(thanos_receive_hashrings_file_refreshes_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])\n)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "",
@@ -480,6 +480,21 @@
             "tagsQuery": "",
             "type": "query",
             "useTags": false
+         },
+         {
+            "auto": true,
+            "auto_count": 300,
+            "auto_min": "10s",
+            "current": {
+               "text": "5m",
+               "value": "5m"
+            },
+            "hide": 0,
+            "label": "interval",
+            "name": "interval",
+            "query": "5m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+            "refresh": 2,
+            "type": "interval"
          }
       ]
    },

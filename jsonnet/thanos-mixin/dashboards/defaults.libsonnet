@@ -1,5 +1,7 @@
 {
   local grafanaDashboards = super.grafanaDashboards,
+  local grafana = import 'grafonnet/grafana.libsonnet',
+  local template = grafana.template,
 
   // Automatically add a uid to each dashboard based on the base64 encoding
   // of the file name and set the timezone to be 'default'.
@@ -23,6 +25,16 @@
         for row in super.rows
       ],
 
+      templating+: {
+        list+: [
+          template.interval(
+            'interval',
+            '5m,10m,30m,1h,6h,12h,1d,7d,14d,30d,auto',
+            label='interval',
+            current='5m',
+          ),
+        ],
+      },
     }
     for filename in std.objectFields(grafanaDashboards)
   },

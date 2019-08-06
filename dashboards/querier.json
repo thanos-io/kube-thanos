@@ -45,7 +45,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_server_handled_total{namespace=\"$namespace\",grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable\", job=\"thanos-querier\"}[$__range])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n) by (grpc_code, grpc_method, pod)\n",
+                     "expr": "sum(\n  rate(grpc_server_handled_total{namespace=\"$namespace\",grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable\", job=\"thanos-querier\"}[$interval])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n) by (grpc_code, grpc_method, pod)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_code}} {{grpc_method}} {{pod}}",
@@ -121,7 +121,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(thanos_querier_store_apis_dns_failures_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n/\n  rate(thanos_querier_store_apis_dns_lookups_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$__range])\n) by (namespace)\n",
+                     "expr": "sum(\n  rate(thanos_querier_store_apis_dns_failures_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n/\n  rate(thanos_querier_store_apis_dns_lookups_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n) by (namespace)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{ namespace }}",
@@ -209,7 +209,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$__range])) by (grpc_method,kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (grpc_method,kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 {{grpc_method}} {{pod}}",
@@ -285,7 +285,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$__range])) by (kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 {{grpc_method}} {{pod}}",
@@ -293,7 +293,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$__range])) by (kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "range_query {{pod}}",
@@ -457,7 +457,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_client_handled_total{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$__range])) by (kubernetes_pod_name, grpc_code, grpc_method)",
+                     "expr": "sum(rate(grpc_client_handled_total{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, grpc_code, grpc_method)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_code}} {{grpc_method}} {{pod}}",
@@ -1128,6 +1128,21 @@
             "tagsQuery": "",
             "type": "query",
             "useTags": false
+         },
+         {
+            "auto": true,
+            "auto_count": 300,
+            "auto_min": "10s",
+            "current": {
+               "text": "5m",
+               "value": "5m"
+            },
+            "hide": 0,
+            "label": "interval",
+            "name": "interval",
+            "query": "5m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+            "refresh": 2,
+            "type": "interval"
          }
       ]
    },

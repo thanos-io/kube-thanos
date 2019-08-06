@@ -13,14 +13,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('RPS') +
           g.queryPanel(
-            'sum(rate(grpc_server_handled_total{namespace="$namespace",%(thanosRuleSelector)s}[$__range])) by (grpc_code, grpc_method, namespace)' % $._config,
+            'sum(rate(grpc_server_handled_total{namespace="$namespace",%(thanosRuleSelector)s}[$interval])) by (grpc_code, grpc_method, namespace)' % $._config,
             '{{grpc_code}} {{namespace}}/{{grpc_method}}'
           )
         )
         .addPanel(
           g.panel('Query Response Time Quantile') +
           g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}[$__range])) by (grpc_method, le, namespace))' % $._config,
+            'histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (grpc_method, le, namespace))' % $._config,
             '99 {{namespace}}/{{grpc_method}}'
           )
         )
@@ -30,21 +30,21 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Alert Sent Rate') +
           g.queryPanel(
-            'rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$__range])' % $._config,
+            'rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])' % $._config,
             '{{alertmanager}}'
           )
         )
         .addPanel(
           g.panel('Alert Dropped Rate') +
           g.queryPanel(
-            'rate(thanos_alert_sender_alerts_dropped_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$__range])' % $._config,
+            'rate(thanos_alert_sender_alerts_dropped_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])' % $._config,
             '{{alertmanager}}'
           )
         )
         .addPanel(
           g.panel('Alert Sender Latency Quantile') +
           g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}[$__range])) by (alertmanager, le, namespace))' % $._config,
+            'histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager, le, namespace))' % $._config,
             '99 {{namespace}}/{{alertmanager}}'
           )
         )
@@ -54,21 +54,21 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Compaction Rate') +
           g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$__range])) by (namespace)' % $._config,
+            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (namespace)' % $._config,
             '{{ namespace }}'
           )
         )
         .addPanel(
           g.panel('Compaction Failure Rate') +
           g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$__range])) by (namespace)' % $._config,
+            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (namespace)' % $._config,
             '{{ namespace }}'
           )
         )
         .addPanel(
           g.panel('Compaction Duration Quatile') +
           g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}[$__range])) by (namespace,le))' % $._config,
+            'histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (namespace,le))' % $._config,
             '99 {{namespace}}'
           )
         )

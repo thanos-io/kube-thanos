@@ -18,9 +18,9 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.queryPanel(
             |||
               sum(
-                rate(grpc_server_handled_total{namespace="$namespace",grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[$__range])
+                rate(grpc_server_handled_total{namespace="$namespace",grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[$interval])
                 /
-                rate(grpc_server_started_total{namespace="$namespace",%(thanosQuerierSelector)s}[$__range])
+                rate(grpc_server_started_total{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
               ) by (grpc_code, grpc_method, pod)
             ||| % $._config,
             '{{grpc_code}} {{grpc_method}} {{pod}}'
@@ -31,9 +31,9 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.queryPanel(
             |||
               sum(
-                rate(thanos_querier_store_apis_dns_failures_total{namespace="$namespace",%(thanosQuerierSelector)s}[$__range])
+                rate(thanos_querier_store_apis_dns_failures_total{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
               /
-                rate(thanos_querier_store_apis_dns_lookups_total{namespace="$namespace",%(thanosQuerierSelector)s}[$__range])
+                rate(thanos_querier_store_apis_dns_lookups_total{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
               ) by (namespace)
             ||| % $._config,
             '{{ namespace }}'
@@ -45,7 +45,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Response Time Quantile') +
           g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$__range])) by (grpc_method,kubernetes_pod_name, le))' % $._config,
+            'histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (grpc_method,kubernetes_pod_name, le))' % $._config,
             '99 {{grpc_method}} {{pod}}'
           )
         )
@@ -53,8 +53,8 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.panel('Query 99th Quantile') +
           g.queryPanel(
             [
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$__range])) by (kubernetes_pod_name, le))' % $._config,
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$__range])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
 
             ],
             [
@@ -76,7 +76,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Request RPS') +
           g.queryPanel(
-            'sum(rate(grpc_client_handled_total{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$__range])) by (kubernetes_pod_name, grpc_code, grpc_method)' % $._config,
+            'sum(rate(grpc_client_handled_total{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, grpc_code, grpc_method)' % $._config,
             '{{grpc_code}} {{grpc_method}} {{pod}}'
           )
         )

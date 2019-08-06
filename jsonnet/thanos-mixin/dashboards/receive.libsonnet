@@ -12,8 +12,8 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Request Duration Quantile') +
           g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}[$__range])) by (namespace, handler, le))' % $._config,
-            '{{namespsace}} {{handler}}'
+            'histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])) by (namespace, handler, le))' % $._config,
+            '{{namespace}} {{handler}}'
           )
         )
         .addPanel(
@@ -21,9 +21,9 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.queryPanel(
             |||
               sum(
-                rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="error"}[$__range])
+                rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="error"}[$interval])
               /
-                rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}[$__range])
+                rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])
               )
             ||| % $._config,
             ''
@@ -50,14 +50,15 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.queryPanel(
             |||
               sum(
-                rate(thanos_receive_hashrings_file_errors_total{namespace="$namespace",%(thanosReceiveSelector)s}[$__range])
+                rate(thanos_receive_hashrings_file_errors_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])
               /
-                rate(thanos_receive_hashrings_file_refreshes_total{namespace="$namespace",%(thanosReceiveSelector)s}[$__range])
+                rate(thanos_receive_hashrings_file_refreshes_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])
               )
             ||| % $._config,
             ''
           )
         )
-      ) + { tags: $._config.grafanaThanos.dashboardTags },
+      )
+      + { tags: $._config.grafanaThanos.dashboardTags },
   },
 }

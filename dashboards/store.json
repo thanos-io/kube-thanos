@@ -45,7 +45,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (grpc_code, grpc_method, namespace)",
+                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (grpc_code, grpc_method, namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_code}} {{grpc_method}} {{namespace}}",
@@ -121,7 +121,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_server_handled_total{namespace=\"$namespace\",grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable\",job=\"thanos-store\"}[$__range])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])\n) by (grpc_code, grpc_method, namespace)\n",
+                     "expr": "sum(\n  rate(grpc_server_handled_total{namespace=\"$namespace\",grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable\",job=\"thanos-store\"}[$interval])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])\n) by (grpc_code, grpc_method, namespace)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_code}} {{grpc_method}} {{namespace}}",
@@ -197,7 +197,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])\n/\n  rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])\n)\n",
+                     "expr": "sum(\n  rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])\n/\n  rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])\n)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "",
@@ -285,7 +285,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (grpc_method, le, namespace))",
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (grpc_method, le, namespace))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_method}} {{namespace}}",
@@ -361,7 +361,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_bucket_store_sent_chunk_size_bytes_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (le, namespace))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_bucket_store_sent_chunk_size_bytes_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (le, namespace))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{namespace}}",
@@ -449,7 +449,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace, operation)",
+                     "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace, operation)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "bucket {{operation}} {{namespace}}",
@@ -457,7 +457,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_bucket_store_block_drops_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_bucket_store_block_drops_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "block drops {{namespace}}",
@@ -465,7 +465,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_bucket_store_block_loads_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_bucket_store_block_loads_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "block loads {{namespace}}",
@@ -541,7 +541,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (operation,namespace)",
+                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (operation,namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "bucket {{operation}} {{namespace}}",
@@ -549,7 +549,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_bucket_store_block_drop_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_bucket_store_block_drop_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "block drops {{namespace}}",
@@ -557,7 +557,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_bucket_store_block_load_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_bucket_store_block_load_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "block loads {{namespace}}",
@@ -633,7 +633,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace,le, operation))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,le, operation))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 bucket {{operation}} {{namespace}}",
@@ -641,7 +641,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_bucket_store_series_get_all_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace,le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_bucket_store_series_get_all_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 get all {{namespace}}",
@@ -649,7 +649,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_bucket_store_series_merge_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace,le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_bucket_store_series_merge_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 merge {{namespace}}",
@@ -737,7 +737,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_store_index_cache_items_added_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace,item_type)",
+                     "expr": "sum(rate(thanos_store_index_cache_items_added_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,item_type)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "added {{item_type}} {{namespace}}",
@@ -745,7 +745,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_store_index_cache_items_evicted_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace,item_type)",
+                     "expr": "sum(rate(thanos_store_index_cache_items_evicted_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,item_type)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "evicted {{item_type}} {{namespace}}",
@@ -753,7 +753,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_store_index_cache_requests_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace,item_type)",
+                     "expr": "sum(rate(thanos_store_index_cache_requests_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,item_type)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "requests {{item_type}} {{namespace}}",
@@ -761,7 +761,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_store_index_cache_hits_total{namespace=\"$namespace\",job=\"thanos-store\"}[$__range])) by (namespace,item_type)",
+                     "expr": "sum(rate(thanos_store_index_cache_hits_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,item_type)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "hits {{item_type}} {{namespace}}",
@@ -1288,6 +1288,21 @@
             "tagsQuery": "",
             "type": "query",
             "useTags": false
+         },
+         {
+            "auto": true,
+            "auto_count": 300,
+            "auto_min": "10s",
+            "current": {
+               "text": "5m",
+               "value": "5m"
+            },
+            "hide": 0,
+            "label": "interval",
+            "name": "interval",
+            "query": "5m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+            "refresh": 2,
+            "type": "interval"
          }
       ]
    },

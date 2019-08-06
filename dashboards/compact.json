@@ -45,7 +45,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "compaction {{namespace}}",
@@ -53,7 +53,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "bucket ops {{namespace}}",
@@ -61,7 +61,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_compact_garbage_collection_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_compact_garbage_collection_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "gc ops  {{namespace}}",
@@ -69,7 +69,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_compact_group_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_compact_group_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "group compact  {{namespace}}",
@@ -77,7 +77,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_compact_sync_meta_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_compact_sync_meta_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "sync metas  {{namespace}}",
@@ -153,7 +153,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "compaction {{namespace}}",
@@ -161,7 +161,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "bucket ops {{namespace}}",
@@ -169,7 +169,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "gc ops  {{namespace}}",
@@ -177,7 +177,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_compact_group_compactions_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_compact_group_compactions_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "group compact  {{namespace}}",
@@ -185,7 +185,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_compact_sync_meta_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace)",
+                     "expr": "sum(rate(thanos_compact_sync_meta_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "sync metas  {{namespace}}",
@@ -261,7 +261,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace,le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 gc {{namespace}}\"",
@@ -269,7 +269,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_compact_sync_meta_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace,le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_compact_sync_meta_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 sync meta  {{namespace}}",
@@ -277,7 +277,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace,le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 bucket ops {{namespace}}",
@@ -285,7 +285,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$__range])) by (namespace,le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 compact {{namespace}}",
@@ -644,6 +644,21 @@
             "tagsQuery": "",
             "type": "query",
             "useTags": false
+         },
+         {
+            "auto": true,
+            "auto_count": 300,
+            "auto_min": "10s",
+            "current": {
+               "text": "5m",
+               "value": "5m"
+            },
+            "hide": 0,
+            "label": "interval",
+            "name": "interval",
+            "query": "5m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+            "refresh": 2,
+            "type": "interval"
          }
       ]
    },
