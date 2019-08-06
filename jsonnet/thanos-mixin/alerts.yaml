@@ -93,6 +93,12 @@ groups:
         {{ $value }} seconds.
     expr: |
       count(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{job="thanos-sidecar"}) by (pod) >= 300) > 0
+      count(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{job="thanos-sidecar"}) by (pod) > 300) == 0
+  - alert: ThanosReceiveConfigReloadFailure
+    annotations:
+      message: Thanos Receive has not been able to reload hashring configurations.
+    expr: thanos_receive_config_last_reload_successful{job="thanos-receive"} == 0
+    for: 5m
     labels:
       severity: warning
 - name: thanos-store.rules

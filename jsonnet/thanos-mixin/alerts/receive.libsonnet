@@ -53,6 +53,17 @@
               severity: 'warning',
             },
           },
+          {
+            alert: 'ThanosReceiveConfigReloadFailure',
+            annotations: {
+              message: 'Thanos Receive has not been able to reload hashring configurations.',
+            },
+            expr: 'thanos_receive_config_last_reload_successful{%(thanosReceiveSelector)s} == 0' % $._config,
+            'for': '5m',
+            labels: {
+              severity: 'warning',
+            },
+          },
         ],
       },
     ],
