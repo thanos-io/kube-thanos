@@ -8,7 +8,31 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
       .addRow(
-        g.row('Query')
+        g.row('Config')
+        .addPanel(
+          g.panel('Latest Config') +
+          g.statPanel(
+            'thanos_receive_config_hash{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+            'none'
+          )
+        )
+        .addPanel(
+          g.panel('Last Updated At') +
+          g.statPanel(
+            'thanos_receive_config_last_reload_success_timestamp_seconds{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+            'none'
+          )
+        )
+        .addPanel(
+          g.panel('Latest Config Reload') +
+          g.statPanel(
+            'thanos_receive_config_last_reload_successful{namespace="$namespace",%(thanosReceiveSelector)s' % $._config,
+            'none'
+          )
+        )
+      )
+      .addRow(
+        g.row('Request')
         .addPanel(
           g.panel('Request Duration Quantile') +
           g.queryPanel(
