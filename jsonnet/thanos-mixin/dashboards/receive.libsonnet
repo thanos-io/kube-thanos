@@ -11,44 +11,114 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
       .addRow(
-        g.row('Request')
+        g.row('Incoming Request')
         .addPanel(
-          g.panel('Forward Request Failure Rate') +
+          g.panel('Rate') +
+          g.queryPanel(
+            |||
+              sum(
+                label_replace(
+                  rate(thanos_http_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]),
+                  "status_code", "${1}xx", "code", "([0-9]).."
+                  )
+              ) by (status_code)
+            ||| % $._config,
+            '{{status_code}}'
+          ) +
+          g.stack +
+          {
+            aliasColors: {
+              '1xx': '#EAB839',
+              '2xx': '#7EB26D',
+              '3xx': '#6ED0E0',
+              '4xx': '#EF843C',
+              '5xx': '#E24D42',
+              success: '#7EB26D',
+              'error': '#E24D42',
+            },
+          },
+        )
+        .addPanel(
+          g.panel('Error Rate') +
+          g.queryPanel(
+            |||
+              sum(rate(thanos_http_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,code!~"2.."}[$interval]))
+              /
+              sum(rate(thanos_http_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
+            ||| % $._config,
+            'error'
+          ) +
+          {
+            yaxes: g.yaxes({ format: 'percentunit', max: 1 }),
+            aliasColors: {
+              'error': '#E24D42',
+            },
+          },
+        )
+        .addPanel(
+          g.panel('Duration Percentile') +
+          g.queryPanel(
+            [
+              'histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])) by (handler, le))' % $._config,
+              |||
+                sum(rate(thanos_http_request_duration_seconds_sum{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
+                /
+                sum(rate(thanos_http_request_duration_seconds_count{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
+              ||| % $._config,
+              'histogram_quantile(0.50, sum(rate(thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])) by (handler, le))' % $._config,
+            ],
+            [
+              '99 {{handler}}',
+              'mean {{handler}}',
+              '50 {{handler}}',
+            ]
+          )
+        )
+      )
+      .addRow(
+        g.row('Forward Request')
+        .addPanel(
+          g.panel('Rate') +
+          g.queryPanel(
+            [
+              'sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="error"}[$interval]))' % $._config,
+              'sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="success"}[$interval]))' % $._config,
+            ],
+            [
+              'error',
+              'success',
+            ]
+          ) +
+          g.stack +
+          {
+            yaxes: g.yaxes('percentunit'),
+            aliasColors: {
+              success: '#7EB26D',
+              'error': '#E24D42',
+            },
+          }
+        )
+        .addPanel(
+          g.panel('Error Rate') +
           g.queryPanel(
             |||
               sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="error"}[$interval]))
               /
               sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
             ||| % $._config,
-            'failure rate'
+            'error'
           ) +
-          { yaxes: g.yaxes('percentunit') }
-        )
-        .addPanel(
-          g.panel('Request Duration 99th Percentile') +
-          g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])) by (handler, le))' % $._config,
-            '{{handler}}'
-          )
+          {
+            yaxes: g.yaxes('percentunit'),
+            aliasColors: {
+              success: '#7EB26D',
+              'error': '#E24D42',
+            },
+          }
         )
       )
       .addRow(
-        g.row('Hashring')
-        .addPanel(
-          g.panel('Hashring File Refresh Failure Rate') +
-          g.queryPanel(
-            |||
-              sum(rate(thanos_receive_hashrings_file_errors_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
-              /
-              sum(rate(thanos_receive_hashrings_file_refreshes_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
-            ||| % $._config,
-            'failure rate'
-          ) +
-          { yaxes: g.yaxes('percentunit') }
-        )
-      )
-      .addRow(
-        g.row('Hashring')
+        g.row('Hashring Status')
         .addPanel(
           g.panel('Nodes per Hashring') +
           g.queryPanel(
@@ -65,7 +135,49 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
       )
       .addRow(
-        g.row('Config')
+        g.row('Hashring Refresh')
+        .addPanel(
+          g.panel('Rate') +
+          g.queryPanel(
+            [
+              'sum(rate(thanos_receive_hashrings_file_errors_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
+              'sum(rate(thanos_receive_hashrings_file_changes_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
+            ],
+            [
+              'error',
+              'success',
+            ]
+          ) +
+          g.stack +
+          {
+            yaxes: g.yaxes('percentunit'),
+            aliasColors: {
+              success: '#7EB26D',
+              'error': '#E24D42',
+            },
+          }
+        )
+        .addPanel(
+          g.panel('Error Rate') +
+          g.queryPanel(
+            |||
+              sum(rate(thanos_receive_hashrings_file_errors_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
+              /
+              sum(rate(thanos_receive_hashrings_file_refreshes_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
+            ||| % $._config,
+            'error'
+          ) +
+          {
+            yaxes: g.yaxes('percentunit'),
+            aliasColors: {
+              success: '#7EB26D',
+              'error': '#E24D42',
+            },
+          }
+        )
+      )
+      .addRow(
+        g.row('Hashring Config')
         .addPanel(
           g.panel('Latest Config') +
           g.statPanel(
@@ -126,8 +238,8 @@ local g = import 'grafana-builder/grafana.libsonnet';
           )
         )
         + { collapse: true }
-      )
-      + {
+      ) +
+      {
         templating+: {
           list+: [
             template.new(
@@ -143,7 +255,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
             ),
           ],
         },
-      }
-      + { tags: $._config.grafanaThanos.dashboardTags },
+      } +
+      { tags: $._config.grafanaThanos.dashboardTags },
   },
 }
