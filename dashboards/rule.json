@@ -48,7 +48,7 @@
                      "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) by (grpc_code, grpc_method, namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}} {{namespace}}/{{grpc_method}}",
+                     "legendFormat": "{{grpc_code}} {{grpc_method}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -124,7 +124,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (grpc_method, le, namespace))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 {{namespace}}/{{grpc_method}}",
+                     "legendFormat": "99 {{grpc_method}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -364,7 +364,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (alertmanager, le, namespace))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 {{namespace}}/{{alertmanager}}",
+                     "legendFormat": "99 {{alertmanager}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -372,7 +372,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Alert Sender Latency Quantile",
+               "title": "Alert Sender Latency 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -601,10 +601,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (namespace,le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (namespace, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 {{namespace}}",
+                     "legendFormat": "99",
                      "legendLink": null,
                      "step": 10
                   }
@@ -654,7 +654,7 @@
          "titleSize": "h6"
       },
       {
-         "collapse": false,
+         "collapse": true,
          "height": "250px",
          "panels": [
             {
@@ -689,10 +689,50 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-rule\"}",
+                     "expr": "go_memstats_alloc_bytes{namespace=\"$namespace\",job=\"thanos-rule\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{kubernetes_pod_name}}",
+                     "legendFormat": "alloc all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-rule\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_alloc_bytes_total{namespace=\"$namespace\",job=\"thanos-rule\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-rule\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_stack_inuse_bytes{namespace=\"$namespace\",job=\"thanos-rule\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse stack {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_heap_inuse_bytes{namespace=\"$namespace\",job=\"thanos-rule\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse heap {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -768,7 +808,7 @@
                      "expr": "go_goroutines{namespace=\"$namespace\",job=\"thanos-rule\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{kubernetes_pod_name}}",
+                     "legendFormat": "{{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -841,10 +881,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"thanos-rule\", quantile=\"1\"}",
+                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"thanos-rule\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{kubernetes_pod_name}}",
+                     "legendFormat": "{{quantile}} {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -952,6 +992,29 @@
             "name": "namespace",
             "options": [ ],
             "query": "label_values(kube_pod_info{cluster=\"$cluster\"}, namespace)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 2,
+            "tagValuesQuery": "",
+            "tags": [ ],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+         },
+         {
+            "allValue": ".*",
+            "current": {
+               "text": "all",
+               "value": "$__all"
+            },
+            "datasource": "$datasource",
+            "hide": 0,
+            "includeAll": true,
+            "label": "pod",
+            "multi": false,
+            "name": "pod",
+            "options": [ ],
+            "query": "label_values(kube_pod_info{namespace=\"$namespace\"}, pod)",
             "refresh": 1,
             "regex": "",
             "sort": 2,

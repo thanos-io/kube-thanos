@@ -48,7 +48,7 @@
                      "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (grpc_code, grpc_method, namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}} {{grpc_method}} {{namespace}}",
+                     "legendFormat": "{{grpc_code}} {{grpc_method}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -124,7 +124,7 @@
                      "expr": "sum(\n  rate(grpc_server_handled_total{namespace=\"$namespace\",grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable\",job=\"thanos-store\"}[$interval])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])\n) by (grpc_code, grpc_method, namespace)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}} {{grpc_method}} {{namespace}}",
+                     "legendFormat": "{{grpc_code}} {{grpc_method}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -288,7 +288,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (grpc_method, le, namespace))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_method}} {{namespace}}",
+                     "legendFormat": "{{grpc_method}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -296,7 +296,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Response Time 99th Quantile",
+               "title": "Response Time 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -364,7 +364,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_bucket_store_sent_chunk_size_bytes_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (le, namespace))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}}",
+                     "legendFormat": "",
                      "legendLink": null,
                      "step": 10
                   }
@@ -372,7 +372,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Response Size 99th Quantile",
+               "title": "Response Size 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -452,7 +452,7 @@
                      "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace, operation)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "bucket {{operation}} {{namespace}}",
+                     "legendFormat": "bucket {{operation}}",
                      "legendLink": null,
                      "step": 10
                   },
@@ -460,7 +460,7 @@
                      "expr": "sum(rate(thanos_bucket_store_block_drops_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "block drops {{namespace}}",
+                     "legendFormat": "block drops",
                      "legendLink": null,
                      "step": 10
                   },
@@ -468,7 +468,7 @@
                      "expr": "sum(rate(thanos_bucket_store_block_loads_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "block loads {{namespace}}",
+                     "legendFormat": "block loads",
                      "legendLink": null,
                      "step": 10
                   }
@@ -541,10 +541,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (operation,namespace)",
+                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (operation, namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "bucket {{operation}} {{namespace}}",
+                     "legendFormat": "bucket {{operation}}",
                      "legendLink": null,
                      "step": 10
                   },
@@ -552,7 +552,7 @@
                      "expr": "sum(rate(thanos_bucket_store_block_drop_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "block drops {{namespace}}",
+                     "legendFormat": "block drops",
                      "legendLink": null,
                      "step": 10
                   },
@@ -560,7 +560,7 @@
                      "expr": "sum(rate(thanos_bucket_store_block_load_failures_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "block loads {{namespace}}",
+                     "legendFormat": "block loads",
                      "legendLink": null,
                      "step": 10
                   }
@@ -633,10 +633,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,le, operation))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,le,operation))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 bucket {{operation}} {{namespace}}",
+                     "legendFormat": "99 bucket {{operation}}",
                      "legendLink": null,
                      "step": 10
                   },
@@ -644,7 +644,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_bucket_store_series_get_all_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 get all {{namespace}}",
+                     "legendFormat": "99 get all",
                      "legendLink": null,
                      "step": 10
                   },
@@ -652,7 +652,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_bucket_store_series_merge_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 merge {{namespace}}",
+                     "legendFormat": "99 merge",
                      "legendLink": null,
                      "step": 10
                   }
@@ -660,7 +660,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Operation Time 99th Quantile",
+               "title": "Operation Time 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -737,34 +737,34 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_store_index_cache_items_added_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,item_type)",
+                     "expr": "sum(rate(thanos_store_index_cache_items_added_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace, item_type)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "added {{item_type}} {{namespace}}",
+                     "legendFormat": "added {{item_type}}",
                      "legendLink": null,
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_store_index_cache_items_evicted_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,item_type)",
+                     "expr": "sum(rate(thanos_store_index_cache_items_evicted_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace, item_type)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "evicted {{item_type}} {{namespace}}",
+                     "legendFormat": "evicted {{item_type}}",
                      "legendLink": null,
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_store_index_cache_requests_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,item_type)",
+                     "expr": "sum(rate(thanos_store_index_cache_requests_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace, item_type)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "requests {{item_type}} {{namespace}}",
+                     "legendFormat": "requests {{item_type}}",
                      "legendLink": null,
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_store_index_cache_hits_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace,item_type)",
+                     "expr": "sum(rate(thanos_store_index_cache_hits_total{namespace=\"$namespace\",job=\"thanos-store\"}[$interval])) by (namespace, item_type)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "hits {{item_type}} {{namespace}}",
+                     "legendFormat": "hits {{item_type}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -848,7 +848,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Series Gate Time 99th Quantile",
+               "title": "Series Gate Time 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -916,7 +916,7 @@
                      "expr": "thanos_bucket_store_series_blocks_queried{namespace=\"$namespace\",job=\"thanos-store\",quantile=\"0.99\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "blocks queried {{kubernetes_pod_name}} {{namespace}}",
+                     "legendFormat": "blocks queried {{kubernetes_pod_name}}",
                      "legendLink": null,
                      "step": 10
                   },
@@ -924,7 +924,7 @@
                      "expr": "thanos_bucket_store_series_data_fetched{namespace=\"$namespace\",job=\"thanos-store\",quantile=\"0.99\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "data fetched {{kubernetes_pod_name}} {{namespace}}",
+                     "legendFormat": "data fetched {{kubernetes_pod_name}}",
                      "legendLink": null,
                      "step": 10
                   },
@@ -932,7 +932,7 @@
                      "expr": "thanos_bucket_store_series_result_series{namespace=\"$namespace\",job=\"thanos-store\",quantile=\"0.99\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "result series {{kubernetes_pod_name}} {{namespace}}",
+                     "legendFormat": "result series {{kubernetes_pod_name}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -940,7 +940,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Pod Operation Time 99th Quantile",
+               "title": "Pod Operation Time 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -982,7 +982,7 @@
          "titleSize": "h6"
       },
       {
-         "collapse": false,
+         "collapse": true,
          "height": "250px",
          "panels": [
             {
@@ -1017,10 +1017,50 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-store\"}",
+                     "expr": "go_memstats_alloc_bytes{namespace=\"$namespace\",job=\"thanos-store\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{kubernetes_pod_name}}",
+                     "legendFormat": "alloc all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-store\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_alloc_bytes_total{namespace=\"$namespace\",job=\"thanos-store\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-store\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_stack_inuse_bytes{namespace=\"$namespace\",job=\"thanos-store\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse stack {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_heap_inuse_bytes{namespace=\"$namespace\",job=\"thanos-store\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse heap {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -1096,7 +1136,7 @@
                      "expr": "go_goroutines{namespace=\"$namespace\",job=\"thanos-store\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{kubernetes_pod_name}}",
+                     "legendFormat": "{{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -1169,10 +1209,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"thanos-store\", quantile=\"1\"}",
+                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"thanos-store\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{kubernetes_pod_name}}",
+                     "legendFormat": "{{quantile}} {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -1280,6 +1320,29 @@
             "name": "namespace",
             "options": [ ],
             "query": "label_values(kube_pod_info{cluster=\"$cluster\"}, namespace)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 2,
+            "tagValuesQuery": "",
+            "tags": [ ],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+         },
+         {
+            "allValue": ".*",
+            "current": {
+               "text": "all",
+               "value": "$__all"
+            },
+            "datasource": "$datasource",
+            "hide": 0,
+            "includeAll": true,
+            "label": "pod",
+            "multi": false,
+            "name": "pod",
+            "options": [ ],
+            "query": "label_values(kube_pod_info{namespace=\"$namespace\"}, pod)",
             "refresh": 1,
             "regex": "",
             "sort": 2,

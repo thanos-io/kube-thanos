@@ -48,7 +48,7 @@
                      "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "compaction {{namespace}}",
+                     "legendFormat": "compaction",
                      "legendLink": null,
                      "step": 10
                   },
@@ -56,7 +56,7 @@
                      "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "bucket ops {{namespace}}",
+                     "legendFormat": "bucket ops",
                      "legendLink": null,
                      "step": 10
                   },
@@ -64,7 +64,7 @@
                      "expr": "sum(rate(thanos_compact_garbage_collection_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "gc ops  {{namespace}}",
+                     "legendFormat": "gc ops",
                      "legendLink": null,
                      "step": 10
                   },
@@ -72,7 +72,7 @@
                      "expr": "sum(rate(thanos_compact_group_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "group compact  {{namespace}}",
+                     "legendFormat": "group compact",
                      "legendLink": null,
                      "step": 10
                   },
@@ -80,7 +80,7 @@
                      "expr": "sum(rate(thanos_compact_sync_meta_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "sync metas  {{namespace}}",
+                     "legendFormat": "sync metas",
                      "legendLink": null,
                      "step": 10
                   }
@@ -156,7 +156,7 @@
                      "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "compaction {{namespace}}",
+                     "legendFormat": "compaction",
                      "legendLink": null,
                      "step": 10
                   },
@@ -164,7 +164,7 @@
                      "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "bucket ops {{namespace}}",
+                     "legendFormat": "bucket ops",
                      "legendLink": null,
                      "step": 10
                   },
@@ -172,7 +172,7 @@
                      "expr": "sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "gc ops  {{namespace}}",
+                     "legendFormat": "gc ops",
                      "legendLink": null,
                      "step": 10
                   },
@@ -180,7 +180,7 @@
                      "expr": "sum(rate(thanos_compact_group_compactions_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "group compact  {{namespace}}",
+                     "legendFormat": "group compact",
                      "legendLink": null,
                      "step": 10
                   },
@@ -188,7 +188,7 @@
                      "expr": "sum(rate(thanos_compact_sync_meta_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "sync metas  {{namespace}}",
+                     "legendFormat": "sync metas",
                      "legendLink": null,
                      "step": 10
                   }
@@ -264,7 +264,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 gc {{namespace}}\"",
+                     "legendFormat": "99 gc",
                      "legendLink": null,
                      "step": 10
                   },
@@ -272,7 +272,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_compact_sync_meta_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 sync meta  {{namespace}}",
+                     "legendFormat": "99 sync meta",
                      "legendLink": null,
                      "step": 10
                   },
@@ -280,7 +280,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 bucket ops {{namespace}}",
+                     "legendFormat": "99 bucket ops",
                      "legendLink": null,
                      "step": 10
                   },
@@ -288,7 +288,7 @@
                      "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (namespace,le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "99 compact {{namespace}}",
+                     "legendFormat": "99 compact",
                      "legendLink": null,
                      "step": 10
                   }
@@ -296,7 +296,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Operation Time Quantile",
+               "title": "Operation Time 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -338,7 +338,7 @@
          "titleSize": "h6"
       },
       {
-         "collapse": false,
+         "collapse": true,
          "height": "250px",
          "panels": [
             {
@@ -373,10 +373,50 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-compact\"}",
+                     "expr": "go_memstats_alloc_bytes{namespace=\"$namespace\",job=\"thanos-compact\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{kubernetes_pod_name}}",
+                     "legendFormat": "alloc all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-compact\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_alloc_bytes_total{namespace=\"$namespace\",job=\"thanos-compact\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-compact\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_stack_inuse_bytes{namespace=\"$namespace\",job=\"thanos-compact\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse stack {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_heap_inuse_bytes{namespace=\"$namespace\",job=\"thanos-compact\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse heap {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -452,7 +492,7 @@
                      "expr": "go_goroutines{namespace=\"$namespace\",job=\"thanos-compact\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{kubernetes_pod_name}}",
+                     "legendFormat": "{{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -525,10 +565,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"thanos-compact\", quantile=\"1\"}",
+                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"thanos-compact\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{kubernetes_pod_name}}",
+                     "legendFormat": "{{quantile}} {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -636,6 +676,29 @@
             "name": "namespace",
             "options": [ ],
             "query": "label_values(kube_pod_info{cluster=\"$cluster\"}, namespace)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 2,
+            "tagValuesQuery": "",
+            "tags": [ ],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+         },
+         {
+            "allValue": ".*",
+            "current": {
+               "text": "all",
+               "value": "$__all"
+            },
+            "datasource": "$datasource",
+            "hide": 0,
+            "includeAll": true,
+            "label": "pod",
+            "multi": false,
+            "name": "pod",
+            "options": [ ],
+            "query": "label_values(kube_pod_info{namespace=\"$namespace\"}, pod)",
             "refresh": 1,
             "regex": "",
             "sort": 2,

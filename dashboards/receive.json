@@ -45,10 +45,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (namespace, handler, le))",
+                     "expr": "sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"error\"}[$interval]))\n/\nsum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{namespace}} {{handler}}",
+                     "legendFormat": "failure rate",
                      "legendLink": null,
                      "step": 10
                   }
@@ -56,7 +56,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Request Duration Quantile",
+               "title": "Forward Request Failure Rate",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -72,7 +72,7 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "percentunit",
                      "label": null,
                      "logBase": 1,
                      "max": null,
@@ -121,10 +121,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"error\"}[$interval])\n/\n  rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])\n)\n",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (handler, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
+                     "legendFormat": "{{handler}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -132,7 +132,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Forward Request Failure Rate",
+               "title": "Request Duration 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -204,15 +204,15 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 4,
+               "span": 12,
                "stack": false,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "thanos_receive_hashring_nodes{namespace=\"$namespace\",job=\"thanos-receive\"}",
+                     "expr": "sum(rate(thanos_receive_hashrings_file_errors_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))\n/\nsum(rate(thanos_receive_hashrings_file_refreshes_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
+                     "legendFormat": "failure rate",
                      "legendLink": null,
                      "step": 10
                   }
@@ -220,7 +220,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Nodes per Hashring",
+               "title": "Hashring File Refresh Failure Rate",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -236,7 +236,7 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "percentunit",
                      "label": null,
                      "logBase": 1,
                      "max": null,
@@ -252,7 +252,19 @@
                      "show": false
                   }
                ]
-            },
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Hashring",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": false,
+         "height": "250px",
+         "panels": [
             {
                "aliasColors": { },
                "bars": false,
@@ -280,15 +292,15 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 4,
+               "span": 6,
                "stack": false,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "thanos_receive_hashring_tenants{namespace=\"$namespace\",job=\"thanos-receive\"}",
+                     "expr": "avg(thanos_receive_hashring_nodes{namespace=\"$namespace\",job=\"thanos-receive\"}) by (name)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
+                     "legendFormat": "{{name}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -296,7 +308,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Tenants per Hashring",
+               "title": "Nodes per Hashring",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -356,15 +368,15 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 4,
+               "span": 6,
                "stack": false,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(thanos_receive_hashrings_file_errors_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])\n/\n  rate(thanos_receive_hashrings_file_refreshes_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])\n)\n",
+                     "expr": "avg(thanos_receive_hashring_tenants{namespace=\"$namespace\",job=\"thanos-receive\"}) by (name)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
+                     "legendFormat": "{{name}}",
                      "legendLink": null,
                      "step": 10
                   }
@@ -372,7 +384,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Hashring File Refresh Failure Rate",
+               "title": "Tenants per Hashring",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -602,7 +614,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "thanos_receive_config_last_reload_successful{namespace=\"$namespace\",job=\"thanos-receive\"",
+                     "expr": "thanos_receive_config_last_reload_successful{namespace=\"$namespace\",job=\"thanos-receive\"}",
                      "format": "time_series",
                      "instant": true,
                      "intervalFactor": 2,
@@ -651,6 +663,286 @@
          "repeatRowId": null,
          "showTitle": true,
          "title": "Config",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": true,
+         "height": "250px",
+         "panels": [
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 9,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "go_memstats_alloc_bytes{namespace=\"$namespace\",job=\"thanos-receive\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-receive\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_alloc_bytes_total{namespace=\"$namespace\",job=\"thanos-receive\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-receive\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_stack_inuse_bytes{namespace=\"$namespace\",job=\"thanos-receive\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse stack {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_heap_inuse_bytes{namespace=\"$namespace\",job=\"thanos-receive\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Memory Used",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 10,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "go_goroutines{namespace=\"$namespace\",job=\"thanos-receive\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Goroutines",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 11,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"thanos-receive\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{quantile}} {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "GC Time Quantiles",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Resources",
          "titleSize": "h6"
       }
    ],
@@ -712,6 +1004,29 @@
             "name": "namespace",
             "options": [ ],
             "query": "label_values(kube_pod_info{cluster=\"$cluster\"}, namespace)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 2,
+            "tagValuesQuery": "",
+            "tags": [ ],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+         },
+         {
+            "allValue": ".*",
+            "current": {
+               "text": "all",
+               "value": "$__all"
+            },
+            "datasource": "$datasource",
+            "hide": 0,
+            "includeAll": true,
+            "label": "pod",
+            "multi": false,
+            "name": "pod",
+            "options": [ ],
+            "query": "label_values(kube_pod_info{namespace=\"$namespace\",job=\"thanos-receive\"}, pod)",
             "refresh": 1,
             "regex": "",
             "sort": 2,

@@ -10,7 +10,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
       )
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
-      //   .addTemplate('pod', 'kube_pod_info{namespace="$namespace"}', 'pod')
       .addRow(
         g.row('Errors')
         .addPanel(
@@ -43,14 +42,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addRow(
         g.row('Latency')
         .addPanel(
-          g.panel('Response Time Quantile') +
+          g.panel('Response Time 99th Percentile') +
           g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (grpc_method,kubernetes_pod_name, le))' % $._config,
+            'histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (grpc_method, kubernetes_pod_name, le))' % $._config,
             '99 {{grpc_method}} {{pod}}'
           )
         )
         .addPanel(
-          g.panel('Query 99th Quantile') +
+          g.panel('Query 99th Percentile') +
           g.queryPanel(
             [
               'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
@@ -130,8 +129,22 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Memory Used') +
           g.queryPanel(
-            'go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-            '{{pod}}'
+            [
+              'go_memstats_alloc_bytes{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+              'go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+              'rate(go_memstats_alloc_bytes_total{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[30s])' % $._config,
+              'rate(go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[30s])' % $._config,
+              'go_memstats_stack_inuse_bytes{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+              'go_memstats_heap_inuse_bytes{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+            ],
+            [
+              'alloc all {{pod}}',
+              'alloc heap {{pod}}',
+              'alloc rate all {{pod}}',
+              'alloc rate heap {{pod}}',
+              'inuse stack {{pod}}',
+              'inuse heap {{pod}}',
+            ]
           )
         )
         .addPanel(
@@ -148,6 +161,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
             '{{quantile}} {{pod}}'
           )
         )
+        + { collapse: true }
       )
       + {
         templating+: {

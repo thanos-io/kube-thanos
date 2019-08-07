@@ -1,3 +1,5 @@
+local grafana = import 'grafonnet/grafana.libsonnet';
+local template = grafana.template;
 local g = import 'grafana-builder/grafana.libsonnet';
 
 {
@@ -20,11 +22,11 @@ local g = import 'grafana-builder/grafana.libsonnet';
               'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
               'sum(rate(thanos_compact_sync_meta_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
             ], [
-              'compaction {{namespace}}',
-              'bucket ops {{namespace}}',
-              'gc ops  {{namespace}}',
-              'group compact  {{namespace}}',
-              'sync metas  {{namespace}}',
+              'compaction',
+              'bucket ops',
+              'gc ops',
+              'group compact',
+              'sync metas',
             ],
           )
         )
@@ -38,16 +40,16 @@ local g = import 'grafana-builder/grafana.libsonnet';
               'sum(rate(thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
               'sum(rate(thanos_compact_sync_meta_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
             ], [
-              'compaction {{namespace}}',
-              'bucket ops {{namespace}}',
-              'gc ops  {{namespace}}',
-              'group compact  {{namespace}}',
-              'sync metas  {{namespace}}',
+              'compaction',
+              'bucket ops',
+              'gc ops',
+              'group compact',
+              'sync metas',
             ],
           )
         )
         .addPanel(
-          g.panel('Operation Time Quantile') +
+          g.panel('Operation Time 99th Percentile') +
           g.queryPanel(
             [
               'histogram_quantile(0.99, sum(rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace,le))' % $._config,
@@ -55,10 +57,10 @@ local g = import 'grafana-builder/grafana.libsonnet';
               'histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace,le))' % $._config,
               'histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace,le))' % $._config,
             ], [
-              '99 gc {{namespace}}"',
-              '99 sync meta  {{namespace}}',
-              '99 bucket ops {{namespace}}',
-              '99 compact {{namespace}}',
+              '99 gc',
+              '99 sync meta',
+              '99 bucket ops',
+              '99 compact',
             ],
           )
         )
@@ -68,24 +70,56 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Memory Used') +
           g.queryPanel(
-            'go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosCompactSelector)s}' % $._config,
-            '{{namespace}} {{kubernetes_pod_name}}'
+            [
+              'go_memstats_alloc_bytes{namespace="$namespace",%(thanosCompactSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+              'go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosCompactSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+              'rate(go_memstats_alloc_bytes_total{namespace="$namespace",%(thanosCompactSelector)s,kubernetes_pod_name=~"$pod"}[30s])' % $._config,
+              'rate(go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosCompactSelector)s,kubernetes_pod_name=~"$pod"}[30s])' % $._config,
+              'go_memstats_stack_inuse_bytes{namespace="$namespace",%(thanosCompactSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+              'go_memstats_heap_inuse_bytes{namespace="$namespace",%(thanosCompactSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+            ],
+            [
+              'alloc all {{pod}}',
+              'alloc heap {{pod}}',
+              'alloc rate all {{pod}}',
+              'alloc rate heap {{pod}}',
+              'inuse stack {{pod}}',
+              'inuse heap {{pod}}',
+            ]
           )
         )
         .addPanel(
           g.panel('Goroutines') +
           g.queryPanel(
             'go_goroutines{namespace="$namespace",%(thanosCompactSelector)s}' % $._config,
-            '{{namespace}} {{kubernetes_pod_name}}'
+            '{{pod}}'
           )
         )
         .addPanel(
           g.panel('GC Time Quantiles') +
           g.queryPanel(
-            'go_gc_duration_seconds{namespace="$namespace",%(thanosCompactSelector)s, quantile="1"}' % $._config,
-            '{{namespace}} {{kubernetes_pod_name}}'
+            'go_gc_duration_seconds{namespace="$namespace",%(thanosCompactSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+            '{{quantile}} {{pod}}'
           )
         )
-      ) + { tags: $._config.grafanaThanos.dashboardTags },
+        + { collapse: true }
+      )
+      + {
+        templating+: {
+          list+: [
+            template.new(
+              'pod',
+              '$datasource',
+              'label_values(kube_pod_info{namespace="$namespace"}, pod)',
+              label='pod',
+              refresh=1,
+              sort=2,
+              current='all',
+              allValues='.*',
+              includeAll=true
+            ),
+          ],
+        },
+      } + { tags: $._config.grafanaThanos.dashboardTags },
   },
 }

@@ -209,7 +209,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (grpc_method,kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (grpc_method, kubernetes_pod_name, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "99 {{grpc_method}} {{pod}}",
@@ -220,7 +220,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Response Time Quantile",
+               "title": "Response Time 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -304,7 +304,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Query 99th Quantile",
+               "title": "Query 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -799,7 +799,7 @@
          "titleSize": "h6"
       },
       {
-         "collapse": false,
+         "collapse": true,
          "height": "250px",
          "panels": [
             {
@@ -834,10 +834,50 @@
                "steppedLine": false,
                "targets": [
                   {
+                     "expr": "go_memstats_alloc_bytes{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
                      "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{pod}}",
+                     "legendFormat": "alloc heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_alloc_bytes_total{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate all {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "rate(go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "alloc rate heap {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_stack_inuse_bytes{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse stack {{pod}}",
+                     "legendLink": null,
+                     "step": 10
+                  },
+                  {
+                     "expr": "go_memstats_heap_inuse_bytes{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "inuse heap {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
