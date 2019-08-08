@@ -13,60 +13,30 @@ local g = import 'grafana-builder/grafana.libsonnet';
         g.row('gRPC (Unary)')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanel('namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanel('namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanel('namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          g.queryPanel(
-            'sum(rate(grpc_server_handled_total{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"}[$interval])) by (grpc_code, grpc_method)' % $._config,
-            '{{grpc_method}} {{grpc_code}} ',
-          ) +
-          g.stack
+          b.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            |||
-              sum(
-                rate(grpc_server_handled_total{namespace="$namespace",grpc_code!="OK",%(thanosReceiveSelector)s,grpc_type="unary"}[$interval])
-                /
-                rate(grpc_server_started_total{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"}[$interval])
-              ) by (grpc_code, grpc_method)
-            ||| % $._config,
-            '{{grpc_method}} {{grpc_code}} '
-          ) +
-          g.stack
+          b.grpcErrorsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          g.queryPanel(
-            [
-              'histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"}[$interval])) by (grpc_method, le))' % $._config,
-              |||
-                sum(rate(grpc_server_handling_seconds_sum{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"}[$interval]))
-                /
-                sum(rate(grpc_server_handling_seconds_count{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"}[$interval]))
-              ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"}[$interval])) by (grpc_method, le))' % $._config,
-            ],
-            [
-              'P99 {{grpc_method}}',
-              'mean {{grpc_method}}',
-              'P50 {{grpc_method}}',
-            ]
-          ) +
-          { yaxes: g.yaxes('s') }
+          b.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         ) +
         b.collapse
       )
@@ -74,62 +44,33 @@ local g = import 'grafana-builder/grafana.libsonnet';
         g.row('gRPC (Stream)')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanel('namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanel('namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanel('namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          g.queryPanel(
-            'sum(rate(grpc_server_handled_total{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"}[$interval])) by (grpc_code, grpc_method)' % $._config,
-            '{{grpc_method}} {{grpc_code}} ',
-          ) +
-          g.stack
+          b.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            |||
-              sum(
-                rate(grpc_server_handled_total{namespace="$namespace",grpc_code!="OK",%(thanosReceiveSelector)s,grpc_type="server_stream"}[$interval])
-                /
-                rate(grpc_server_started_total{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"}[$interval])
-              ) by (grpc_code, grpc_method)
-            ||| % $._config,
-            '{{grpc_method}} {{grpc_code}} '
-          ) +
-          g.stack
+          b.grpcErrorsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          g.queryPanel(
-            [
-              'histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"}[$interval])) by (grpc_method, le))' % $._config,
-              |||
-                sum(rate(grpc_server_handling_seconds_sum{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"}[$interval]))
-                /
-                sum(rate(grpc_server_handling_seconds_count{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"}[$interval]))
-              ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"}[$interval])) by (grpc_method, le))' % $._config,
-            ],
-            [
-              'P99 {{grpc_method}}',
-              'mean {{grpc_method}}',
-              'P50 {{grpc_method}}',
-            ]
-          ) +
-          { yaxes: g.yaxes('s') }
+          b.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         ) +
         b.collapse
+
       )
       .addRow(
         g.row('Incoming Request')
@@ -150,65 +91,15 @@ local g = import 'grafana-builder/grafana.libsonnet';
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          g.queryPanel(
-            |||
-              sum(
-                label_replace(
-                  rate(thanos_http_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]),
-                  "status_code", "${1}xx", "code", "([0-9]).."
-                  )
-              ) by (handler, status_code)
-            ||| % $._config,
-            '{{handler}} {{status_code}}'
-          ) +
-          g.stack +
-          {
-            aliasColors: {
-              '1xx': '#EAB839',
-              '2xx': '#7EB26D',
-              '3xx': '#6ED0E0',
-              '4xx': '#EF843C',
-              '5xx': '#E24D42',
-              success: '#7EB26D',
-              'error': '#E24D42',
-            },
-          },
+          b.qpsPanelDetailed('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
         )
         .addPanel(
-          g.panel('Error Rate') +
-          g.queryPanel(
-            |||
-              sum(rate(thanos_http_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,code!~"2.."}[$interval])) by (handler)
-              /
-              sum(rate(thanos_http_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])) by (handler)
-            ||| % $._config,
-            '{{handler}}'
-          ) +
-          {
-            yaxes: g.yaxes({ format: 'percentunit', max: 1 }),
-            aliasColors: {
-              'error': '#E24D42',
-            },
-          },
+          g.panel('Errors') +
+          b.errorsPanelDetailed('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          g.queryPanel(
-            [
-              'histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])) by (handler, le))' % $._config,
-              |||
-                sum(rate(thanos_http_request_duration_seconds_sum{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
-                /
-                sum(rate(thanos_http_request_duration_seconds_count{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
-              ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}[$interval])) by (handler, le))' % $._config,
-            ],
-            [
-              'P99 {{handler}}',
-              'mean {{handler}}',
-              'P50 {{handler}}',
-            ]
-          )
+          b.latencyPanelDetailed('thanos_http_request_duration_seconds', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
         ) +
         b.collapse
       )

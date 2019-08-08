@@ -6,7 +6,7 @@
     thanosRule: 'thanos-rule',
     thanosCompact: 'thanos-compact',
     thanosSidecar: 'thanos-sidecar',
-    thanosPrometheus: 'thanos-prometheus',
+    thanosPrometheus: 'prometheus-telemeter',
 
     thanosQuerierSelector: 'job="thanos-querier"',
     thanosStoreSelector: 'job="thanos-store"',
@@ -14,7 +14,7 @@
     thanosRuleSelector: 'job="thanos-rule"',
     thanosCompactSelector: 'job="thanos-compact"',
     thanosSidecarSelector: 'job="thanos-sidecar"',
-    thanosPrometheusSelector: 'job="thanos-prometheus"',
+    thanosPrometheusSelector: 'job="prometheus-telemeter"',
 
     clusterLabel: 'cluster',
     showMultiCluster: false,

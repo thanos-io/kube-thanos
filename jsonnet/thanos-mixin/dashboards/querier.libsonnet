@@ -1,4 +1,4 @@
-local builder = import '../lib/thanos-grafana-builder/builder.libsonnet';
+local b = import '../lib/thanos-grafana-builder/builder.libsonnet';
 local g = import 'grafana-builder/grafana.libsonnet';
 
 {
@@ -10,86 +10,175 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
       .addRow(
-        g.row('Errors')
+        g.row('gRPC (Unary)')
         .addPanel(
-          g.panel('GRPC Error rate') +
+          g.panel('Rate') +
+          b.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Detailed')
+        .addPanel(
+          g.panel('Rate') +
+          b.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+        ) +
+        b.collapse
+      )
+      .addRow(
+        g.row('gRPC (Stream)')
+        .addPanel(
+          g.panel('Rate') +
+          b.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Detailed')
+        .addPanel(
+          g.panel('Rate') +
+          b.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+        ) +
+        b.collapse
+
+      )
+      .addRow(
+        g.row('DNS')
+        .addPanel(
+          g.panel('Rate') +
           g.queryPanel(
-            |||
-              sum(
-                rate(grpc_server_handled_total{namespace="$namespace",grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[$interval])
-                /
-                rate(grpc_server_started_total{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-              ) by (grpc_code, grpc_method, pod)
-            ||| % $._config,
-            '{{grpc_code}} {{grpc_method}} {{pod}}'
+            'sum(rate(thanos_querier_store_apis_dns_lookups_total{namespace="$namespace",%(thanosQuerierSelector)s}[$interval]))' % $._config,
+            'lookups'
           )
         )
         .addPanel(
-          g.panel('DNS Failure Rate') +
+          g.panel('Errors') +
           g.queryPanel(
             |||
               sum(
                 rate(thanos_querier_store_apis_dns_failures_total{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
               /
                 rate(thanos_querier_store_apis_dns_lookups_total{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-              ) by (namespace)
+              )
             ||| % $._config,
-            '{{ namespace }}'
-          )
+            'error'
+          ) +
+          { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) } +
+          g.stack,
         )
       )
       .addRow(
-        g.row('Latency')
+        g.row('Query API')
         .addPanel(
-          g.panel('Response Time 99th Percentile') +
-          g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (grpc_method, kubernetes_pod_name, le))' % $._config,
-            '99 {{grpc_method}} {{pod}}'
-          )
+          g.panel('Instant Query') +
+          b.latencyPanel('thanos_query_api_instant_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
         )
         .addPanel(
-          g.panel('Query 99th Percentile') +
+          g.panel('Range Query') +
+          b.latencyPanel('thanos_query_api_range_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Detailed')
+        .addPanel(
           g.queryPanel(
             [
               'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
-
+              |||
+                sum(
+                  rate(thanos_query_api_instant_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])
+                /
+                  rate(thanos_query_api_instant_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])
+                ) by (kubernetes_pod_name)
+              ||| % $._config,
+              'histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
             ],
             [
-              '99 {{grpc_method}} {{pod}}',
-              'range_query {{pod}}',
+              'P99 {{pod}}',
+              'mean {{pod}}',
+              'P50 {{pod}}',
             ]
           )
         )
         .addPanel(
-          g.panel('Prometheus Query 99th Quantile') +
           g.queryPanel(
-            'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,kubernetes_pod_name=~"$pod",quantile="0.99"}' % $._config,
-            '{{pod}} {{slice}}'
+            [
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              |||
+                sum(
+                  rate(thanos_query_api_range_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])
+                /
+                  rate(thanos_query_api_range_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])
+                ) by (kubernetes_pod_name)
+              ||| % $._config,
+              'histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+            ],
+            [
+              'P99 {{pod}}',
+              'mean {{pod}}',
+              'P50 {{pod}}',
+            ]
           )
-        )
+        ) +
+        b.collapse
       )
       .addRow(
-        g.row('Operations')
+        g.row('Prometheus')
         .addPanel(
-          g.panel('Request RPS') +
-          g.queryPanel(
-            'sum(rate(grpc_client_handled_total{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, grpc_code, grpc_method)' % $._config,
-            '{{grpc_code}} {{grpc_method}} {{pod}}'
-          )
-        )
-        .addPanel(
-          g.panel('Prometheus Queries/s') +
+          g.panel('Rate') +
           g.queryPanel(
             'prometheus_engine_queries{namespace="$namespace",%(thanosPrometheusSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
             '{{pod}}'
           )
         )
+        .addPanel(
+          g.panel('Duration') +
+          g.queryPanel(
+            [
+              'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,kubernetes_pod_name=~"$pod",quantile="0.99"}' % $._config,
+              'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,kubernetes_pod_name=~"$pod",quantile="0.50"}' % $._config,
+            ],
+            [
+              'P99 {{pod}} {{slice}}',
+              'P50 {{pod}} {{slice}}',
+            ],
+          )
+        )
       )
       .addRow(
-        g.row('Store Status')
+        g.row('Store')
         .addPanel(
-          g.panel('Connected Stores') +
+          g.panel('Connected') +
           g.statPanel(
             'sum(thanos_store_nodes_grpc_connections{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"})' % $._config,
             'none'
@@ -98,7 +187,9 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Gossip Info') +
           g.tablePanel(
-            ['min(thanos_store_node_info{namespace="$namespace",%(thanosQuerierSelector)s}) by (external_labels)' % $._config],
+            [
+              'min(thanos_store_node_info{namespace="$namespace",%(thanosQuerierSelector)s}) by (external_labels)' % $._config,
+            ],
             {
               'Value #A': {
                 alias: 'Peer',
@@ -112,7 +203,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
               'Value #B': {
                 alias: 'Replicas',
                 decimals: 2,
-                type: 'hidden',
+                // type: 'hidden',
                 colors: [
                   'rgba(245, 54, 54, 0.9)',
                   'rgba(237, 129, 40, 0.89)',
@@ -162,6 +253,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         + { collapse: true }
       ) +
-      builder.podTemplate('namespace="$namespace",created_by_name=~"%(thanosQuerier)s.*"' % $._config),
+      b.podTemplate('namespace="$namespace",created_by_name=~"%(thanosQuerier)s.*"' % $._config),
   },
 }
