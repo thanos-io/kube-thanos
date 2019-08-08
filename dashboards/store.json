@@ -1342,7 +1342,7 @@
             "multi": false,
             "name": "pod",
             "options": [ ],
-            "query": "label_values(kube_pod_info{namespace=\"$namespace\"}, pod)",
+            "query": "label_values(kube_pod_info{namespace=\"$namespace\",created_by_name=~\"thanos-store.*\"}, pod)",
             "refresh": 1,
             "regex": "",
             "sort": 2,

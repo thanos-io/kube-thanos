@@ -1,5 +1,4 @@
-local grafana = import 'grafonnet/grafana.libsonnet';
-local template = grafana.template;
+local builder = import '../lib/thanos-grafana-builder/builder.libsonnet';
 local g = import 'grafana-builder/grafana.libsonnet';
 
 {
@@ -103,23 +102,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
           )
         )
         + { collapse: true }
-      )
-      + {
-        templating+: {
-          list+: [
-            template.new(
-              'pod',
-              '$datasource',
-              'label_values(kube_pod_info{namespace="$namespace"}, pod)',
-              label='pod',
-              refresh=1,
-              sort=2,
-              current='all',
-              allValues='.*',
-              includeAll=true
-            ),
-          ],
-        },
-      } + { tags: $._config.grafanaThanos.dashboardTags },
+      ) +
+      builder.podTemplate('namespace="$namespace",created_by_name=~"%(thanosCompact)s.*"' % $._config),
   },
 }

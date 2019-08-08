@@ -1,5 +1,13 @@
 {
   _config+:: {
+    thanosQuerier: 'thanos-querier',
+    thanosStore: 'thanos-store',
+    thanosReceive: 'thanos-receive',
+    thanosRule: 'thanos-rule',
+    thanosCompact: 'thanos-compact',
+    thanosSidecar: 'thanos-sidecar',
+    thanosPrometheus: 'thanos-prometheus',
+
     thanosQuerierSelector: 'job="thanos-querier"',
     thanosStoreSelector: 'job="thanos-store"',
     thanosReceiveSelector: 'job="thanos-receive"',
