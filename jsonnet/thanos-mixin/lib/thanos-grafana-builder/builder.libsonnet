@@ -140,12 +140,13 @@ local g = import 'grafana-builder/grafana.libsonnet';
         /
         sum(rate(%s{%s}[$interval]))
       ||| % [metricName, selector, metricName, selector],
-      '{{code}}'
+      'error'
     ) +
+    { aliasColors: { 'error': '#E24D42' } } +
     { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) } +
     $.stack,
 
-  errorsPanelDetailed(metricName, selector)::
+  errorDetailsPanel(metricName, selector)::
     g.queryPanel(
       |||
         sum(rate(%s{%s,code!~"2.."}[$interval])) by (handler, code)
@@ -165,9 +166,20 @@ local g = import 'grafana-builder/grafana.libsonnet';
         /
         sum(rate(%s_started_total{%s}[$interval]))
       ||| % [prefix, selector, prefix, selector],
-      ''
+      'error'
     ) +
+    { aliasColors: { 'error': '#E24D42' } } +
     { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) } +
+    $.stack,
+
+  grpcErrorDetailsPanel(type, selector)::
+    local prefix = if type == 'client' then 'grpc_client' else 'grpc_server';
+    g.queryPanel(
+      |||
+        sum(rate(%s_handled_total{grpc_code!="OK",%s}[$interval])) by (grpc_method, grpc_code)
+      ||| % [prefix, selector],
+      '{{grpc_method}} {{grpc_code}}'
+    ) +
     $.stack,
 
   latencyPanel(metricName, selector, multiplier='1'):: {

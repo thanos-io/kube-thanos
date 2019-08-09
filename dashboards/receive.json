@@ -109,7 +109,9 @@
                ]
             },
             {
-               "aliasColors": { },
+               "aliasColors": {
+                  "error": "#E24D42"
+               },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
@@ -140,10 +142,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval])\n) by (grpc_code)\n",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval]))\n/\nsum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval]))\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}}",
+                     "legendFormat": "error",
                      "legendLink": null,
                      "step": 10
                   }
@@ -396,7 +398,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval])\n) by (grpc_method, grpc_code)\n",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval])) by (grpc_method, grpc_code)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_method}} {{grpc_code}}",
@@ -423,10 +425,10 @@
                },
                "yaxes": [
                   {
-                     "format": "percentunit",
+                     "format": "short",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -640,7 +642,9 @@
                ]
             },
             {
-               "aliasColors": { },
+               "aliasColors": {
+                  "error": "#E24D42"
+               },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
@@ -671,10 +675,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval])\n) by (grpc_code)\n",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval]))\n/\nsum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval]))\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}}",
+                     "legendFormat": "error",
                      "legendLink": null,
                      "step": 10
                   }
@@ -927,7 +931,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval])\n  /\n  rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval])\n) by (grpc_method, grpc_code)\n",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval])) by (grpc_method, grpc_code)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_method}} {{grpc_code}}",
@@ -954,10 +958,10 @@
                },
                "yaxes": [
                   {
-                     "format": "percentunit",
+                     "format": "short",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -1160,7 +1164,9 @@
                ]
             },
             {
-               "aliasColors": { },
+               "aliasColors": {
+                  "error": "#E24D42"
+               },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
@@ -1194,7 +1200,7 @@
                      "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval]))\n/\nsum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{code}}",
+                     "legendFormat": "error",
                      "legendLink": null,
                      "step": 10
                   }

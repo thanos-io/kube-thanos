@@ -109,7 +109,9 @@
                ]
             },
             {
-               "aliasColors": { },
+               "aliasColors": {
+                  "error": "#E24D42"
+               },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
@@ -140,10 +142,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"unary\"}[$interval])\n  /\n  rate(grpc_client_started_total{namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"unary\"}[$interval])\n) by (grpc_code)\n",
+                     "expr": "sum(rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"unary\"}[$interval]))\n/\nsum(rate(grpc_client_started_total{namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"unary\"}[$interval]))\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}}",
+                     "legendFormat": "error",
                      "legendLink": null,
                      "step": 10
                   }
@@ -396,7 +398,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"unary\"}[$interval])\n  /\n  rate(grpc_client_started_total{namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"unary\"}[$interval])\n) by (grpc_method, grpc_code)\n",
+                     "expr": "sum(rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"unary\"}[$interval])) by (grpc_method, grpc_code)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_method}} {{grpc_code}}",
@@ -423,10 +425,10 @@
                },
                "yaxes": [
                   {
-                     "format": "percentunit",
+                     "format": "short",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -640,7 +642,9 @@
                ]
             },
             {
-               "aliasColors": { },
+               "aliasColors": {
+                  "error": "#E24D42"
+               },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
@@ -671,10 +675,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"server_stream\"}[$interval])\n  /\n  rate(grpc_client_started_total{namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"server_stream\"}[$interval])\n) by (grpc_code)\n",
+                     "expr": "sum(rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"server_stream\"}[$interval]))\n/\nsum(rate(grpc_client_started_total{namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"server_stream\"}[$interval]))\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}}",
+                     "legendFormat": "error",
                      "legendLink": null,
                      "step": 10
                   }
@@ -816,7 +820,7 @@
          "titleSize": "h6"
       },
       {
-         "collapse": false,
+         "collapse": true,
          "height": "250px",
          "panels": [
             {
@@ -927,7 +931,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(\n  rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"server_stream\"}[$interval])\n  /\n  rate(grpc_client_started_total{namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"server_stream\"}[$interval])\n) by (grpc_method, grpc_code)\n",
+                     "expr": "sum(rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-querier\",grpc_type=\"server_stream\"}[$interval])) by (grpc_method, grpc_code)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{grpc_method}} {{grpc_code}}",
@@ -954,10 +958,10 @@
                },
                "yaxes": [
                   {
-                     "format": "percentunit",
+                     "format": "short",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -1436,11 +1440,38 @@
          "height": "250px",
          "panels": [
             {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
                "id": 17,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
                "span": 6,
+               "stack": false,
+               "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (pod, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{pod}}",
@@ -1448,7 +1479,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(\n  rate(thanos_query_api_instant_query_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])\n/\n  rate(thanos_query_api_instant_query_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])\n) by (kubernetes_pod_name)\n",
+                     "expr": "sum(\n  rate(thanos_query_api_instant_query_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n/\n  rate(thanos_query_api_instant_query_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n) by (pod)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean {{pod}}",
@@ -1456,7 +1487,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"}[$interval])) by (kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (pod, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{pod}}",
@@ -1464,42 +1495,133 @@
                      "step": 10
                   }
                ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Instant Query",
                "tooltip": {
-                  "shared": false
-               }
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
             },
             {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
                "id": 18,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
                "span": 6,
+               "stack": false,
+               "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (pod, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "P99 {{kubernetes_pod_name}}",
+                     "legendFormat": "P99 {{pod}}",
                      "legendLink": null,
                      "step": 10
                   },
                   {
-                     "expr": "sum(\n  rate(thanos_query_api_range_query_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n/\n  rate(thanos_query_api_range_query_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n) by (kubernetes_pod_name)\n",
+                     "expr": "sum(\n  rate(thanos_query_api_range_query_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n/\n  rate(thanos_query_api_range_query_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n) by (pod)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "mean {{kubernetes_pod_name}}",
+                     "legendFormat": "mean {{pod}}",
                      "legendLink": null,
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (kubernetes_pod_name, le))",
+                     "expr": "histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (pod, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "P50 {{kubernetes_pod_name}}",
+                     "legendFormat": "P50 {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }
                ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Range Query",
                "tooltip": {
-                  "shared": false
-               }
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
             }
          ],
          "repeat": null,
@@ -1545,7 +1667,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_queries{namespace=\"$namespace\",job=\"prometheus-telemeter\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "prometheus_engine_queries{namespace=\"$namespace\",job=\"prometheus-telemeter\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{pod}}",
@@ -1621,7 +1743,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-telemeter\",kubernetes_pod_name=~\"$pod\",quantile=\"0.99\"}",
+                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-telemeter\",quantile=\"0.99\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{pod}} {{slice}}",
@@ -1629,7 +1751,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-telemeter\",kubernetes_pod_name=~\"$pod\",quantile=\"0.50\"}",
+                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-telemeter\",quantile=\"0.50\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{pod}} {{slice}}",
@@ -1723,7 +1845,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(thanos_store_nodes_grpc_connections{namespace=\"$namespace\",job=\"thanos-querier\",kubernetes_pod_name=~\"$pod\"})",
+                     "expr": "sum(thanos_store_nodes_grpc_connections{namespace=\"$namespace\",job=\"thanos-querier\"})",
                      "format": "time_series",
                      "instant": true,
                      "intervalFactor": 2,
@@ -1802,34 +1924,6 @@
                      "dateFormat": "YYYY-MM-DD HH:mm:ss",
                      "pattern": "Time",
                      "type": "hidden"
-                  },
-                  {
-                     "alias": "Peer",
-                     "colorMode": null,
-                     "colors": [ ],
-                     "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                     "decimals": 2,
-                     "link": false,
-                     "linkTooltip": "Drill down",
-                     "linkUrl": "",
-                     "pattern": "Value #A",
-                     "thresholds": [ ],
-                     "type": "number",
-                     "unit": "short"
-                  },
-                  {
-                     "alias": "Replicas",
-                     "colorMode": null,
-                     "colors": [ ],
-                     "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                     "decimals": 2,
-                     "link": false,
-                     "linkTooltip": "Drill down",
-                     "linkUrl": "",
-                     "pattern": "Value #B",
-                     "thresholds": [ ],
-                     "type": "number",
-                     "unit": "short"
                   },
                   {
                      "alias": "",

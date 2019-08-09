@@ -32,7 +32,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+          b.grpcErrorDetailsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
@@ -63,12 +63,13 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
+          b.grpcErrorDetailsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
           b.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
-        )
+        ) +
+        b.collapse
       )
       .addRow(
         g.row('DNS')
@@ -109,17 +110,18 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addRow(
         g.row('Detailed')
         .addPanel(
+          g.panel('Instant Query') +
           g.queryPanel(
             [
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
               |||
                 sum(
-                  rate(thanos_query_api_instant_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])
+                  rate(thanos_query_api_instant_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
                 /
-                  rate(thanos_query_api_instant_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])
-                ) by (kubernetes_pod_name)
+                  rate(thanos_query_api_instant_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
+                ) by (pod)
               ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
             ],
             [
               'P99 {{pod}}',
@@ -129,22 +131,23 @@ local g = import 'grafana-builder/grafana.libsonnet';
           )
         )
         .addPanel(
+          g.panel('Range Query') +
           g.queryPanel(
             [
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
               |||
                 sum(
                   rate(thanos_query_api_range_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
                 /
                   rate(thanos_query_api_range_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-                ) by (kubernetes_pod_name)
+                ) by (pod)
               ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
             ],
             [
-              'P99 {{kubernetes_pod_name}}',
-              'mean {{kubernetes_pod_name}}',
-              'P50 {{kubernetes_pod_name}}',
+              'P99 {{pod}}',
+              'mean {{pod}}',
+              'P50 {{pod}}',
             ]
           )
         ) +
@@ -155,7 +158,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'prometheus_engine_queries{namespace="$namespace",%(thanosPrometheusSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
+            'prometheus_engine_queries{namespace="$namespace",%(thanosPrometheusSelector)s}' % $._config,
             '{{pod}}'
           )
         )
@@ -163,8 +166,8 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.panel('Duration') +
           g.queryPanel(
             [
-              'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,kubernetes_pod_name=~"$pod",quantile="0.99"}' % $._config,
-              'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,kubernetes_pod_name=~"$pod",quantile="0.50"}' % $._config,
+              'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,quantile="0.99"}' % $._config,
+              'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,quantile="0.50"}' % $._config,
             ],
             [
               'P99 {{pod}} {{slice}}',
@@ -178,7 +181,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Connected') +
           g.statPanel(
-            'sum(thanos_store_nodes_grpc_connections{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"})' % $._config,
+            'sum(thanos_store_nodes_grpc_connections{namespace="$namespace",%(thanosQuerierSelector)s})' % $._config,
             'none'
           ) +
           b.sparkline
@@ -186,30 +189,8 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Gossip Info') +
           g.tablePanel(
-            [
-              'min(thanos_store_node_info{namespace="$namespace",%(thanosQuerierSelector)s}) by (external_labels)' % $._config,
-            ],
-            {
-              'Value #A': {
-                alias: 'Peer',
-                decimals: 2,
-                colors: [
-                  'rgba(245, 54, 54, 0.9)',
-                  'rgba(237, 129, 40, 0.89)',
-                  'rgba(50, 172, 45, 0.97)',
-                ],
-              },
-              'Value #B': {
-                alias: 'Replicas',
-                decimals: 2,
-                // type: 'hidden',
-                colors: [
-                  'rgba(245, 54, 54, 0.9)',
-                  'rgba(237, 129, 40, 0.89)',
-                  'rgba(50, 172, 45, 0.97)',
-                ],
-              },
-            },
+            ['min(thanos_store_node_info{namespace="$namespace",%(thanosQuerierSelector)s}) by (external_labels)' % $._config],
+            {},
           )
         )
       )
