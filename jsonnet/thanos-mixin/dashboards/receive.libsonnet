@@ -253,7 +253,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Errors') +
           g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
+            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosReceiveSelector)s}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
             'error'
           ) +
           { aliasColors: { 'error': '#E24D42' } }

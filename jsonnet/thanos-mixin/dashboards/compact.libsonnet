@@ -1,4 +1,4 @@
-local builder = import '../lib/thanos-grafana-builder/builder.libsonnet';
+local b = import '../lib/thanos-grafana-builder/builder.libsonnet';
 local g = import 'grafana-builder/grafana.libsonnet';
 
 {
@@ -10,58 +10,133 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
       .addRow(
-        g.row('Operations')
+        g.row('Compaction')
         .addPanel(
-          g.panel('Operations/s') +
+          g.panel('Rate') +
           g.queryPanel(
-            [
-              'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_objstore_bucket_operations_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_compact_garbage_collection_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_compact_sync_meta_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-            ], [
-              'compaction',
-              'bucket ops',
-              'gc ops',
-              'group compact',
-              'sync metas',
-            ],
-          )
+            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'compaction'
+          ) +
+          g.stack
         )
         .addPanel(
-          g.panel('Operation Failures/s') +
+          g.panel('Errors') +
           g.queryPanel(
-            [
-              'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_compact_sync_meta_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace)' % $._config,
-            ], [
-              'compaction',
-              'bucket ops',
-              'gc ops',
-              'group compact',
-              'sync metas',
-            ],
-          )
+            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } }
         )
         .addPanel(
-          g.panel('Operation Time 99th Percentile') +
+          g.panel('Duration') +
+          b.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Downsample')
+        .addPanel(
+          g.panel('Rate') +
           g.queryPanel(
-            [
-              'histogram_quantile(0.99, sum(rate(thanos_compact_garbage_collection_duration_seconds_bucket{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace,le))' % $._config,
-              'histogram_quantile(0.99, sum(rate(thanos_compact_sync_meta_duration_seconds_bucket{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace,le))' % $._config,
-              'histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace,le))' % $._config,
-              'histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (namespace,le))' % $._config,
-            ], [
-              '99 gc',
-              '99 sync meta',
-              '99 bucket ops',
-              '99 compact',
-            ],
-          )
+            'sum(rate(thanos_compact_downsample_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (group)' % $._config,
+            'compaction'
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.queryPanel(
+            'sum(rate(thanos_compact_downsample_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_compact_downsample_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } }
+        )
+      )
+      .addRow(
+        g.row('Garbage Collection')
+        .addPanel(
+          g.panel('Rate') +
+          g.queryPanel(
+            'sum(rate(thanos_compact_garbage_collection_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'compaction'
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.queryPanel(
+            'sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_compact_garbage_collection_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } }
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.latencyPanel('thanos_compact_garbage_collection_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Group Compaction')
+        .addPanel(
+          g.panel('Rate') +
+          g.queryPanel(
+            'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (group)' % $._config,
+            'compaction'
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.queryPanel(
+            'sum(rate(thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } }
+        )
+      )
+      .addRow(
+        g.row('Sync Meta')
+        .addPanel(
+          g.panel('Rate') +
+          g.queryPanel(
+            'sum(rate(thanos_compact_sync_meta_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'compaction'
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.queryPanel(
+            'sum(rate(thanos_compact_sync_meta_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_compact_sync_meta_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } }
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.latencyPanel('thanos_compact_sync_meta_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Object Store Operations')
+        .addPanel(
+          g.panel('Rate') +
+          g.queryPanel(
+            'sum(rate(thanos_objstore_bucket_operations_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (operation)' % $._config,
+            '{{operation}}'
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.queryPanel(
+            'sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_objstore_bucket_operations_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } }
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
         )
       )
       .addRow(
@@ -103,6 +178,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         + { collapse: true }
       ) +
-      builder.podTemplate('namespace="$namespace",created_by_name=~"%(thanosCompact)s.*"' % $._config),
+      b.podTemplate('namespace="$namespace",created_by_name=~"%(thanosCompact)s.*"' % $._config),
   },
 }

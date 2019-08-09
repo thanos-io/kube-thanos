@@ -1523,7 +1523,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval]))",
+                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
