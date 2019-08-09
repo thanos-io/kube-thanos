@@ -1171,7 +1171,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 10,
+               "fill": 1,
                "id": 14,
                "legend": {
                   "avg": false,
@@ -1183,7 +1183,7 @@
                   "values": false
                },
                "lines": true,
-               "linewidth": 0,
+               "linewidth": 1,
                "links": [ ],
                "nullPointMode": "null as zero",
                "percentage": false,
@@ -1193,7 +1193,7 @@
                "seriesOverrides": [ ],
                "spaceLength": 10,
                "span": 4,
-               "stack": true,
+               "stack": false,
                "steppedLine": false,
                "targets": [
                   {

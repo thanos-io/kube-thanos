@@ -143,8 +143,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
       'error'
     ) +
     { aliasColors: { 'error': '#E24D42' } } +
-    { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) } +
-    $.stack,
+    { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) },
 
   errorDetailsPanel(metricName, selector)::
     g.queryPanel(
@@ -213,7 +212,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
     yaxes: g.yaxes('ms'),
   },
 
-  latencyPanelDetailed(metricName, selector, multiplier='1'):: {
+  httpLatencyDetailsPanel(metricName, selector, multiplier='1'):: {
     nullPointMode: 'null as zero',
     targets: [
       {

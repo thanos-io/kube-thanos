@@ -1,4 +1,4 @@
-local builder = import '../lib/thanos-grafana-builder/builder.libsonnet';
+local b = import '../lib/thanos-grafana-builder/builder.libsonnet';
 local g = import 'grafana-builder/grafana.libsonnet';
 
 {
@@ -10,29 +10,79 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
       .addRow(
-        g.row('Query')
+        g.row('gRPC (Unary)')
         .addPanel(
-          g.panel('Query RPS') +
-          g.queryPanel(
-            'sum(rate(grpc_server_handled_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (grpc_code, grpc_method, namespace)' % $._config,
-            '{{grpc_code}} {{grpc_method}}'
-          )
+          g.panel('Rate') +
+          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
-          g.panel('Query Error Rate') +
-          g.queryPanel(
-            |||
-              sum(
-                rate(grpc_server_handled_total{namespace="$namespace",grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable",%(thanosStoreSelector)s}[$interval])
-                /
-                rate(grpc_server_started_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
-              ) by (grpc_code, grpc_method, namespace)
-            ||| % $._config,
-            '{{grpc_code}} {{grpc_method}}'
-          )
+          g.panel('Errors') +
+          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
-          g.panel('Bucket Operations Error Rate') +
+          g.panel('Duration') +
+          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Detailed')
+        .addPanel(
+          g.panel('Rate') +
+          b.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        ) +
+        b.collapse
+      )
+      .addRow(
+        g.row('gRPC (Stream)')
+        .addPanel(
+          g.panel('Rate') +
+          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Detailed')
+        .addPanel(
+          g.panel('Rate') +
+          b.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorDetailsPanel('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        ) +
+        b.collapse
+      )
+      .addRow(
+        g.row('Bucket Operations')
+        .addPanel(
+          g.panel('Rate') +
+          g.queryPanel(
+            'sum(rate(thanos_objstore_bucket_operations_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (operation)' % $._config,
+            '{{operation}}'
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Errors') +
           g.queryPanel(
             |||
               sum(
@@ -41,114 +91,177 @@ local g = import 'grafana-builder/grafana.libsonnet';
                 rate(thanos_objstore_bucket_operations_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
               )
             ||| % $._config,
-            ''
-          )
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } } +
+          { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) }
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
         )
       )
       .addRow(
-        g.row('Response')
+        g.row('Block Operations')
         .addPanel(
-          g.panel('Response Time 99th Percentile') +
+          g.panel('Block Load Rate') +
           g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (grpc_method, le, namespace))' % $._config,
-            '{{grpc_method}}'
-          )
+            'sum(rate(thanos_bucket_store_block_loads_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval]))' % $._config,
+            'block loads'
+          ) +
+          g.stack
         )
         .addPanel(
-          g.panel('Response Size 99th Percentile') +
-          g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(thanos_bucket_store_sent_chunk_size_bytes_bucket{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (le, namespace))' % $._config,
-            ''
-          )
-        )
-      )
-      .addRow(
-        g.row('Operations')
-        .addPanel(
-          g.panel('Operations/s') +
-          g.queryPanel(
-            [
-              'sum(rate(thanos_objstore_bucket_operations_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace, operation)' % $._config,
-              'sum(rate(thanos_bucket_store_block_drops_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_bucket_store_block_loads_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace)' % $._config,
-            ], [
-              'bucket {{operation}}',
-              'block drops',
-              'block loads',
-            ],
-          )
-        )
-        .addPanel(
-          g.panel('Operation Failures/s') +
-          g.queryPanel(
-            [
-              'sum(rate(thanos_objstore_bucket_operation_failures_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (operation, namespace)' % $._config,
-              'sum(rate(thanos_bucket_store_block_drop_failures_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace)' % $._config,
-              'sum(rate(thanos_bucket_store_block_load_failures_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace)' % $._config,
-            ], [
-              'bucket {{operation}}',
-              'block drops',
-              'block loads',
-            ],
-          )
-        )
-        .addPanel(
-          g.panel('Operation Time 99th Percentile') +
-          g.queryPanel(
-            [
-              'histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace,le,operation))' % $._config,
-              'histogram_quantile(0.99, sum(rate(thanos_bucket_store_series_get_all_duration_seconds_bucket{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace,le))' % $._config,
-              'histogram_quantile(0.99, sum(rate(thanos_bucket_store_series_merge_duration_seconds_bucket{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace,le))' % $._config,
-            ], [
-              '99 bucket {{operation}}',
-              '99 get all',
-              '99 merge',
-            ],
-          )
-        )
-      )
-      .addRow(
-        g.row('Operations')
-        .addPanel(
-          g.panel('Cache Ops/s') +
-          g.queryPanel(
-            [
-              'sum(rate(thanos_store_index_cache_items_added_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace, item_type)' % $._config,
-              'sum(rate(thanos_store_index_cache_items_evicted_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace, item_type)' % $._config,
-              'sum(rate(thanos_store_index_cache_requests_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace, item_type)' % $._config,
-              'sum(rate(thanos_store_index_cache_hits_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace, item_type)' % $._config,
-            ], [
-              'added {{item_type}}',
-              'evicted {{item_type}}',
-              'requests {{item_type}}',
-              'hits {{item_type}}',
-            ],
-          )
-        )
-        .addPanel(
-          g.panel('Series Gate Time 99th Percentile') +
+          g.panel('Block Load Errors') +
           g.queryPanel(
             |||
-              histogram_quantile(0.99,
-                sum(thanos_bucket_store_series_gate_duration_seconds_bucket{namespace="$namespace",%(thanosStoreSelector)s}) by (le)
+              sum(
+                rate(thanos_bucket_store_block_load_failures_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
+              /
+                rate(thanos_bucket_store_block_loads_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
               )
             ||| % $._config,
-            ''
-          )
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } } +
+          { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) }
         )
         .addPanel(
-          g.panel('Pod Operation Time 99th Percentile') +
+          g.panel('Block Drop Rate') +
+          g.queryPanel(
+            'sum(rate(thanos_bucket_store_block_drops_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (operation)' % $._config,
+            'block drops'
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Block Drop Errors') +
+          g.queryPanel(
+            |||
+              sum(
+                rate(thanos_bucket_store_block_drop_failures_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
+              /
+                rate(thanos_bucket_store_block_drops_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
+              )
+            ||| % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } } +
+          { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) }
+        )
+      )
+      .addRow(
+        g.row('Cache Operations')
+        .addPanel(
+          g.panel('Requests') +
+          g.queryPanel(
+            'sum(rate(thanos_store_index_cache_requests_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace, item_type)' % $._config,
+            '{{item_type}}',
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Hits') +
+          g.queryPanel(
+            'sum(rate(thanos_store_index_cache_hits_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace, item_type)' % $._config,
+            '{{item_type}}',
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Added') +
+          g.queryPanel(
+            'sum(rate(thanos_store_index_cache_items_added_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace, item_type)' % $._config,
+            '{{item_type}}',
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Evicted') +
+          g.queryPanel(
+            'sum(rate(thanos_store_index_cache_items_evicted_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (namespace, item_type)' % $._config,
+            '{{item_type}}',
+          ) +
+          g.stack
+        )
+      )
+      .addRow(
+        g.row('Store Sent')
+        .addPanel(
+          g.panel('Chunk Size') +
+          g.queryPanel(
+            [
+              'histogram_quantile(0.99, sum(rate(thanos_bucket_store_sent_chunk_size_bytes_bucket{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (le))' % $._config,
+              'sum(rate(thanos_bucket_store_sent_chunk_size_bytes_sum{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) / sum(rate(thanos_bucket_store_sent_chunk_size_bytes_count{namespace="$namespace",%(thanosStoreSelector)s}[$interval]))' % $._config,
+              'histogram_quantile(0.99, sum(rate(thanos_bucket_store_sent_chunk_size_bytes_bucket{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) by (le))' % $._config,
+            ],
+            [
+              'P99',
+              'mean',
+              'P50',
+            ],
+          )
+        ) +
+        { yaxes: g.yaxes('decbytes') },
+      )
+      .addRow(
+        g.row('Series Operations')
+        .addPanel(
+          g.panel('Block queried') +
           g.queryPanel(
             [
               'thanos_bucket_store_series_blocks_queried{namespace="$namespace",%(thanosStoreSelector)s,quantile="0.99"}' % $._config,
-              'thanos_bucket_store_series_data_fetched{namespace="$namespace",%(thanosStoreSelector)s,quantile="0.99"}' % $._config,
-              'thanos_bucket_store_series_result_series{namespace="$namespace",%(thanosStoreSelector)s,quantile="0.99"}' % $._config,
+              'sum(rate(thanos_bucket_store_series_blocks_queried_sum{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) / sum(rate(thanos_bucket_store_series_blocks_queried_count{namespace="$namespace",%(thanosStoreSelector)s}[$interval]))' % $._config,
+              'thanos_bucket_store_series_blocks_queried{namespace="$namespace",%(thanosStoreSelector)s,quantile="0.50"}' % $._config,
             ], [
-              'blocks queried {{kubernetes_pod_name}}',
-              'data fetched {{kubernetes_pod_name}}',
-              'result series {{kubernetes_pod_name}}',
+              'P99',
+              'mean',
+              'P50',
             ],
           )
+        )
+        .addPanel(
+          g.panel('Data Fetched') +
+          g.queryPanel(
+            [
+              'thanos_bucket_store_series_data_fetched{namespace="$namespace",%(thanosStoreSelector)s,quantile="0.99"}' % $._config,
+              'sum(rate(thanos_bucket_store_series_data_fetched_sum{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) / sum(rate(thanos_bucket_store_series_data_fetched_count{namespace="$namespace",%(thanosStoreSelector)s}[$interval]))' % $._config,
+              'thanos_bucket_store_series_data_fetched{namespace="$namespace",%(thanosStoreSelector)s,quantile="0.50"}' % $._config,
+            ], [
+              'P99',
+              'mean',
+              'P50',
+            ],
+          )
+        )
+        .addPanel(
+          g.panel('Result series') +
+          g.queryPanel(
+            [
+              'thanos_bucket_store_series_result_series{namespace="$namespace",%(thanosStoreSelector)s,quantile="0.99"}' % $._config,
+              'sum(rate(thanos_bucket_store_series_result_series_sum{namespace="$namespace",%(thanosStoreSelector)s}[$interval])) / sum(rate(thanos_bucket_store_series_result_series_count{namespace="$namespace",%(thanosStoreSelector)s}[$interval]))' % $._config,
+              'thanos_bucket_store_series_result_series{namespace="$namespace",%(thanosStoreSelector)s,quantile="0.50"}' % $._config,
+            ], [
+              'P99',
+              'mean',
+              'P50',
+            ],
+          )
+        )
+      )
+      .addRow(
+        g.row('Series Operation Durations')
+        .addPanel(
+          g.panel('Get All') +
+          b.latencyPanel('thanos_bucket_store_series_get_all_duration_seconds', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
+        )
+        .addPanel(
+          g.panel('Merge') +
+          b.latencyPanel('thanos_bucket_store_series_merge_duration_seconds_bucket', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
+        )
+        .addPanel(
+          g.panel('Gate') +
+          b.latencyPanel('thanos_bucket_store_series_gate_duration_seconds_bucket', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
         )
       )
       .addRow(
@@ -190,6 +303,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         + { collapse: true }
       ) +
-      builder.podTemplate('namespace="$namespace",created_by_name=~"%(thanosStore)s.*"' % $._config),
+      b.podTemplate('namespace="$namespace",created_by_name=~"%(thanosStore)s.*"' % $._config),
   },
 }
