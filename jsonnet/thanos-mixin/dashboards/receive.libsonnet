@@ -161,7 +161,49 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
       )
       .addRow(
-        g.row('Hashring Refresh')
+        g.row('Hashring Config')
+        .addPanel(
+          g.panel('Last Updated') +
+          g.statPanel(
+            'time() - max(thanos_receive_config_last_reload_success_timestamp_seconds{namespace="$namespace",%(thanosReceiveSelector)s})' % $._config,
+            's'
+          ) +
+          {
+            postfix: 'ago',
+            decimals: 0,
+          }
+        )
+        .addPanel(
+          g.panel('Latest Config Reload') +
+          g.statPanel(
+            'avg(thanos_receive_config_last_reload_successful{namespace="$namespace",%(thanosReceiveSelector)s})' % $._config,
+            'none'
+          ) +
+          {
+            thresholds: '0.5,0.7',
+            colorBackground: true,
+            colors: [
+              '#d44a3a',
+              'rgba(237, 129, 40, 0.89)',
+              '#299c46',
+            ],
+            valueMaps: [
+              {
+                value: 'null',
+                op: '=',
+                text: 'N/A',
+              },
+              {
+                value: '1',
+                op: '=',
+                text: 'OK',
+              },
+            ],
+          },
+        )
+      )
+      .addRow(
+        g.row('Hashring Config Refresh')
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
@@ -198,30 +240,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
               'error': '#E24D42',
             },
           }
-        )
-      )
-      .addRow(
-        g.row('Hashring Config')
-        .addPanel(
-          g.panel('Latest Config') +
-          g.statPanel(
-            'thanos_receive_config_hash{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
-            'none'
-          )
-        )
-        .addPanel(
-          g.panel('Last Updated At') +
-          g.statPanel(
-            'thanos_receive_config_last_reload_success_timestamp_seconds{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
-            'none'
-          )
-        )
-        .addPanel(
-          g.panel('Latest Config Reload') +
-          g.statPanel(
-            'thanos_receive_config_last_reload_successful{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
-            'none'
-          )
         )
       )
       .addRow(
