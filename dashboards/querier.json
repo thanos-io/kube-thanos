@@ -1714,6 +1714,11 @@
                "seriesOverrides": [ ],
                "spaceLength": 10,
                "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": true
+               },
                "stack": false,
                "steppedLine": false,
                "targets": [

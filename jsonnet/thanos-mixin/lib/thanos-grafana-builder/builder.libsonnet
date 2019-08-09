@@ -32,6 +32,22 @@ local g = import 'grafana-builder/grafana.libsonnet';
       },
     },
 
+  spanSize(size):: {
+    span: size,
+  },
+
+  postfix(postfix):: {
+    postfix: postfix,
+  },
+
+  sparkline:: {
+    sparkline: {
+      show: true,
+      lineColor: 'rgb(31, 120, 193)',
+      fillColor: 'rgba(31, 118, 189, 0.18)',
+    },
+  },
+
   qpsPanel(metricName, selector):: {
     aliasColors: {
       '1xx': '#EAB839',

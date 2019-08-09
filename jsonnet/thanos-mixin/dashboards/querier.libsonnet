@@ -182,7 +182,8 @@ local g = import 'grafana-builder/grafana.libsonnet';
           g.statPanel(
             'sum(thanos_store_nodes_grpc_connections{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"})' % $._config,
             'none'
-          )
+          ) +
+          b.sparkline
         )
         .addPanel(
           g.panel('Gossip Info') +
