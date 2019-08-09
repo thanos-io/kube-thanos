@@ -1951,7 +1951,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Gossip Info",
+               "title": "Node Info",
                "tooltip": {
                   "shared": false,
                   "sort": 0,

@@ -187,7 +187,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
           b.sparkline
         )
         .addPanel(
-          g.panel('Gossip Info') +
+          g.panel('Node Info') +
           g.tablePanel(
             ['min(thanos_store_node_info{namespace="$namespace",%(thanosQuerierSelector)s}) by (external_labels)' % $._config],
             {},
