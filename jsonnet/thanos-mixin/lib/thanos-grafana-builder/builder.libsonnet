@@ -161,28 +161,11 @@ local g = import 'grafana-builder/grafana.libsonnet';
     local prefix = if type == 'client' then 'grpc_client' else 'grpc_server';
     g.queryPanel(
       |||
-        sum(
-          rate(%s_handled_total{grpc_code!="OK",%s}[$interval])
-          /
-          rate(%s_started_total{%s}[$interval])
-        ) by (grpc_code)
+        sum(rate(%s_handled_total{grpc_code!="OK",%s}[$interval]))
+        /
+        sum(rate(%s_started_total{%s}[$interval]))
       ||| % [prefix, selector, prefix, selector],
-      '{{grpc_code}}'
-    ) +
-    { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) } +
-    $.stack,
-
-  grpcErrorsPanelDetailed(type, selector)::
-    local prefix = if type == 'client' then 'grpc_client' else 'grpc_server';
-    g.queryPanel(
-      |||
-        sum(
-          rate(%s_handled_total{grpc_code!="OK",%s}[$interval])
-          /
-          rate(%s_started_total{%s}[$interval])
-        ) by (grpc_method, grpc_code)
-      ||| % [prefix, selector, prefix, selector],
-      '{{grpc_method}} {{grpc_code}}'
+      ''
     ) +
     { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) } +
     $.stack,

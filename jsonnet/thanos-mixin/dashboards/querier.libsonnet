@@ -44,33 +44,31 @@ local g = import 'grafana-builder/grafana.libsonnet';
         g.row('gRPC (Stream)')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+          b.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+          b.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+          b.grpcLatencyPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+          b.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
+          b.grpcErrorsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="client_stream"' % $._config)
-        ) +
-        b.collapse
-
+          b.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
+        )
       )
       .addRow(
         g.row('DNS')
@@ -133,20 +131,20 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.queryPanel(
             [
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (kubernetes_pod_name, le))' % $._config,
               |||
                 sum(
-                  rate(thanos_query_api_range_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])
+                  rate(thanos_query_api_range_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
                 /
-                  rate(thanos_query_api_range_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])
+                  rate(thanos_query_api_range_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
                 ) by (kubernetes_pod_name)
               ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,kubernetes_pod_name=~"$pod"}[$interval])) by (kubernetes_pod_name, le))' % $._config,
+              'histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (kubernetes_pod_name, le))' % $._config,
             ],
             [
-              'P99 {{pod}}',
-              'mean {{pod}}',
-              'P50 {{pod}}',
+              'P99 {{kubernetes_pod_name}}',
+              'mean {{kubernetes_pod_name}}',
+              'P50 {{kubernetes_pod_name}}',
             ]
           )
         ) +
