@@ -1,4 +1,4 @@
-local builder = import '../lib/thanos-grafana-builder/builder.libsonnet';
+local b = import '../lib/thanos-grafana-builder/builder.libsonnet';
 local g = import 'grafana-builder/grafana.libsonnet';
 
 {
@@ -10,68 +10,122 @@ local g = import 'grafana-builder/grafana.libsonnet';
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
       .addRow(
-        g.row('Load')
+        g.row('gRPC (Unary)')
         .addPanel(
-          g.panel('RPS') +
-          g.queryPanel(
-            'sum(rate(grpc_server_handled_total{namespace="$namespace",%(thanosRuleSelector)s}[$interval])) by (grpc_code, grpc_method, namespace)' % $._config,
-            '{{grpc_code}} {{grpc_method}}'
-          )
+          g.panel('Rate') +
+          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
-          g.panel('Query Response Time Quantile') +
-          g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (grpc_method, le, namespace))' % $._config,
-            '99 {{grpc_method}}'
-          )
+          g.panel('Errors') +
+          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="unary"' % $._config)
         )
       )
       .addRow(
-        g.row('Alert Sender')
+        g.row('Detailed')
         .addPanel(
-          g.panel('Alert Sent Rate') +
+          g.panel('Rate') +
+          b.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="unary"' % $._config)
+        ) +
+        b.collapse
+      )
+      .addRow(
+        g.row('gRPC (Stream)')
+        .addPanel(
+          g.panel('Rate') +
+          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="server_stream"' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Detailed')
+        .addPanel(
+          g.panel('Rate') +
+          b.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          b.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="server_stream"' % $._config)
+        ) +
+        b.collapse
+      )
+      .addRow(
+        g.row('Alert Sent')
+        .addPanel(
+          g.panel('Dropped Rate') +
           g.queryPanel(
-            'rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])' % $._config,
+            'sum(rate(thanos_alert_sender_alerts_dropped_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager)' % $._config,
             '{{alertmanager}}'
           )
         )
         .addPanel(
-          g.panel('Alert Dropped Rate') +
+          g.panel('Sent Rate') +
           g.queryPanel(
-            'rate(thanos_alert_sender_alerts_dropped_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])' % $._config,
+            'sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager)' % $._config,
             '{{alertmanager}}'
-          )
+          ) +
+          g.stack
         )
         .addPanel(
-          g.panel('Alert Sender Latency 99th Percentile') +
+          g.panel('Sent Errors') +
           g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager, le, namespace))' % $._config,
-            '99 {{alertmanager}}'
-          )
+            |||
+              sum(rate(thanos_alert_sender_errors_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval]))
+              /
+              sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval]))
+            ||| % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } } +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Sent Duration') +
+          b.latencyPanel('thanos_alert_sender_latency_seconds', 'namespace=~"$namespace",%(thanosRuleSelector)s' % $._config),
         )
       )
       .addRow(
         g.row('Compaction')
         .addPanel(
-          g.panel('Compaction Rate') +
+          g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (namespace)' % $._config,
-            '{{ namespace }}'
+            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval]))' % $._config,
+            'compaction'
           )
         )
         .addPanel(
-          g.panel('Compaction Failure Rate') +
+          g.panel('Errors') +
           g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (namespace)' % $._config,
-            '{{ namespace }}'
-          )
+            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval]))' % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } }
         )
         .addPanel(
-          g.panel('Compaction Duration Quatile') +
-          g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (namespace, le))' % $._config,
-            '99'
-          )
+          g.panel('Duration') +
+          b.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosRuleSelector)s' % $._config)
         )
       )
       .addRow(
@@ -113,6 +167,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         + { collapse: true }
       ) +
-      builder.podTemplate('namespace="$namespace",created_by_name=~"%(thanosRule)s.*"' % $._config),
+      b.podTemplate('namespace="$namespace",created_by_name=~"%(thanosRule)s.*"' % $._config),
   },
 }

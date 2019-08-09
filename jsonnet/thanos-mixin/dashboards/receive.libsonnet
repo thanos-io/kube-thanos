@@ -70,7 +70,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
           b.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         ) +
         b.collapse
-
       )
       .addRow(
         g.row('Incoming Request')
@@ -240,6 +239,28 @@ local g = import 'grafana-builder/grafana.libsonnet';
               'error': '#E24D42',
             },
           }
+        )
+      )
+      .addRow(
+        g.row('Compaction')
+        .addPanel(
+          g.panel('Rate') +
+          g.queryPanel(
+            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
+            'compaction'
+          )
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.queryPanel(
+            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
+            'error'
+          ) +
+          { aliasColors: { 'error': '#E24D42' } }
+        )
+        .addPanel(
+          g.panel('Duration') +
+          b.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosReceiveSelector)s' % $._config)
         )
       )
       .addRow(
