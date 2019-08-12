@@ -1,5 +1,4 @@
-local b = import '../lib/thanos-grafana-builder/builder.libsonnet';
-local g = import 'grafana-builder/grafana.libsonnet';
+local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
 
 {
   grafanaDashboards+:: {
@@ -13,63 +12,63 @@ local g = import 'grafana-builder/grafana.libsonnet';
         g.row('gRPC (Unary)')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorDetailsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrorDetailsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config)
         ) +
-        b.collapse
+        g.collapse
       )
       .addRow(
         g.row('gRPC (Stream)')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorDetailsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrorDetailsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="server_stream"' % $._config)
         ) +
-        b.collapse
+        g.collapse
       )
       .addRow(
         g.row('DNS')
@@ -82,29 +81,21 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            |||
-              sum(
-                rate(thanos_querier_store_apis_dns_failures_total{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-              /
-                rate(thanos_querier_store_apis_dns_lookups_total{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-              )
-            ||| % $._config,
-            'error'
-          ) +
-          { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) } +
-          g.stack,
+          g.qpsErrTotalPanel(
+            'thanos_querier_store_apis_dns_failures_total{namespace=~"$namespace",%(thanosQuerierSelector)s}' % $._config,
+            'thanos_querier_store_apis_dns_lookups_total{namespace=~"$namespace",%(thanosQuerierSelector)s}' % $._config,
+          )
         )
       )
       .addRow(
         g.row('Query API')
         .addPanel(
           g.panel('Instant Query') +
-          b.latencyPanel('thanos_query_api_instant_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
+          g.latencyPanel('thanos_query_api_instant_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
         )
         .addPanel(
           g.panel('Range Query') +
-          b.latencyPanel('thanos_query_api_range_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
+          g.latencyPanel('thanos_query_api_range_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
         )
       )
       .addRow(
@@ -151,7 +142,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
             ]
           )
         ) +
-        b.collapse
+        g.collapse
       )
       .addRow(
         g.row('Prometheus')
@@ -184,7 +175,7 @@ local g = import 'grafana-builder/grafana.libsonnet';
             'sum(thanos_store_nodes_grpc_connections{namespace="$namespace",%(thanosQuerierSelector)s})' % $._config,
             'none'
           ) +
-          b.sparkline
+          g.sparkline
         )
         .addPanel(
           g.panel('Node Info') +
@@ -233,6 +224,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         + { collapse: true }
       ) +
-      b.podTemplate('namespace="$namespace",created_by_name=~"%(thanosQuerier)s.*"' % $._config),
+      g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosQuerier)s.*"' % $._config),
   },
 }

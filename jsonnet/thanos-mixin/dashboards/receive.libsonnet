@@ -1,5 +1,4 @@
-local b = import '../lib/thanos-grafana-builder/builder.libsonnet';
-local g = import 'grafana-builder/grafana.libsonnet';
+local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
 
 {
   grafanaDashboards+:: {
@@ -13,133 +12,109 @@ local g = import 'grafana-builder/grafana.libsonnet';
         g.row('gRPC (Unary)')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         ) +
-        b.collapse
+        g.collapse
       )
       .addRow(
         g.row('gRPC (Stream)')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         ) +
-        b.collapse
+        g.collapse
       )
       .addRow(
         g.row('Incoming Request')
         .addPanel(
           g.panel('Rate') +
-          b.qpsPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpQpsPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.errorsPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpErrPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.latencyPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.latencyPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          b.qpsPanelDetailed('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpQpsPanelDetailed('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.errorDetailsPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpErrDetailsPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.httpLatencyDetailsPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpLatencyDetailsPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
         ) +
-        b.collapse
+        g.collapse
       )
       .addRow(
         g.row('Forward Request')
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            [
-              'sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="error"}[$interval]))' % $._config,
-              'sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="success"}[$interval]))' % $._config,
-            ],
-            [
-              'error',
-              'success',
-            ]
-          ) +
-          g.stack +
-          {
-            aliasColors: {
-              success: '#7EB26D',
-              'error': '#E24D42',
-            },
-          }
+            'sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="success"}))' % $._config,
+            'all',
+          )
         )
         .addPanel(
-          g.panel('Errors') +
-          g.queryPanel(
-            |||
-              sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="error"}[$interval]))
-              /
-              sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
-            ||| % $._config,
-            'error'
-          ) +
-          {
-            aliasColors: {
-              success: '#7EB26D',
-              'error': '#E24D42',
-            },
-          }
+          g.qpsErrTotalPanel(
+            'thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="error"}' % $._config,
+            'thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+          )
         )
       )
       .addRow(
@@ -206,39 +181,16 @@ local g = import 'grafana-builder/grafana.libsonnet';
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            [
-              'sum(rate(thanos_receive_hashrings_file_errors_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
-              'sum(rate(thanos_receive_hashrings_file_changes_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
-            ],
-            [
-              'error',
-              'success',
-            ]
-          ) +
-          g.stack +
-          {
-            aliasColors: {
-              success: '#7EB26D',
-              'error': '#E24D42',
-            },
-          }
+            'sum(rate(thanos_receive_hashrings_file_changes_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
+            'all'
+          )
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            |||
-              sum(rate(thanos_receive_hashrings_file_errors_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
-              /
-              sum(rate(thanos_receive_hashrings_file_refreshes_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))
-            ||| % $._config,
-            'error'
-          ) +
-          {
-            aliasColors: {
-              success: '#7EB26D',
-              'error': '#E24D42',
-            },
-          }
+          g.qpsErrTotalPanel(
+            'thanos_receive_hashrings_file_errors_total{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+            'thanos_receive_hashrings_file_changes_total{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+          )
         )
       )
       .addRow(
@@ -252,15 +204,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosReceiveSelector)s}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } }
+          g.qpsErrTotalPanel(
+            'prometheus_tsdb_compactions_failed_total{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+            'prometheus_tsdb_compactions_total{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+          )
         )
         .addPanel(
           g.panel('Duration') +
-          b.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosReceiveSelector)s' % $._config)
         )
       )
       .addRow(
@@ -300,8 +251,8 @@ local g = import 'grafana-builder/grafana.libsonnet';
             '{{quantile}} {{pod}}'
           )
         ) +
-        b.collapse
+        g.collapse
       ) +
-      b.podTemplate('namespace="$namespace",created_by_name=~"%(thanosReceive)s.*"' % $._config),
+      g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosReceive)s.*"' % $._config),
   },
 }

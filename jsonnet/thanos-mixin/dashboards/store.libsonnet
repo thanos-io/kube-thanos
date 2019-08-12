@@ -1,5 +1,4 @@
-local b = import '../lib/thanos-grafana-builder/builder.libsonnet';
-local g = import 'grafana-builder/grafana.libsonnet';
+local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
 
 {
   grafanaDashboards+:: {
@@ -13,63 +12,63 @@ local g = import 'grafana-builder/grafana.libsonnet';
         g.row('gRPC (Unary)')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
         ) +
-        b.collapse
+        g.collapse
       )
       .addRow(
         g.row('gRPC (Stream)')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          b.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Errors') +
-          b.grpcErrorDetailsPanel('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrorDetailsPanel('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
-          b.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
         ) +
-        b.collapse
+        g.collapse
       )
       .addRow(
         g.row('Bucket Operations')
@@ -83,22 +82,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            |||
-              sum(
-                rate(thanos_objstore_bucket_operation_failures_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
-              /
-                rate(thanos_objstore_bucket_operations_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
-              )
-            ||| % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } } +
-          { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) }
+          g.qpsErrTotalPanel(
+            'thanos_objstore_bucket_operation_failures_total{namespace="$namespace",%(thanosStoreSelector)s}' % $._config,
+            'thanos_objstore_bucket_operations_total{namespace="$namespace",%(thanosStoreSelector)s}' % $._config,
+          )
         )
         .addPanel(
           g.panel('Duration') +
-          b.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
+          g.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
         )
       )
       .addRow(
@@ -113,18 +104,10 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Block Load Errors') +
-          g.queryPanel(
-            |||
-              sum(
-                rate(thanos_bucket_store_block_load_failures_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
-              /
-                rate(thanos_bucket_store_block_loads_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
-              )
-            ||| % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } } +
-          { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) }
+          g.qpsErrTotalPanel(
+            'thanos_bucket_store_block_load_failures_total{namespace="$namespace",%(thanosStoreSelector)s}' % $._config,
+            'thanos_bucket_store_block_loads_total{namespace="$namespace",%(thanosStoreSelector)s}' % $._config,
+          )
         )
         .addPanel(
           g.panel('Block Drop Rate') +
@@ -136,18 +119,10 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Block Drop Errors') +
-          g.queryPanel(
-            |||
-              sum(
-                rate(thanos_bucket_store_block_drop_failures_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
-              /
-                rate(thanos_bucket_store_block_drops_total{namespace="$namespace",%(thanosStoreSelector)s}[$interval])
-              )
-            ||| % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } } +
-          { yaxes: g.yaxes({ format: 'percentunit', max: 1 }) }
+          g.qpsErrTotalPanel(
+            'thanos_bucket_store_block_drop_failures_total{namespace="$namespace",%(thanosStoreSelector)s}' % $._config,
+            'thanos_bucket_store_block_drops_total{namespace="$namespace",%(thanosStoreSelector)s}' % $._config,
+          )
         )
       )
       .addRow(
@@ -253,15 +228,15 @@ local g = import 'grafana-builder/grafana.libsonnet';
         g.row('Series Operation Durations')
         .addPanel(
           g.panel('Get All') +
-          b.latencyPanel('thanos_bucket_store_series_get_all_duration_seconds', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
+          g.latencyPanel('thanos_bucket_store_series_get_all_duration_seconds', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
         )
         .addPanel(
           g.panel('Merge') +
-          b.latencyPanel('thanos_bucket_store_series_merge_duration_seconds_bucket', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
+          g.latencyPanel('thanos_bucket_store_series_merge_duration_seconds_bucket', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
         )
         .addPanel(
           g.panel('Gate') +
-          b.latencyPanel('thanos_bucket_store_series_gate_duration_seconds_bucket', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
+          g.latencyPanel('thanos_bucket_store_series_gate_duration_seconds_bucket', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
         )
       )
       .addRow(
@@ -303,6 +278,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         + { collapse: true }
       ) +
-      b.podTemplate('namespace="$namespace",created_by_name=~"%(thanosStore)s.*"' % $._config),
+      g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosStore)s.*"' % $._config),
   },
 }

@@ -91,13 +91,14 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42"
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 1,
+               "fill": 10,
                "id": 2,
                "legend": {
                   "avg": false,
@@ -109,7 +110,7 @@
                   "values": false
                },
                "lines": true,
-               "linewidth": 1,
+               "linewidth": 0,
                "links": [ ],
                "nullPointMode": "null as zero",
                "percentage": false,
@@ -119,15 +120,23 @@
                "seriesOverrides": [ ],
                "spaceLength": 10,
                "span": 4,
-               "stack": false,
+               "stack": true,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
-                     "legendLink": null,
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
                      "step": 10
                   }
                ],
@@ -349,13 +358,14 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42"
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 1,
+               "fill": 10,
                "id": 5,
                "legend": {
                   "avg": false,
@@ -367,7 +377,7 @@
                   "values": false
                },
                "lines": true,
-               "linewidth": 1,
+               "linewidth": 0,
                "links": [ ],
                "nullPointMode": "null as zero",
                "percentage": false,
@@ -377,15 +387,23 @@
                "seriesOverrides": [ ],
                "spaceLength": 10,
                "span": 6,
-               "stack": false,
+               "stack": true,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_compact_downsample_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(thanos_compact_downsample_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "expr": "sum(rate(thanos_compact_downsample_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
-                     "legendLink": null,
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(thanos_compact_downsample_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(thanos_compact_downsample_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
                      "step": 10
                   }
                ],
@@ -515,13 +533,14 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42"
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 1,
+               "fill": 10,
                "id": 7,
                "legend": {
                   "avg": false,
@@ -533,7 +552,7 @@
                   "values": false
                },
                "lines": true,
-               "linewidth": 1,
+               "linewidth": 0,
                "links": [ ],
                "nullPointMode": "null as zero",
                "percentage": false,
@@ -543,15 +562,23 @@
                "seriesOverrides": [ ],
                "spaceLength": 10,
                "span": 4,
-               "stack": false,
+               "stack": true,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(thanos_compact_garbage_collection_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "expr": "sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
-                     "legendLink": null,
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(thanos_compact_garbage_collection_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
                      "step": 10
                   }
                ],
@@ -773,13 +800,14 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42"
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 1,
+               "fill": 10,
                "id": 10,
                "legend": {
                   "avg": false,
@@ -791,7 +819,7 @@
                   "values": false
                },
                "lines": true,
-               "linewidth": 1,
+               "linewidth": 0,
                "links": [ ],
                "nullPointMode": "null as zero",
                "percentage": false,
@@ -801,15 +829,23 @@
                "seriesOverrides": [ ],
                "spaceLength": 10,
                "span": 6,
-               "stack": false,
+               "stack": true,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_compact_group_compactions_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(thanos_compact_group_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "expr": "sum(rate(thanos_compact_group_compactions_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
-                     "legendLink": null,
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(thanos_compact_group_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(thanos_compact_group_compactions_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
                      "step": 10
                   }
                ],
@@ -939,13 +975,14 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42"
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 1,
+               "fill": 10,
                "id": 12,
                "legend": {
                   "avg": false,
@@ -957,7 +994,7 @@
                   "values": false
                },
                "lines": true,
-               "linewidth": 1,
+               "linewidth": 0,
                "links": [ ],
                "nullPointMode": "null as zero",
                "percentage": false,
@@ -967,15 +1004,23 @@
                "seriesOverrides": [ ],
                "spaceLength": 10,
                "span": 4,
-               "stack": false,
+               "stack": true,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_compact_sync_meta_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(thanos_compact_sync_meta_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "expr": "sum(rate(thanos_compact_sync_meta_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
-                     "legendLink": null,
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(thanos_compact_sync_meta_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(thanos_compact_sync_meta_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
                      "step": 10
                   }
                ],
@@ -1197,13 +1242,14 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42"
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 1,
+               "fill": 10,
                "id": 15,
                "legend": {
                   "avg": false,
@@ -1215,7 +1261,7 @@
                   "values": false
                },
                "lines": true,
-               "linewidth": 1,
+               "linewidth": 0,
                "links": [ ],
                "nullPointMode": "null as zero",
                "percentage": false,
@@ -1225,15 +1271,23 @@
                "seriesOverrides": [ ],
                "spaceLength": 10,
                "span": 4,
-               "stack": false,
+               "stack": true,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(thanos_objstore_bucket_operations_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
-                     "legendLink": null,
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
                      "step": 10
                   }
                ],

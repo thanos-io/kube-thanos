@@ -1,5 +1,4 @@
-local b = import '../lib/thanos-grafana-builder/builder.libsonnet';
-local g = import 'grafana-builder/grafana.libsonnet';
+local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
 
 {
   grafanaDashboards+:: {
@@ -21,15 +20,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } }
+          g.qpsErrTotalPanel(
+            'prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+          )
         )
         .addPanel(
           g.panel('Duration') +
-          b.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+          g.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
         )
       )
       .addRow(
@@ -44,11 +42,10 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            'sum(rate(thanos_compact_downsample_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_compact_downsample_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } }
+          g.qpsErrTotalPanel(
+            'thanos_compact_downsample_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_downsample_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+          )
         )
       )
       .addRow(
@@ -63,15 +60,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            'sum(rate(thanos_compact_garbage_collection_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_compact_garbage_collection_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } }
+          g.qpsErrTotalPanel(
+            'thanos_compact_garbage_collection_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_garbage_collection_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+          )
         )
         .addPanel(
           g.panel('Duration') +
-          b.latencyPanel('thanos_compact_garbage_collection_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+          g.latencyPanel('thanos_compact_garbage_collection_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
         )
       )
       .addRow(
@@ -86,11 +82,10 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            'sum(rate(thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } }
+          g.qpsErrTotalPanel(
+            'thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+          )
         )
       )
       .addRow(
@@ -105,15 +100,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            'sum(rate(thanos_compact_sync_meta_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_compact_sync_meta_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } }
+          g.qpsErrTotalPanel(
+            'thanos_compact_sync_meta_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_sync_meta_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+          )
         )
         .addPanel(
           g.panel('Duration') +
-          b.latencyPanel('thanos_compact_sync_meta_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+          g.latencyPanel('thanos_compact_sync_meta_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
         )
       )
       .addRow(
@@ -128,15 +122,14 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.queryPanel(
-            'sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) / sum(rate(thanos_objstore_bucket_operations_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'error'
-          ) +
-          { aliasColors: { 'error': '#E24D42' } }
+          g.qpsErrTotalPanel(
+            'thanos_objstore_bucket_operation_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_objstore_bucket_operations_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+          )
         )
         .addPanel(
           g.panel('Duration') +
-          b.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+          g.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
         )
       )
       .addRow(
@@ -178,6 +171,6 @@ local g = import 'grafana-builder/grafana.libsonnet';
         )
         + { collapse: true }
       ) +
-      b.podTemplate('namespace="$namespace",created_by_name=~"%(thanosCompact)s.*"' % $._config),
+      g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosCompact)s.*"' % $._config),
   },
 }
