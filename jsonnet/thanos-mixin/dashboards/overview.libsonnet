@@ -82,37 +82,145 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('Receive')
         .addPanel(
-          g.sloError('', '', '')
+          g.sloError(
+            'gRPC API Error Rate',
+            'grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss",grpc_type="unary",namespace=~"$namespace",%(thanosReceiveSelector)s}' % $._config,
+            'grpc_server_started_total{grpc_type="unary",namespace=~"$namespace",%(thanosReceiveSelector)s}' % $._config,
+            10,
+            30
+          )
         )
         .addPanel(
-          g.sloLatency('', '', 0, 0, 0, 0)
+          g.sloLatency(
+            'gRPC Latecy 99th Percentile',
+            'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace=~"$namespace",%(thanosReceiveSelector)s}' % $._config,
+            0.99,
+            0.5,
+            1,
+            10
+          )
+        )
+        .addPanel(
+          g.sloError(
+            'Incoming Requests Error Rate',
+            'thanos_http_requests_total{code!~"2..",namespace=~"$namespace",%(thanosReceiveSelector)s}' % $._config,
+            'thanos_http_requests_total{namespace=~"$namespace",%(thanosReceiveSelector)s}' % $._config,
+            10,
+            30
+          )
+        )
+        .addPanel(
+          g.sloLatency(
+            'Incoming Requests Latecy 99th Percentile',
+            'thanos_http_request_duration_seconds_bucket{namespace=~"$namespace",%(thanosReceiveSelector)s}' % $._config,
+            0.99,
+            0.5,
+            1,
+            10
+          )
+        )
+        .addPanel(
+          g.sloError(
+            'Forward Requests Error Rate',
+            'thanos_receive_forward_requests_total{result="error",namespace=~"$namespace",%(thanosReceiveSelector)s}' % $._config,
+            'thanos_receive_forward_requests_total{namespace=~"$namespace",%(thanosReceiveSelector)s}' % $._config,
+            10,
+            30
+          )
         )
       )
       .addRow(
         g.row('Rule')
         .addPanel(
-          g.sloError('', '', '')
+          g.sloError(
+            'gRPC API Error Rate',
+            'grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss",grpc_type="unary",namespace=~"$namespace",%(thanosRuleSelector)s}' % $._config,
+            'grpc_server_started_total{grpc_type="unary",namespace=~"$namespace",%(thanosRuleSelector)s}' % $._config,
+            10,
+            30
+          )
         )
         .addPanel(
-          g.sloLatency('', '', 0, 0, 0, 0)
+          g.sloLatency(
+            'gRPC Latecy 99th Percentile',
+            'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace=~"$namespace",%(thanosRuleSelector)s}' % $._config,
+            0.99,
+            0.5,
+            1,
+            10
+          )
+        )
+        .addPanel(
+          g.sloError(
+            'Sent Error Rate',
+            'thanos_alert_sender_errors_total{namespace=~"$namespace",%(thanosRuleSelector)s}' % $._config,
+            'thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}' % $._config,
+            10,
+            30
+          )
         )
       )
       .addRow(
         g.row('Sidecar')
         .addPanel(
-          g.sloError('', '', '')
+          g.sloError(
+            'gRPC API Error Rate',
+            'grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss",grpc_type="unary",namespace=~"$namespace",%(thanosSidecarSelector)s}' % $._config,
+            'grpc_server_started_total{grpc_type="unary",namespace=~"$namespace",%(thanosSidecarSelector)s}' % $._config,
+            10,
+            30
+          )
         )
         .addPanel(
-          g.sloLatency('', '', 0, 0, 0, 0)
+          g.sloLatency(
+            'gRPC Latecy 99th Percentile',
+            'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace=~"$namespace",%(thanosSidecarSelector)s}' % $._config,
+            0.99,
+            0.5,
+            1,
+            10
+          )
+        )
+        .addPanel(
+          g.sloError(
+            'Bucket Operation Error Rate',
+            'thanos_objstore_bucket_operation_failures_total{namespace=~"$namespace",%(thanosSidecarSelector)s}' % $._config,
+            'thanos_objstore_bucket_operations_total{namespace=~"$namespace",%(thanosSidecarSelector)s}' % $._config,
+            10,
+            30
+          )
+        )
+        .addPanel(
+          g.sloLatency(
+            'Bucket Operation Latecy 99th Percentile',
+            'thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=~"$namespace",%(thanosSidecarSelector)s}' % $._config,
+            0.99,
+            0.5,
+            1,
+            10
+          )
         )
       )
       .addRow(
         g.row('Store')
         .addPanel(
-          g.sloError('', '', '')
+          g.sloError(
+            'gRPC API Error Rate',
+            'grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss",grpc_type="unary",namespace=~"$namespace",%(thanosStoreSelector)s}' % $._config,
+            'grpc_server_started_total{grpc_type="unary",namespace=~"$namespace",%(thanosStoreSelector)s}' % $._config,
+            10,
+            30
+          )
         )
         .addPanel(
-          g.sloLatency('', '', 0, 0, 0, 0)
+          g.sloLatency(
+            'gRPC Latecy 99th Percentile',
+            'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace=~"$namespace",%(thanosStoreSelector)s}' % $._config,
+            0.99,
+            0.5,
+            1,
+            10
+          )
         )
       ),
   },

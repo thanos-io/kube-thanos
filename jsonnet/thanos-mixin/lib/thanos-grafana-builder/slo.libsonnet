@@ -67,13 +67,19 @@ local gauge = {
         },
       },
 
-      withFormet(format):: self {
+      withFormat(format):: self {
         format: format,
       },
     },
 };
 
 {
+  sloFromRecordingRule(title, rule, format, warning, critical, max)::
+    gauge.new(title, rule)
+    .withFormat(format)
+    .withLowerBeingBetter(warning + ',' + critical)
+    .withMaxValue(max),
+
   sloError(title, selectorErr, selectorTotal, warning='50', critical='80')::
     gauge.new(
       title,
@@ -86,6 +92,6 @@ local gauge = {
       'histogram_quantile(%.2f, sum(rate(%s[$interval])) by (le))' % [quantile, selector],
     )
     .withLowerBeingBetter(warning + ',' + critical)
-    .withFormet('s')
+    .withFormat('s')
     .withMaxValue(max),
 }
