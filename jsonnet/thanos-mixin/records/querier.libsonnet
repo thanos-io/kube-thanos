@@ -48,6 +48,7 @@
               )
             ||| % $._config,
             labels: {
+              quantile: '0.99',
             },
           },
           {
@@ -58,6 +59,7 @@
               )
             ||| % $._config,
             labels: {
+              quantile: '0.99',
             },
           },
           {
@@ -68,6 +70,7 @@
               )
             ||| % $._config,
             labels: {
+              quantile: '0.99',
             },
           },
           {
@@ -78,6 +81,7 @@
               )
             ||| % $._config,
             labels: {
+              quantile: '0.99',
             },
           },
         ],
