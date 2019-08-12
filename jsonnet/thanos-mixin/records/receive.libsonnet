@@ -9,7 +9,7 @@
             expr: |||
               sum(
                 rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", %(thanosQuerierSelector)s, grpc_type="unary"}[5m])
-                /
+              /
                 rate(grpc_server_started_total{%(thanosQuerierSelector)s, grpc_type="unary"}[5m])
               )
             ||| % $._config,
@@ -41,10 +41,20 @@
             },
           },
           {
-            record: 'thanos_receive:http_request_duration_seconds:p99',
+            record: 'thanos_receive:http_request_duration_seconds:p99:sum',
             expr: |||
               histogram_quantile(0.99,
                 sum(thanos_http_request_duration_seconds_bucket{%(thanosReceiveSelector)s}) by (le)
+              )
+            ||| % $._config,
+            labels: {
+            },
+          },
+          {
+            record: 'thanos_receive:http_request_duration_seconds:p99:rate5m',
+            expr: |||
+              histogram_quantile(0.99,
+                sum(rate(thanos_http_request_duration_seconds_bucket{%(thanosReceiveSelector)s}[5m])) by (le)
               )
             ||| % $._config,
             labels: {

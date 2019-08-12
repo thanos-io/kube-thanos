@@ -41,10 +41,20 @@
             },
           },
           {
-            record: 'thanos_store:objstore_bucket_operation_duration_seconds:p99',
+            record: 'thanos_store:objstore_bucket_operation_duration_seconds:p99:sum',
             expr: |||
               histogram_quantile(0.99,
                 sum(thanos_objstore_bucket_operation_duration_seconds_bucket{%(thanosStoreSelector)s}) by (le)
+              )
+            ||| % $._config,
+            labels: {
+            },
+          },
+          {
+            record: 'thanos_store:objstore_bucket_operation_duration_seconds:p99:rate5m',
+            expr: |||
+              histogram_quantile(0.99,
+                sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{%(thanosStoreSelector)s}[5m])) by (le)
               )
             ||| % $._config,
             labels: {

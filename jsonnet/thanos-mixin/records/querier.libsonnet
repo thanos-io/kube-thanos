@@ -41,7 +41,7 @@
             },
           },
           {
-            record: 'thanos_querier:api_instant_query_duration_seconds:p99',
+            record: 'thanos_querier:api_instant_query_duration_seconds:p99:sum',
             expr: |||
               histogram_quantile(0.99,
                 sum(thanos_query_api_instant_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (le)
@@ -51,10 +51,30 @@
             },
           },
           {
-            record: 'thanos_querier:api_range_query_duration_seconds:p99',
+            record: 'thanos_querier:api_instant_query_duration_seconds:p99:rate5m',
+            expr: |||
+              histogram_quantile(0.99,
+                sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{%(thanosQuerierSelector)s}[5m])) by (le)
+              )
+            ||| % $._config,
+            labels: {
+            },
+          },
+          {
+            record: 'thanos_querier:api_range_query_duration_seconds:p99:sum',
             expr: |||
               histogram_quantile(0.99,
                 sum(thanos_query_api_range_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (le)
+              )
+            ||| % $._config,
+            labels: {
+            },
+          },
+          {
+            record: 'thanos_querier:api_range_query_duration_seconds:p99:rate5m',
+            expr: |||
+              histogram_quantile(0.99,
+                sum(rate(thanos_query_api_range_query_duration_seconds_bucket{%(thanosQuerierSelector)s}[5m])) by (le)
               )
             ||| % $._config,
             labels: {
