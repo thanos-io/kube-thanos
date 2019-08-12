@@ -12,7 +12,261 @@
       {
          "collapse": false,
          "height": "250px",
-         "panels": [ ],
+         "panels": [
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 1,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 12,
+               "stack": false,
+               "steppedLine": false,
+               "styles": [
+                  {
+                     "alias": "Time",
+                     "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                     "pattern": "Time",
+                     "type": "hidden"
+                  },
+                  {
+                     "alias": "",
+                     "colorMode": null,
+                     "colors": [ ],
+                     "dateFormat": "YYYY-MM-DD HH:mm:ss",
+                     "decimals": 2,
+                     "pattern": "/.*/",
+                     "thresholds": [ ],
+                     "type": "string",
+                     "unit": "short"
+                  }
+               ],
+               "targets": [ ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Per component",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "transform": "table",
+               "type": "table",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Overview",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": false,
+         "height": "250px",
+         "panels": [
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "percent",
+               "gauge": {
+                  "maxValue": 100,
+                  "minValue": 0,
+                  "show": true,
+                  "thresholdLabels": false,
+                  "thresholdMarkers": true
+               },
+               "id": 2,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]) / rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) * 100",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "10,30",
+               "title": "Compaction Error Rate",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            },
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "s",
+               "gauge": {
+                  "maxValue": 10
+               },
+               "id": 3,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "0.5,1",
+               "title": "Compaction Latecy 99th Percentile",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            }
+         ],
          "repeat": null,
          "repeatIteration": null,
          "repeatRowId": null,
@@ -23,7 +277,312 @@
       {
          "collapse": false,
          "height": "250px",
-         "panels": [ ],
+         "panels": [
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "percent",
+               "gauge": {
+                  "maxValue": 100,
+                  "minValue": 0,
+                  "show": true,
+                  "thresholdLabels": false,
+                  "thresholdMarkers": true
+               },
+               "id": 4,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 3,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "sum(rate(grpc_client_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval]) / rate(grpc_client_started_total{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval])) * 100",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "10,30",
+               "title": "gRPC API Error Rate",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            },
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "s",
+               "gauge": {
+                  "maxValue": 10
+               },
+               "id": 5,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 3,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "0.5,1",
+               "title": "gRPC Latecy 99th Percentile",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            },
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "s",
+               "gauge": {
+                  "maxValue": 10
+               },
+               "id": 6,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 3,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "0.5,1",
+               "title": "Instant Query Latecy 99th Percentile",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            },
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "s",
+               "gauge": {
+                  "maxValue": 10
+               },
+               "id": 7,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 3,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "0.5,1",
+               "title": "Range Query Latecy 99th Percentile",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            }
+         ],
          "repeat": null,
          "repeatIteration": null,
          "repeatRowId": null,
@@ -34,7 +593,162 @@
       {
          "collapse": false,
          "height": "250px",
-         "panels": [ ],
+         "panels": [
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "percent",
+               "gauge": {
+                  "maxValue": 100,
+                  "minValue": 0,
+                  "show": true,
+                  "thresholdLabels": false,
+                  "thresholdMarkers": true
+               },
+               "id": 8,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "sum(rate([$interval]) / rate([$interval])) * 100",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "50,80",
+               "title": "",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            },
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "s",
+               "gauge": {
+                  "maxValue": 0
+               },
+               "id": 9,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.00, sum(rate([$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "0,0",
+               "title": "",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            }
+         ],
          "repeat": null,
          "repeatIteration": null,
          "repeatRowId": null,
@@ -45,7 +759,162 @@
       {
          "collapse": false,
          "height": "250px",
-         "panels": [ ],
+         "panels": [
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "percent",
+               "gauge": {
+                  "maxValue": 100,
+                  "minValue": 0,
+                  "show": true,
+                  "thresholdLabels": false,
+                  "thresholdMarkers": true
+               },
+               "id": 10,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "sum(rate([$interval]) / rate([$interval])) * 100",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "50,80",
+               "title": "",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            },
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "s",
+               "gauge": {
+                  "maxValue": 0
+               },
+               "id": 11,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.00, sum(rate([$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "0,0",
+               "title": "",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            }
+         ],
          "repeat": null,
          "repeatIteration": null,
          "repeatRowId": null,
@@ -56,7 +925,162 @@
       {
          "collapse": false,
          "height": "250px",
-         "panels": [ ],
+         "panels": [
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "percent",
+               "gauge": {
+                  "maxValue": 100,
+                  "minValue": 0,
+                  "show": true,
+                  "thresholdLabels": false,
+                  "thresholdMarkers": true
+               },
+               "id": 12,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "sum(rate([$interval]) / rate([$interval])) * 100",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "50,80",
+               "title": "",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            },
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "s",
+               "gauge": {
+                  "maxValue": 0
+               },
+               "id": 13,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.00, sum(rate([$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "0,0",
+               "title": "",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            }
+         ],
          "repeat": null,
          "repeatIteration": null,
          "repeatRowId": null,
@@ -67,7 +1091,162 @@
       {
          "collapse": false,
          "height": "250px",
-         "panels": [ ],
+         "panels": [
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "percent",
+               "gauge": {
+                  "maxValue": 100,
+                  "minValue": 0,
+                  "show": true,
+                  "thresholdLabels": false,
+                  "thresholdMarkers": true
+               },
+               "id": 14,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "sum(rate([$interval]) / rate([$interval])) * 100",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "50,80",
+               "title": "",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            },
+            {
+               "cacheTimeout": null,
+               "colorBackground": false,
+               "colorValue": false,
+               "colors": [
+                  "rgba(50, 172, 45, 0.97)",
+                  "rgba(237, 129, 40, 0.89)",
+                  "rgba(245, 54, 54, 0.9)"
+               ],
+               "datasource": "$datasource",
+               "format": "s",
+               "gauge": {
+                  "maxValue": 0
+               },
+               "id": 15,
+               "interval": null,
+               "links": [ ],
+               "mappingType": 1,
+               "mappingTypes": [
+                  {
+                     "name": "value to text",
+                     "value": 1
+                  },
+                  {
+                     "name": "range to text",
+                     "value": 2
+                  }
+               ],
+               "maxDataPoints": 100,
+               "nullPointMode": "connected",
+               "nullText": null,
+               "postfix": "",
+               "postfixFontSize": "50%",
+               "prefix": "",
+               "prefixFontSize": "50%",
+               "rangeMaps": [
+                  {
+                     "from": "null",
+                     "text": "N/A",
+                     "to": "null"
+                  }
+               ],
+               "span": 6,
+               "sparkline": {
+                  "fillColor": "rgba(31, 118, 189, 0.18)",
+                  "full": false,
+                  "lineColor": "rgb(31, 120, 193)",
+                  "show": false
+               },
+               "tableColumn": "",
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.00, sum(rate([$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "",
+                     "refId": "A"
+                  }
+               ],
+               "thresholds": "0,0",
+               "title": "",
+               "tooltip": {
+                  "shared": false
+               },
+               "type": "singlestat",
+               "valueFontSize": "80%",
+               "valueMaps": [
+                  {
+                     "op": "=",
+                     "text": "N/A",
+                     "value": "null"
+                  }
+               ],
+               "valueName": "current"
+            }
+         ],
          "repeat": null,
          "repeatIteration": null,
          "repeatRowId": null,
