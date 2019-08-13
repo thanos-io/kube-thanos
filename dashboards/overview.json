@@ -19,300 +19,8 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 10,
+               "fill": 1,
                "id": 1,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 0,
-               "links": [
-                  {
-                     "dashboard": "Thanos / Compact",
-                     "includeVars": true,
-                     "keepTime": true,
-                     "title": "Thanos / Compact",
-                     "type": "dashboard"
-                  }
-               ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": true,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "compaction",
-                     "legendLink": null,
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Compaction Rate",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
-               },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 10,
-               "id": 2,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 0,
-               "links": [
-                  {
-                     "dashboard": "Thanos / Compact",
-                     "includeVars": true,
-                     "keepTime": true,
-                     "title": "Thanos / Compact",
-                     "type": "dashboard"
-                  }
-               ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": true,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) ",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "error",
-                     "refId": "A",
-                     "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Compaction Errors",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "percentunit",
-                     "label": null,
-                     "logBase": 1,
-                     "max": 1,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": { },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 1,
-               "id": 3,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 1,
-               "links": [
-                  {
-                     "dashboard": "Thanos / Compact",
-                     "includeVars": true,
-                     "keepTime": true,
-                     "title": "Thanos / Compact",
-                     "type": "dashboard"
-                  }
-               ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": false,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (le))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P99",
-                     "legendLink": null,
-                     "step": 10
-                  }
-               ],
-               "thresholds": [
-                  {
-                     "colorMode": "warning",
-                     "fill": true,
-                     "line": true,
-                     "op": "gt",
-                     "value": 0.5,
-                     "yaxis": "left"
-                  },
-                  {
-                     "colorMode": "critical",
-                     "fill": true,
-                     "line": true,
-                     "op": "gt",
-                     "value": 1,
-                     "yaxis": "left"
-                  }
-               ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Compaction Latency 99th Percentile",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "s",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            }
-         ],
-         "repeat": null,
-         "repeatIteration": null,
-         "repeatRowId": null,
-         "showTitle": true,
-         "title": "Compact",
-         "titleSize": "h6"
-      },
-      {
-         "collapse": false,
-         "height": "250px",
-         "panels": [
-            {
-               "aliasColors": { },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 1,
-               "id": 4,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -413,7 +121,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 5,
+               "id": 2,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -521,20 +229,31 @@
          "panels": [
             {
                "aliasColors": {
-                  "1xx": "#EAB839",
-                  "2xx": "#7EB26D",
-                  "3xx": "#6ED0E0",
-                  "4xx": "#EF843C",
-                  "5xx": "#E24D42",
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "Aborted": "#EAB839",
+                  "AlreadyExists": "#7EB26D",
+                  "Canceled": "#E24D42",
+                  "DataLoss": "#E24D42",
+                  "DeadlineExceeded": "#E24D42",
+                  "FailedPrecondition": "#6ED0E0",
+                  "Internal": "#E24D42",
+                  "InvalidArgument": "#EF843C",
+                  "NotFound": "#EF843C",
+                  "OK": "#7EB26D",
+                  "OutOfRange": "#E24D42",
+                  "PermissionDenied": "#EF843C",
+                  "ResourceExhausted": "#E24D42",
+                  "Unauthenticated": "#EF843C",
+                  "Unavailable": "#E24D42",
+                  "Unimplemented": "#6ED0E0",
+                  "Unknown": "#E24D42",
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 6,
+               "id": 3,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -548,10 +267,10 @@
                "linewidth": 0,
                "links": [
                   {
-                     "dashboard": "Thanos / Receive",
+                     "dashboard": "Thanos / Store",
                      "includeVars": true,
                      "keepTime": true,
-                     "title": "Thanos / Receive",
+                     "title": "Thanos / Store",
                      "type": "dashboard"
                   }
                ],
@@ -567,10 +286,10 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (status_code)",
+                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) by (grpc_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{status_code}}",
+                     "legendFormat": "{{grpc_code}}",
                      "refId": "A",
                      "step": 10
                   }
@@ -578,7 +297,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Incoming Requests Rate",
+               "title": "gPRC (Unary) Rate",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -621,7 +340,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 7,
+               "id": 4,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -635,10 +354,10 @@
                "linewidth": 0,
                "links": [
                   {
-                     "dashboard": "Thanos / Receive",
+                     "dashboard": "Thanos / Store",
                      "includeVars": true,
                      "keepTime": true,
-                     "title": "Thanos / Receive",
+                     "title": "Thanos / Store",
                      "type": "dashboard"
                   }
                ],
@@ -654,7 +373,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval])) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) ",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -662,7 +381,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "(sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval]))) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -673,7 +392,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Incoming Requests  Errors",
+               "title": "gPRC (Unary) Errors",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -713,7 +432,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 8,
+               "id": 5,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -727,10 +446,10 @@
                "linewidth": 1,
                "links": [
                   {
-                     "dashboard": "Thanos / Receive",
+                     "dashboard": "Thanos / Store",
                      "includeVars": true,
                      "keepTime": true,
-                     "title": "Thanos / Receive",
+                     "title": "Thanos / Store",
                      "type": "dashboard"
                   }
                ],
@@ -746,7 +465,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval])) by (le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-store\"}[$interval])) by (le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99",
@@ -774,7 +493,7 @@
                ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Incoming Requests Latency 99th Percentile",
+               "title": "gRPC Latency 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -812,299 +531,7 @@
          "repeatIteration": null,
          "repeatRowId": null,
          "showTitle": true,
-         "title": "Receive",
-         "titleSize": "h6"
-      },
-      {
-         "collapse": false,
-         "height": "250px",
-         "panels": [
-            {
-               "aliasColors": { },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 10,
-               "id": 9,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 0,
-               "links": [
-                  {
-                     "dashboard": "Thanos / Rule",
-                     "includeVars": true,
-                     "keepTime": true,
-                     "title": "Thanos / Rule",
-                     "type": "dashboard"
-                  }
-               ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": true,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (alertmanager)",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "{{alertmanager}}",
-                     "legendLink": null,
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Alert Sent Rate",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
-               },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 10,
-               "id": 10,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 0,
-               "links": [
-                  {
-                     "dashboard": "Thanos / Rule",
-                     "includeVars": true,
-                     "keepTime": true,
-                     "title": "Thanos / Rule",
-                     "type": "dashboard"
-                  }
-               ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": true,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(rate(thanos_alert_sender_errors_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) / sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) ",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "error",
-                     "refId": "A",
-                     "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) - sum(rate(thanos_alert_sender_errors_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval]))) / sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Alert Sent Errors",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "percentunit",
-                     "label": null,
-                     "logBase": 1,
-                     "max": 1,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": { },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 1,
-               "id": 11,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 1,
-               "links": [
-                  {
-                     "dashboard": "Thanos / Rule",
-                     "includeVars": true,
-                     "keepTime": true,
-                     "title": "Thanos / Rule",
-                     "type": "dashboard"
-                  }
-               ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": false,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (le))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P99",
-                     "legendLink": null,
-                     "step": 10
-                  }
-               ],
-               "thresholds": [
-                  {
-                     "colorMode": "warning",
-                     "fill": true,
-                     "line": true,
-                     "op": "gt",
-                     "value": 0.5,
-                     "yaxis": "left"
-                  },
-                  {
-                     "colorMode": "critical",
-                     "fill": true,
-                     "line": true,
-                     "op": "gt",
-                     "value": 1,
-                     "yaxis": "left"
-                  }
-               ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Sent Error Duration",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "s",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            }
-         ],
-         "repeat": null,
-         "repeatIteration": null,
-         "repeatRowId": null,
-         "showTitle": true,
-         "title": "Rule",
+         "title": "Store",
          "titleSize": "h6"
       },
       {
@@ -1137,7 +564,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 12,
+               "id": 6,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1224,7 +651,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 13,
+               "id": 7,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1316,7 +743,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 14,
+               "id": 8,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1424,25 +851,598 @@
          "panels": [
             {
                "aliasColors": {
-                  "Aborted": "#EAB839",
-                  "AlreadyExists": "#7EB26D",
-                  "Canceled": "#E24D42",
-                  "DataLoss": "#E24D42",
-                  "DeadlineExceeded": "#E24D42",
-                  "FailedPrecondition": "#6ED0E0",
-                  "Internal": "#E24D42",
-                  "InvalidArgument": "#EF843C",
-                  "NotFound": "#EF843C",
-                  "OK": "#7EB26D",
-                  "OutOfRange": "#E24D42",
-                  "PermissionDenied": "#EF843C",
-                  "ResourceExhausted": "#E24D42",
-                  "Unauthenticated": "#EF843C",
-                  "Unavailable": "#E24D42",
-                  "Unimplemented": "#6ED0E0",
-                  "Unknown": "#E24D42",
-                  "error": "#E24D42"
+                  "1xx": "#EAB839",
+                  "2xx": "#7EB26D",
+                  "3xx": "#6ED0E0",
+                  "4xx": "#EF843C",
+                  "5xx": "#E24D42",
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 9,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Receive",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Receive",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (status_code)",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{status_code}}",
+                     "refId": "A",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Incoming Requests Rate",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 10,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Receive",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Receive",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval])) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "(sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval]))) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Incoming Requests  Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 11,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Receive",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Receive",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "P99",
+                     "legendLink": null,
+                     "step": 10
+                  }
+               ],
+               "thresholds": [
+                  {
+                     "colorMode": "warning",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 0.5,
+                     "yaxis": "left"
+                  },
+                  {
+                     "colorMode": "critical",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 1,
+                     "yaxis": "left"
+                  }
+               ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Incoming Requests Latency 99th Percentile",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Receive",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": true,
+         "height": "250px",
+         "panels": [
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 12,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Rule",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Rule",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (alertmanager)",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{alertmanager}}",
+                     "legendLink": null,
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Alert Sent Rate",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 13,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Rule",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Rule",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(thanos_alert_sender_errors_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) / sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "(sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) - sum(rate(thanos_alert_sender_errors_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval]))) / sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Alert Sent Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 14,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Rule",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Rule",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (le))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "P99",
+                     "legendLink": null,
+                     "step": 10
+                  }
+               ],
+               "thresholds": [
+                  {
+                     "colorMode": "warning",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 0.5,
+                     "yaxis": "left"
+                  },
+                  {
+                     "colorMode": "critical",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 1,
+                     "yaxis": "left"
+                  }
+               ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Sent Error Duration",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Rule",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": true,
+         "height": "250px",
+         "panels": [
+            {
+               "aliasColors": { },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
@@ -1462,10 +1462,10 @@
                "linewidth": 0,
                "links": [
                   {
-                     "dashboard": "Thanos / Store",
+                     "dashboard": "Thanos / Compact",
                      "includeVars": true,
                      "keepTime": true,
-                     "title": "Thanos / Store",
+                     "title": "Thanos / Compact",
                      "type": "dashboard"
                   }
                ],
@@ -1481,18 +1481,18 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) by (grpc_code)",
+                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "{{grpc_code}}",
-                     "refId": "A",
+                     "legendFormat": "compaction",
+                     "legendLink": null,
                      "step": 10
                   }
                ],
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "gPRC (Unary) Rate",
+               "title": "Compaction Rate",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -1549,10 +1549,10 @@
                "linewidth": 0,
                "links": [
                   {
-                     "dashboard": "Thanos / Store",
+                     "dashboard": "Thanos / Compact",
                      "includeVars": true,
                      "keepTime": true,
-                     "title": "Thanos / Store",
+                     "title": "Thanos / Compact",
                      "type": "dashboard"
                   }
                ],
@@ -1568,7 +1568,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) ",
+                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -1576,7 +1576,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval]))",
+                     "expr": "(sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -1587,7 +1587,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "gPRC (Unary) Errors",
+               "title": "Compaction Errors",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -1641,10 +1641,10 @@
                "linewidth": 1,
                "links": [
                   {
-                     "dashboard": "Thanos / Store",
+                     "dashboard": "Thanos / Compact",
                      "includeVars": true,
                      "keepTime": true,
-                     "title": "Thanos / Store",
+                     "title": "Thanos / Compact",
                      "type": "dashboard"
                   }
                ],
@@ -1660,7 +1660,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-store\"}[$interval])) by (le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99",
@@ -1688,7 +1688,7 @@
                ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "gRPC Latency 99th Percentile",
+               "title": "Compaction Latency 99th Percentile",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -1726,7 +1726,7 @@
          "repeatIteration": null,
          "repeatRowId": null,
          "showTitle": true,
-         "title": "Store",
+         "title": "Compact",
          "titleSize": "h6"
       }
    ],
