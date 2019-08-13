@@ -36,16 +36,10 @@
     },
 
   httpErrPanel(metricName, selector)::
-    $.queryPanel(
-      |||
-        sum(rate(%s{%s,code!~"2.."}[$interval]))
-        /
-        sum(rate(%s{%s}[$interval]))
-      ||| % [metricName, selector, metricName, selector],
-      'error'
-    ) +
-    { aliasColors: { 'error': '#E24D42' } } +
-    { yaxes: $.yaxes({ format: 'percentunit', max: 1 }) },
+    $.qpsErrTotalPanel(
+      '%s{%s,code!~"2.."}' % [metricName, selector],
+      '%s{%s}' % [metricName, selector],
+    ),
 
   httpErrDetailsPanel(metricName, selector)::
     $.queryPanel(

@@ -31,7 +31,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
@@ -62,7 +62,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
@@ -106,11 +106,12 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="success"}))' % $._config,
+            'sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="success"}[$interval]))' % $._config,
             'all',
           )
         )
         .addPanel(
+          g.panel('Errors') +
           g.qpsErrTotalPanel(
             'thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="error"}' % $._config,
             'thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,

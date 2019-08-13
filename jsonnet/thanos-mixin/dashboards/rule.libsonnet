@@ -31,7 +31,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrDetailsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="unary"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +
@@ -62,7 +62,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrorDetailsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrDetailsPanel('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="server_stream"' % $._config)
         )
         .addPanel(
           g.panel('Duration') +

@@ -55,7 +55,7 @@
       '%s_started_total{%s}' % [prefix, selector],
     ),
 
-  grpcErrorDetailsPanel(type, selector)::
+  grpcErrDetailsPanel(type, selector)::
     local prefix = if type == 'client' then 'grpc_client' else 'grpc_server';
     $.queryPanel(
       |||
