@@ -81,6 +81,6 @@
         step: 10,
       },
     ],
-    yaxes: $.yaxes('ms'),
+    yaxes: $.yaxes('s'),
   },
 }

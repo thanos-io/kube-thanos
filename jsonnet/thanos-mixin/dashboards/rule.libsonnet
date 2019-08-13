@@ -3,11 +3,38 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
 {
   grafanaDashboards+:: {
     'rule.json':
-      g.dashboard(
-        '%(dashboardNamePrefix)sRule' % $._config.grafanaThanos,
-      )
+      g.dashboard($._config.grafanaThanos.dashboardRuleTitle)
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
+      .addRow(
+        g.row('Alert Sent')
+        .addPanel(
+          g.panel('Dropped Rate') +
+          g.queryPanel(
+            'sum(rate(thanos_alert_sender_alerts_dropped_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager)' % $._config,
+            '{{alertmanager}}'
+          )
+        )
+        .addPanel(
+          g.panel('Sent Rate') +
+          g.queryPanel(
+            'sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager)' % $._config,
+            '{{alertmanager}}'
+          ) +
+          g.stack
+        )
+        .addPanel(
+          g.panel('Sent Errors') +
+          g.qpsErrTotalPanel(
+            'thanos_alert_sender_errors_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
+            'thanos_alert_sender_alerts_sent_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
+          )
+        )
+        .addPanel(
+          g.panel('Sent Duration') +
+          g.latencyPanel('thanos_alert_sender_latency_seconds', 'namespace=~"$namespace",%(thanosRuleSelector)s' % $._config),
+        )
+      )
       .addRow(
         g.row('gRPC (Unary)')
         .addPanel(
@@ -69,35 +96,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosRuleSelector)s,grpc_type="server_stream"' % $._config)
         ) +
         g.collapse
-      )
-      .addRow(
-        g.row('Alert Sent')
-        .addPanel(
-          g.panel('Dropped Rate') +
-          g.queryPanel(
-            'sum(rate(thanos_alert_sender_alerts_dropped_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager)' % $._config,
-            '{{alertmanager}}'
-          )
-        )
-        .addPanel(
-          g.panel('Sent Rate') +
-          g.queryPanel(
-            'sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager)' % $._config,
-            '{{alertmanager}}'
-          ) +
-          g.stack
-        )
-        .addPanel(
-          g.panel('Sent Errors') +
-          g.qpsErrTotalPanel(
-            'thanos_alert_sender_errors_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
-            'thanos_alert_sender_alerts_sent_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
-          )
-        )
-        .addPanel(
-          g.panel('Sent Duration') +
-          g.latencyPanel('thanos_alert_sender_latency_seconds', 'namespace=~"$namespace",%(thanosRuleSelector)s' % $._config),
-        )
       )
       .addRow(
         g.row('Compaction')

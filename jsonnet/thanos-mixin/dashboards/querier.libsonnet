@@ -3,11 +3,66 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
 {
   grafanaDashboards+:: {
     'querier.json':
-      g.dashboard(
-        '%(dashboardNamePrefix)sQuerier' % $._config.grafanaThanos,
-      )
+      g.dashboard($._config.grafanaThanos.dashboardQuerierTitle)
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
+      .addRow(
+        g.row('Query API')
+        .addPanel(
+          g.panel('Instant Query') +
+          g.latencyPanel('thanos_query_api_instant_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
+        )
+        .addPanel(
+          g.panel('Range Query') +
+          g.latencyPanel('thanos_query_api_range_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Detailed')
+        .addPanel(
+          g.panel('Instant Query') +
+          g.queryPanel(
+            [
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
+              |||
+                sum(
+                  rate(thanos_query_api_instant_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
+                /
+                  rate(thanos_query_api_instant_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
+                ) by (pod)
+              ||| % $._config,
+              'histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
+            ],
+            [
+              'P99 {{pod}}',
+              'mean {{pod}}',
+              'P50 {{pod}}',
+            ]
+          )
+        )
+        .addPanel(
+          g.panel('Range Query') +
+          g.queryPanel(
+            [
+              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
+              |||
+                sum(
+                  rate(thanos_query_api_range_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
+                /
+                  rate(thanos_query_api_range_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
+                ) by (pod)
+              ||| % $._config,
+              'histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
+            ],
+            [
+              'P99 {{pod}}',
+              'mean {{pod}}',
+              'P50 {{pod}}',
+            ]
+          )
+        ) +
+        g.collapse
+      )
       .addRow(
         g.row('gRPC (Unary)')
         .addPanel(
@@ -86,63 +141,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
             'thanos_querier_store_apis_dns_lookups_total{namespace=~"$namespace",%(thanosQuerierSelector)s}' % $._config,
           )
         )
-      )
-      .addRow(
-        g.row('Query API')
-        .addPanel(
-          g.panel('Instant Query') +
-          g.latencyPanel('thanos_query_api_instant_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
-        )
-        .addPanel(
-          g.panel('Range Query') +
-          g.latencyPanel('thanos_query_api_range_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
-        )
-      )
-      .addRow(
-        g.row('Detailed')
-        .addPanel(
-          g.panel('Instant Query') +
-          g.queryPanel(
-            [
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-              |||
-                sum(
-                  rate(thanos_query_api_instant_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-                /
-                  rate(thanos_query_api_instant_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-                ) by (pod)
-              ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-            ],
-            [
-              'P99 {{pod}}',
-              'mean {{pod}}',
-              'P50 {{pod}}',
-            ]
-          )
-        )
-        .addPanel(
-          g.panel('Range Query') +
-          g.queryPanel(
-            [
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-              |||
-                sum(
-                  rate(thanos_query_api_range_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-                /
-                  rate(thanos_query_api_range_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-                ) by (pod)
-              ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-            ],
-            [
-              'P99 {{pod}}',
-              'mean {{pod}}',
-              'P50 {{pod}}',
-            ]
-          )
-        ) +
-        g.collapse
       )
       .addRow(
         g.row('Prometheus')

@@ -8,13 +8,13 @@
     thanosSidecar: 'thanos-sidecar',
     thanosPrometheus: 'prometheus-telemeter',
 
-    thanosQuerierSelector: 'job="thanos-querier"',
-    thanosStoreSelector: 'job="thanos-store"',
-    thanosReceiveSelector: 'job="thanos-receive"',
-    thanosRuleSelector: 'job="thanos-rule"',
-    thanosCompactSelector: 'job="thanos-compact"',
-    thanosSidecarSelector: 'job="thanos-sidecar"',
-    thanosPrometheusSelector: 'job="prometheus-telemeter"',
+    thanosQuerierSelector: 'job="%s"' % self.thanosQuerier,
+    thanosStoreSelector: 'job="%s"' % self.thanosStore,
+    thanosReceiveSelector: 'job="%s"' % self.thanosReceive,
+    thanosRuleSelector: 'job="%s"' % self.thanosRule,
+    thanosCompactSelector: 'job="%s"' % self.thanosCompact,
+    thanosSidecarSelector: 'job="%s"' % self.thanosSidecar,
+    thanosPrometheusSelector: 'job="%s"' % self.thanosPrometheus,
 
     clusterLabel: 'cluster',
     showMultiCluster: false,
@@ -24,9 +24,13 @@
       dashboardNamePrefix: 'Thanos / ',
       dashboardTags: ['thanos-mixin'],
 
-      // For links between grafana dashboards, you need to tell us if your grafana
-      // servers under some non-root path.
-      linkPrefix: '',
+      dashboardOverviewTitle: '%(dashboardNamePrefix)sOverview' % $._config.grafanaThanos,
+      dashboardCompactTitle: '%(dashboardNamePrefix)sCompact' % $._config.grafanaThanos,
+      dashboardQuerierTitle: '%(dashboardNamePrefix)sQuerier' % $._config.grafanaThanos,
+      dashboardReceiveTitle: '%(dashboardNamePrefix)sReceive' % $._config.grafanaThanos,
+      dashboardRuleTitle: '%(dashboardNamePrefix)sRule' % $._config.grafanaThanos,
+      dashboardSidecarTitle: '%(dashboardNamePrefix)sSidecar' % $._config.grafanaThanos,
+      dashboardStoreTitle: '%(dashboardNamePrefix)sStore' % $._config.grafanaThanos,
     },
   },
 }

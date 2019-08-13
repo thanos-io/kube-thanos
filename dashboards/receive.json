@@ -15,6 +15,720 @@
          "panels": [
             {
                "aliasColors": {
+                  "1xx": "#EAB839",
+                  "2xx": "#7EB26D",
+                  "3xx": "#6ED0E0",
+                  "4xx": "#EF843C",
+                  "5xx": "#E24D42",
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 1,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (status_code)",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{status_code}}",
+                     "refId": "A",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Rate",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 2,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval])) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "(sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval]))) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 3,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (le)) * 1",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "P99",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(thanos_http_request_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) * 1 / sum(rate(thanos_http_request_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "mean",
+                     "refId": "B",
+                     "step": 10
+                  },
+                  {
+                     "expr": "histogram_quantile(0.50, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (le)) * 1",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "P50",
+                     "refId": "C",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Duration",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Incoming Request",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": true,
+         "height": "250px",
+         "panels": [
+            {
+               "aliasColors": {
+                  "1xx": "#EAB839",
+                  "2xx": "#7EB26D",
+                  "3xx": "#6ED0E0",
+                  "4xx": "#EF843C",
+                  "5xx": "#E24D42",
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 4,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (handler, status_code)",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{handler}} {{status_code}}",
+                     "refId": "A",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Rate",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 5,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval])) by (handler, code)\n/\nsum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (handler, code)\n",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{handler}} {{code}}",
+                     "legendLink": null,
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 6,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (handler, le)) * 1",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "P99 {{handler}}",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(thanos_http_request_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) * 1 / sum(rate(thanos_http_request_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "mean",
+                     "refId": "B",
+                     "step": 10
+                  },
+                  {
+                     "expr": "histogram_quantile(0.50, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (lhandler, e)) * 1",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "P50 {{handler}}",
+                     "refId": "C",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Duration",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Detailed",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": false,
+         "height": "250px",
+         "panels": [
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 7,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 6,
+               "stack": false,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"success\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "all",
+                     "legendLink": null,
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Rate",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 8,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 6,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"error\"}[$interval])) / sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "(sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"error\"}[$interval]))) / sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Forward Request",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": false,
+         "height": "250px",
+         "panels": [
+            {
+               "aliasColors": {
                   "Aborted": "#EAB839",
                   "AlreadyExists": "#7EB26D",
                   "Canceled": "#E24D42",
@@ -39,7 +753,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 1,
+               "id": 9,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -118,7 +832,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 2,
+               "id": 10,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -143,7 +857,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval]))",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -151,7 +865,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval]))",
+                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"unary\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -178,10 +892,10 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": null,
+                     "max": 1,
                      "min": 0,
                      "show": true
                   },
@@ -202,7 +916,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 3,
+               "id": 11,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -306,7 +1020,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 4,
+               "id": 12,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -382,7 +1096,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 5,
+               "id": 13,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -458,7 +1172,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 6,
+               "id": 14,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -581,7 +1295,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 7,
+               "id": 15,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -660,7 +1374,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 8,
+               "id": 16,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -685,7 +1399,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval]))",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -693,7 +1407,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval]))",
+                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-receive\",grpc_type=\"server_stream\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -720,10 +1434,10 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": null,
+                     "max": 1,
                      "min": 0,
                      "show": true
                   },
@@ -744,7 +1458,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 9,
+               "id": 17,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -848,7 +1562,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 10,
+               "id": 18,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -924,7 +1638,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 11,
+               "id": 19,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1000,7 +1714,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 12,
+               "id": 20,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1091,720 +1805,6 @@
          "repeatRowId": null,
          "showTitle": true,
          "title": "Detailed",
-         "titleSize": "h6"
-      },
-      {
-         "collapse": false,
-         "height": "250px",
-         "panels": [
-            {
-               "aliasColors": {
-                  "1xx": "#EAB839",
-                  "2xx": "#7EB26D",
-                  "3xx": "#6ED0E0",
-                  "4xx": "#EF843C",
-                  "5xx": "#E24D42",
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
-               },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 10,
-               "id": 13,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 0,
-               "links": [ ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": true,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (status_code)",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "{{status_code}}",
-                     "refId": "A",
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Rate",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
-               },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 10,
-               "id": 14,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 0,
-               "links": [ ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": true,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "error",
-                     "refId": "A",
-                     "step": 10
-                  },
-                  {
-                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Errors",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": { },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 1,
-               "id": 15,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 1,
-               "links": [ ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": false,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (le)) * 1",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P99",
-                     "refId": "A",
-                     "step": 10
-                  },
-                  {
-                     "expr": "sum(rate(thanos_http_request_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) * 1 / sum(rate(thanos_http_request_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "mean",
-                     "refId": "B",
-                     "step": 10
-                  },
-                  {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (le)) * 1",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P50",
-                     "refId": "C",
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Duration",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "ms",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            }
-         ],
-         "repeat": null,
-         "repeatIteration": null,
-         "repeatRowId": null,
-         "showTitle": true,
-         "title": "Incoming Request",
-         "titleSize": "h6"
-      },
-      {
-         "collapse": true,
-         "height": "250px",
-         "panels": [
-            {
-               "aliasColors": {
-                  "1xx": "#EAB839",
-                  "2xx": "#7EB26D",
-                  "3xx": "#6ED0E0",
-                  "4xx": "#EF843C",
-                  "5xx": "#E24D42",
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
-               },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 10,
-               "id": 16,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 0,
-               "links": [ ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": true,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (handler, status_code)",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "{{handler}} {{status_code}}",
-                     "refId": "A",
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Rate",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": { },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 10,
-               "id": 17,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 0,
-               "links": [ ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": true,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval])) by (handler, code)\n/\nsum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (handler, code)\n",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "{{handler}} {{code}}",
-                     "legendLink": null,
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Errors",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "percentunit",
-                     "label": null,
-                     "logBase": 1,
-                     "max": 1,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": { },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 1,
-               "id": 18,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 1,
-               "links": [ ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": false,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (handler, le)) * 1",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P99 {{handler}}",
-                     "refId": "A",
-                     "step": 10
-                  },
-                  {
-                     "expr": "sum(rate(thanos_http_request_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) * 1 / sum(rate(thanos_http_request_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "mean",
-                     "refId": "B",
-                     "step": 10
-                  },
-                  {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) by (lhandler, e)) * 1",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P50 {{handler}}",
-                     "refId": "C",
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Duration",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "ms",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            }
-         ],
-         "repeat": null,
-         "repeatIteration": null,
-         "repeatRowId": null,
-         "showTitle": true,
-         "title": "Detailed",
-         "titleSize": "h6"
-      },
-      {
-         "collapse": false,
-         "height": "250px",
-         "panels": [
-            {
-               "aliasColors": { },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 1,
-               "id": 19,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 1,
-               "links": [ ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 6,
-               "stack": false,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"success\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "all",
-                     "legendLink": null,
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Rate",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
-               },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 10,
-               "id": 20,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 0,
-               "links": [ ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 6,
-               "stack": true,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"error\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "error",
-                     "refId": "A",
-                     "step": 10
-                  },
-                  {
-                     "expr": "sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(thanos_receive_forward_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",result=\"error\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
-                  }
-               ],
-               "thresholds": [ ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Errors",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            }
-         ],
-         "repeat": null,
-         "repeatIteration": null,
-         "repeatRowId": null,
-         "showTitle": true,
-         "title": "Forward Request",
          "titleSize": "h6"
       },
       {
@@ -2270,7 +2270,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_receive_hashrings_file_errors_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "expr": "sum(rate(thanos_receive_hashrings_file_errors_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) / sum(rate(thanos_receive_hashrings_file_changes_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -2278,7 +2278,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_receive_hashrings_file_changes_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(thanos_receive_hashrings_file_errors_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "expr": "(sum(rate(thanos_receive_hashrings_file_changes_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(thanos_receive_hashrings_file_errors_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))) / sum(rate(thanos_receive_hashrings_file_changes_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -2305,10 +2305,10 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": null,
+                     "max": 1,
                      "min": 0,
                      "show": true
                   },
@@ -2445,7 +2445,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -2453,7 +2453,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(prometheus_tsdb_compactions_failed_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "expr": "(sum(rate(prometheus_tsdb_compactions_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(prometheus_tsdb_compactions_failed_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))) / sum(rate(prometheus_tsdb_compactions_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -2480,10 +2480,10 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": null,
+                     "max": 1,
                      "min": 0,
                      "show": true
                   },
@@ -2572,7 +2572,7 @@
                },
                "yaxes": [
                   {
-                     "format": "ms",
+                     "format": "s",
                      "label": null,
                      "logBase": 1,
                      "max": null,

@@ -19,7 +19,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 1,
+               "fill": 10,
                "id": 1,
                "legend": {
                   "avg": false,
@@ -31,8 +31,16 @@
                   "values": false
                },
                "lines": true,
-               "linewidth": 1,
-               "links": [ ],
+               "linewidth": 0,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Compact",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Compact",
+                     "type": "dashboard"
+                  }
+               ],
                "nullPointMode": "null as zero",
                "percentage": false,
                "pointradius": 5,
@@ -40,40 +48,29 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 12,
-               "stack": false,
+               "span": 4,
+               "stack": true,
                "steppedLine": false,
-               "styles": [
+               "targets": [
                   {
-                     "alias": "Time",
-                     "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                     "pattern": "Time",
-                     "type": "hidden"
-                  },
-                  {
-                     "alias": "",
-                     "colorMode": null,
-                     "colors": [ ],
-                     "dateFormat": "YYYY-MM-DD HH:mm:ss",
-                     "decimals": 2,
-                     "pattern": "/.*/",
-                     "thresholds": [ ],
-                     "type": "string",
-                     "unit": "short"
+                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "compaction",
+                     "legendLink": null,
+                     "step": 10
                   }
                ],
-               "targets": [ ],
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Per component",
+               "title": "Compaction Rate",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
                   "value_type": "individual"
                },
-               "transform": "table",
-               "type": "table",
+               "type": "graph",
                "xaxis": {
                   "buckets": null,
                   "mode": "time",
@@ -99,172 +96,202 @@
                      "show": false
                   }
                ]
-            }
-         ],
-         "repeat": null,
-         "repeatIteration": null,
-         "repeatRowId": null,
-         "showTitle": true,
-         "title": "Overview",
-         "titleSize": "h6"
-      },
-      {
-         "collapse": false,
-         "height": "250px",
-         "panels": [
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
-                  "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
-               },
-               "id": 2,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
-                  }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 6,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
-               "targets": [
-                  {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]) / rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) * 100",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
-                  }
-               ],
-               "thresholds": "10,30",
-               "title": "Compaction Error Rate",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
             },
             {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
-               "id": 3,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 2,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [
                   {
-                     "name": "value to text",
-                     "value": 1
+                     "dashboard": "Thanos / Compact",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Compact",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
                   },
                   {
-                     "name": "range to text",
-                     "value": 2
+                     "expr": "(sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
                   }
                ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 6,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Compaction Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
                },
-               "tableColumn": "",
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 3,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Compact",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Compact",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
                "targets": [
                   {
                      "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "P99",
+                     "legendLink": null,
+                     "step": 10
                   }
                ],
-               "thresholds": "0.5,1",
-               "title": "Compaction Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+               "thresholds": [
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
+                     "colorMode": "warning",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 0.5,
+                     "yaxis": "left"
+                  },
+                  {
+                     "colorMode": "critical",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 1,
+                     "yaxis": "left"
                   }
                ],
-               "valueName": "current"
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Compaction Latency 99th Percentile",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
             }
          ],
          "repeat": null,
@@ -279,308 +306,206 @@
          "height": "250px",
          "panels": [
             {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
                "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
-                  "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
-               },
+               "fill": 1,
                "id": 4,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
-                  }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 3,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
                },
-               "tableColumn": "",
-               "targets": [
+               "lines": true,
+               "linewidth": 1,
+               "links": [
                   {
-                     "expr": "sum(rate(grpc_client_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval]) / rate(grpc_client_started_total{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval])) * 100",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "dashboard": "Thanos / Querier",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Querier",
+                     "type": "dashboard"
                   }
                ],
-               "thresholds": "10,30",
-               "title": "gRPC API Error Rate",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
-               },
-               "id": 5,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
-                  }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 3,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
-               "targets": [
-                  {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
-                  }
-               ],
-               "thresholds": "0.5,1",
-               "title": "gRPC Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
-               },
-               "id": 6,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
-                  }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 3,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 6,
+               "stack": false,
+               "steppedLine": false,
                "targets": [
                   {
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "P99",
+                     "legendLink": null,
+                     "step": 10
                   }
                ],
-               "thresholds": "0.5,1",
-               "title": "Instant Query Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+               "thresholds": [
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
-               },
-               "id": 7,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
+                     "colorMode": "warning",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 0.5,
+                     "yaxis": "left"
                   },
                   {
-                     "name": "range to text",
-                     "value": 2
+                     "colorMode": "critical",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 1,
+                     "yaxis": "left"
                   }
                ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 3,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Instant Query Latency 99th Percentile",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
                },
-               "tableColumn": "",
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 5,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Querier",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Querier",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 6,
+               "stack": false,
+               "steppedLine": false,
                "targets": [
                   {
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "P99",
+                     "legendLink": null,
+                     "step": 10
                   }
                ],
-               "thresholds": "0.5,1",
-               "title": "Range Query Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+               "thresholds": [
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
+                     "colorMode": "warning",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 0.5,
+                     "yaxis": "left"
+                  },
+                  {
+                     "colorMode": "critical",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 1,
+                     "yaxis": "left"
                   }
                ],
-               "valueName": "current"
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Range Query Latency 99th Percentile",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
             }
          ],
          "repeat": null,
@@ -595,391 +520,292 @@
          "height": "250px",
          "panels": [
             {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
-                  "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
+               "aliasColors": {
+                  "1xx": "#EAB839",
+                  "2xx": "#7EB26D",
+                  "3xx": "#6ED0E0",
+                  "4xx": "#EF843C",
+                  "5xx": "#E24D42",
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 6,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Receive",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Receive",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (status_code)",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{status_code}}",
+                     "refId": "A",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Incoming Requests Rate",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 7,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Receive",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Receive",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval])) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "(sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval])) - sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\",code!~\"2..\"}[$interval]))) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=\"thanos-receive\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Incoming Requests  Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
                "id": 8,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
-                  }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 2,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
-               "targets": [
-                  {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval]) / rate(grpc_server_started_total{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval])) * 100",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
-                  }
-               ],
-               "thresholds": "10,30",
-               "title": "gRPC API Error Rate",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
-               },
-               "id": 9,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
-                  }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 2,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
-               "targets": [
-                  {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval])) by (le))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
-                  }
-               ],
-               "thresholds": "0.5,1",
-               "title": "gRPC Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
                   "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
+                  "total": false,
+                  "values": false
                },
-               "id": 10,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "lines": true,
+               "linewidth": 1,
+               "links": [
                   {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
+                     "dashboard": "Thanos / Receive",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Receive",
+                     "type": "dashboard"
                   }
                ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 2,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
-               "targets": [
-                  {
-                     "expr": "sum(rate(thanos_http_requests_total{code!~\"2..\",namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval]) / rate(thanos_http_requests_total{namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval])) * 100",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
-                  }
-               ],
-               "thresholds": "10,30",
-               "title": "Incoming Requests Error Rate",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
-               },
-               "id": 11,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
-                  }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 2,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
                "targets": [
                   {
                      "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval])) by (le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "P99",
+                     "legendLink": null,
+                     "step": 10
                   }
                ],
-               "thresholds": "0.5,1",
-               "title": "Incoming Requests Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+               "thresholds": [
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
-                  "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
-               },
-               "id": 12,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
+                     "colorMode": "warning",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 0.5,
+                     "yaxis": "left"
                   },
                   {
-                     "name": "range to text",
-                     "value": 2
+                     "colorMode": "critical",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 1,
+                     "yaxis": "left"
                   }
                ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 2,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
-               "targets": [
-                  {
-                     "expr": "sum(rate(thanos_receive_forward_requests_total{result=\"error\",namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval]) / rate(thanos_receive_forward_requests_total{namespace=~\"$namespace\",job=\"thanos-receive\"}[$interval])) * 100",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
-                  }
-               ],
-               "thresholds": "10,30",
-               "title": "Forward Requests Error Rate",
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Incoming Requests Latency 99th Percentile",
                "tooltip": {
-                  "shared": false
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
                },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
                   }
-               ],
-               "valueName": "current"
+               ]
             }
          ],
          "repeat": null,
@@ -994,237 +820,284 @@
          "height": "250px",
          "panels": [
             {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
                "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
+               "fill": 10,
+               "id": 9,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
                   "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
+                  "total": false,
+                  "values": false
                },
-               "id": 13,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "lines": true,
+               "linewidth": 0,
+               "links": [
                   {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
+                     "dashboard": "Thanos / Rule",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Rule",
+                     "type": "dashboard"
                   }
                ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
                "span": 4,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
+               "stack": true,
+               "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval]) / rate(grpc_server_started_total{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) * 100",
+                     "expr": "sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (alertmanager)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "{{alertmanager}}",
+                     "legendLink": null,
+                     "step": 10
                   }
                ],
-               "thresholds": "10,30",
-               "title": "gRPC API Error Rate",
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Alert Sent Rate",
                "tooltip": {
-                  "shared": false
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
                },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
                   }
-               ],
-               "valueName": "current"
+               ]
             },
             {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
                "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
+               "fill": 10,
+               "id": 10,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
                },
-               "id": 14,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "lines": true,
+               "linewidth": 0,
+               "links": [
                   {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
+                     "dashboard": "Thanos / Rule",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Rule",
+                     "type": "dashboard"
                   }
                ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
                "span": 4,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
+               "stack": true,
+               "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (le))",
+                     "expr": "sum(rate(thanos_alert_sender_errors_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) / sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
-                  }
-               ],
-               "thresholds": "0.5,1",
-               "title": "gRPC Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
+                     "expr": "(sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval])) - sum(rate(thanos_alert_sender_errors_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval]))) / sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=\"thanos-rule\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
                   }
                ],
-               "valueName": "current"
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Alert Sent Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
             },
             {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
                "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
+               "fill": 1,
+               "id": 11,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
                   "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
+                  "total": false,
+                  "values": false
                },
-               "id": 15,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "lines": true,
+               "linewidth": 1,
+               "links": [
                   {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
+                     "dashboard": "Thanos / Rule",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Rule",
+                     "type": "dashboard"
                   }
                ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
                "span": 4,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
+               "stack": false,
+               "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_alert_sender_errors_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval]) / rate(thanos_alert_sender_alerts_sent_total{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) * 100",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-rule\"}[$interval])) by (le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "P99",
+                     "legendLink": null,
+                     "step": 10
                   }
                ],
-               "thresholds": "10,30",
-               "title": "Sent Error Rate",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+               "thresholds": [
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
+                     "colorMode": "warning",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 0.5,
+                     "yaxis": "left"
+                  },
+                  {
+                     "colorMode": "critical",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 1,
+                     "yaxis": "left"
                   }
                ],
-               "valueName": "current"
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Sent Error Duration",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
             }
          ],
          "repeat": null,
@@ -1239,312 +1112,303 @@
          "height": "250px",
          "panels": [
             {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
+               "aliasColors": {
+                  "Aborted": "#EAB839",
+                  "AlreadyExists": "#7EB26D",
+                  "Canceled": "#E24D42",
+                  "DataLoss": "#E24D42",
+                  "DeadlineExceeded": "#E24D42",
+                  "FailedPrecondition": "#6ED0E0",
+                  "Internal": "#E24D42",
+                  "InvalidArgument": "#EF843C",
+                  "NotFound": "#EF843C",
+                  "OK": "#7EB26D",
+                  "OutOfRange": "#E24D42",
+                  "PermissionDenied": "#EF843C",
+                  "ResourceExhausted": "#E24D42",
+                  "Unauthenticated": "#EF843C",
+                  "Unavailable": "#E24D42",
+                  "Unimplemented": "#6ED0E0",
+                  "Unknown": "#E24D42",
+                  "error": "#E24D42"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
                "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
+               "fill": 10,
+               "id": 12,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
                   "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
+                  "total": false,
+                  "values": false
                },
-               "id": 16,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "lines": true,
+               "linewidth": 0,
+               "links": [
                   {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
+                     "dashboard": "Thanos / Sidecar",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Sidecar",
+                     "type": "dashboard"
                   }
                ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 3,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-sidecar\"}[$interval]) / rate(grpc_server_started_total{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-sidecar\"}[$interval])) * 100",
+                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval])) by (grpc_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "{{grpc_code}}",
+                     "refId": "A",
+                     "step": 10
                   }
                ],
-               "thresholds": "10,30",
-               "title": "gRPC API Error Rate",
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "gPRC (Unary) Rate",
                "tooltip": {
-                  "shared": false
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
                },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
                },
-               "id": 17,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "yaxes": [
                   {
-                     "name": "value to text",
-                     "value": 1
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
                   },
                   {
-                     "name": "range to text",
-                     "value": 2
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
                   }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 3,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
+               ]
+            },
+            {
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
-               "tableColumn": "",
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 13,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Sidecar",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Sidecar",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "gPRC (Unary) Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 14,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Sidecar",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Sidecar",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
                "targets": [
                   {
                      "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-sidecar\"}[$interval])) by (le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "P99",
+                     "legendLink": null,
+                     "step": 10
                   }
                ],
-               "thresholds": "0.5,1",
-               "title": "gRPC Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+               "thresholds": [
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
+                     "colorMode": "warning",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 0.5,
+                     "yaxis": "left"
+                  },
+                  {
+                     "colorMode": "critical",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 1,
+                     "yaxis": "left"
                   }
                ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "gPRC (Unary) Latency 99th Percentile",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
                   "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
+                  "values": [ ]
                },
-               "id": 18,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "yaxes": [
                   {
-                     "name": "value to text",
-                     "value": 1
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
                   },
                   {
-                     "name": "range to text",
-                     "value": 2
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
                   }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 3,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
-               "targets": [
-                  {
-                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=~\"$namespace\",job=\"thanos-sidecar\"}[$interval]) / rate(thanos_objstore_bucket_operations_total{namespace=~\"$namespace\",job=\"thanos-sidecar\"}[$interval])) * 100",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
-                  }
-               ],
-               "thresholds": "10,30",
-               "title": "Bucket Operation Error Rate",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
-               },
-               "id": 19,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
-                  {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
-                  }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 3,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
-               "targets": [
-                  {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-sidecar\"}[$interval])) by (le))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
-                  }
-               ],
-               "thresholds": "0.5,1",
-               "title": "Bucket Operation Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
+               ]
             }
          ],
          "repeat": null,
@@ -1559,158 +1423,303 @@
          "height": "250px",
          "panels": [
             {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
+               "aliasColors": {
+                  "Aborted": "#EAB839",
+                  "AlreadyExists": "#7EB26D",
+                  "Canceled": "#E24D42",
+                  "DataLoss": "#E24D42",
+                  "DeadlineExceeded": "#E24D42",
+                  "FailedPrecondition": "#6ED0E0",
+                  "Internal": "#E24D42",
+                  "InvalidArgument": "#EF843C",
+                  "NotFound": "#EF843C",
+                  "OK": "#7EB26D",
+                  "OutOfRange": "#E24D42",
+                  "PermissionDenied": "#EF843C",
+                  "ResourceExhausted": "#E24D42",
+                  "Unauthenticated": "#EF843C",
+                  "Unavailable": "#E24D42",
+                  "Unimplemented": "#6ED0E0",
+                  "Unknown": "#E24D42",
+                  "error": "#E24D42"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
                "datasource": "$datasource",
-               "format": "percent",
-               "gauge": {
-                  "maxValue": 100,
-                  "minValue": 0,
+               "fill": 10,
+               "id": 15,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
                   "show": true,
-                  "thresholdLabels": false,
-                  "thresholdMarkers": true
+                  "total": false,
+                  "values": false
                },
-               "id": 20,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "lines": true,
+               "linewidth": 0,
+               "links": [
                   {
-                     "name": "value to text",
-                     "value": 1
-                  },
-                  {
-                     "name": "range to text",
-                     "value": 2
+                     "dashboard": "Thanos / Store",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Store",
+                     "type": "dashboard"
                   }
                ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 6,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
-               },
-               "tableColumn": "",
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code=~\"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss\",grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-store\"}[$interval]) / rate(grpc_server_started_total{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-store\"}[$interval])) * 100",
+                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) by (grpc_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "{{grpc_code}}",
+                     "refId": "A",
+                     "step": 10
                   }
                ],
-               "thresholds": "10,30",
-               "title": "gRPC API Error Rate",
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "gPRC (Unary) Rate",
                "tooltip": {
-                  "shared": false
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
                },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
-                  {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
-                  }
-               ],
-               "valueName": "current"
-            },
-            {
-               "cacheTimeout": null,
-               "colorBackground": false,
-               "colorValue": false,
-               "colors": [
-                  "rgba(50, 172, 45, 0.97)",
-                  "rgba(237, 129, 40, 0.89)",
-                  "rgba(245, 54, 54, 0.9)"
-               ],
-               "datasource": "$datasource",
-               "format": "s",
-               "gauge": {
-                  "maxValue": 10
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
                },
-               "id": 21,
-               "interval": null,
-               "links": [ ],
-               "mappingType": 1,
-               "mappingTypes": [
+               "yaxes": [
                   {
-                     "name": "value to text",
-                     "value": 1
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
                   },
                   {
-                     "name": "range to text",
-                     "value": 2
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
                   }
-               ],
-               "maxDataPoints": 100,
-               "nullPointMode": "connected",
-               "nullText": null,
-               "postfix": "",
-               "postfixFontSize": "50%",
-               "prefix": "",
-               "prefixFontSize": "50%",
-               "rangeMaps": [
-                  {
-                     "from": "null",
-                     "text": "N/A",
-                     "to": "null"
-                  }
-               ],
-               "span": 6,
-               "sparkline": {
-                  "fillColor": "rgba(31, 118, 189, 0.18)",
-                  "full": false,
-                  "lineColor": "rgb(31, 120, 193)",
-                  "show": false
+               ]
+            },
+            {
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
                },
-               "tableColumn": "",
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 16,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Store",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Store",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-store\",grpc_type=\"unary\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "gPRC (Unary) Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 1,
+               "id": 17,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 1,
+               "links": [
+                  {
+                     "dashboard": "Thanos / Store",
+                     "includeVars": true,
+                     "keepTime": true,
+                     "title": "Thanos / Store",
+                     "type": "dashboard"
+                  }
+               ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": false,
+               "steppedLine": false,
                "targets": [
                   {
                      "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{grpc_type=\"unary\",namespace=~\"$namespace\",job=\"thanos-store\"}[$interval])) by (le))",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "",
-                     "refId": "A"
+                     "legendFormat": "P99",
+                     "legendLink": null,
+                     "step": 10
                   }
                ],
-               "thresholds": "0.5,1",
-               "title": "gRPC Latecy 99th Percentile",
-               "tooltip": {
-                  "shared": false
-               },
-               "type": "singlestat",
-               "valueFontSize": "80%",
-               "valueMaps": [
+               "thresholds": [
                   {
-                     "op": "=",
-                     "text": "N/A",
-                     "value": "null"
+                     "colorMode": "warning",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 0.5,
+                     "yaxis": "left"
+                  },
+                  {
+                     "colorMode": "critical",
+                     "fill": true,
+                     "line": true,
+                     "op": "gt",
+                     "value": 1,
+                     "yaxis": "left"
                   }
                ],
-               "valueName": "current"
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "gRPC Latency 99th Percentile",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
             }
          ],
          "repeat": null,

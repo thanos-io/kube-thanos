@@ -7,6 +7,19 @@ local template = grafana.template;
     collapse: true,
   },
 
+  addDashboardLink(name): {
+    links+: [
+      {
+        dashboard: name,
+        includeVars: true,
+        keepTime: true,
+        title: name,
+        type: 'dashboard',
+        // url: '/d/916a852b00ccc5ed81056644718fa4fb/thanos-receive',
+      },
+    ],
+  },
+
   podTemplate(selector)::
     {
       templating+: {
@@ -70,7 +83,7 @@ local template = grafana.template;
         step: 10,
       },
     ],
-    yaxes: $.yaxes('ms'),
+    yaxes: $.yaxes('s'),
   },
 
   qpsErrTotalPanel(selectorErr, selectorTotal):: {
@@ -82,7 +95,7 @@ local template = grafana.template;
     },
     targets: [
       {
-        expr: expr(selectorErr),
+        expr: '%s / %s ' % [expr(selectorErr), expr(selectorTotal)],
         format: 'time_series',
         intervalFactor: 2,
         legendFormat: 'error',
@@ -90,7 +103,7 @@ local template = grafana.template;
         step: 10,
       },
       {
-        expr: expr(selectorTotal) + ' - ' + expr(selectorErr),
+        expr: '(%s - %s) / %s' % [expr(selectorTotal), expr(selectorErr), expr(selectorTotal)],
         format: 'time_series',
         intervalFactor: 2,
         legendFormat: 'success',
@@ -98,6 +111,7 @@ local template = grafana.template;
         step: 10,
       },
     ],
+    yaxes: $.yaxes({ format: 'percentunit', max: 1 }),
   } + $.stack,
 } +
 (import 'grpc.libsonnet') +

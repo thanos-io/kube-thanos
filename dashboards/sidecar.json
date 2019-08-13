@@ -377,7 +377,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval]))",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -385,7 +385,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval]))",
+                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"unary\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -412,10 +412,10 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": null,
+                     "max": 1,
                      "min": 0,
                      "show": true
                   },
@@ -919,7 +919,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"server_stream\"}[$interval]))",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"server_stream\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"server_stream\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -927,7 +927,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"server_stream\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"server_stream\"}[$interval]))",
+                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"server_stream\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"server_stream\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"thanos-sidecar\",grpc_type=\"server_stream\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -954,10 +954,10 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": null,
+                     "max": 1,
                      "min": 0,
                      "show": true
                   },
@@ -1442,7 +1442,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-sidecar\"}[$interval]))",
+                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-sidecar\"}[$interval])) / sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"thanos-sidecar\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -1450,7 +1450,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"thanos-sidecar\"}[$interval])) - sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-sidecar\"}[$interval]))",
+                     "expr": "(sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"thanos-sidecar\"}[$interval])) - sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"thanos-sidecar\"}[$interval]))) / sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"thanos-sidecar\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -1477,10 +1477,10 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": null,
+                     "max": 1,
                      "min": 0,
                      "show": true
                   },
@@ -1569,7 +1569,7 @@
                },
                "yaxes": [
                   {
-                     "format": "ms",
+                     "format": "s",
                      "label": null,
                      "logBase": 1,
                      "max": null,

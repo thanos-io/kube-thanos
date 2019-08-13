@@ -3,9 +3,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
 {
   grafanaDashboards+:: {
     'compact.json':
-      g.dashboard(
-        '%(dashboardNamePrefix)sCompact' % $._config.grafanaThanos,
-      )
+      g.dashboard($._config.grafanaThanos.dashboardCompactTitle)
       .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
       .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
       .addRow(
