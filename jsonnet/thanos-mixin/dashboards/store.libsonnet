@@ -6,6 +6,68 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.dashboard($._config.grafanaThanos.dashboardStoreTitle)
       .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
+        g.row('gRPC (Unary)')
+        .addPanel(
+          g.panel('Rate') +
+          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Detailed')
+        .addPanel(
+          g.panel('Rate') +
+          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.grpcErrDetailsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
+        ) +
+        g.collapse
+      )
+      .addRow(
+        g.row('gRPC (Stream)')
+        .addPanel(
+          g.panel('Rate') +
+          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Detailed')
+        .addPanel(
+          g.panel('Rate') +
+          g.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.grpcErrDetailsPanel('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          g.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
+        ) +
+        g.collapse
+      )
+      .addRow(
         g.row('Bucket Operations')
         .addPanel(
           g.panel('Rate') +
@@ -173,68 +235,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.panel('Gate') +
           g.latencyPanel('thanos_bucket_store_series_gate_duration_seconds_bucket', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config,)
         )
-      )
-      .addRow(
-        g.row('gRPC (Unary)')
-        .addPanel(
-          g.panel('Rate') +
-          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
-        )
-        .addPanel(
-          g.panel('Errors') +
-          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
-        )
-        .addPanel(
-          g.panel('Duration') +
-          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
-        )
-      )
-      .addRow(
-        g.row('Detailed')
-        .addPanel(
-          g.panel('Rate') +
-          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
-        )
-        .addPanel(
-          g.panel('Errors') +
-          g.grpcErrDetailsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
-        )
-        .addPanel(
-          g.panel('Duration') +
-          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config)
-        ) +
-        g.collapse
-      )
-      .addRow(
-        g.row('gRPC (Stream)')
-        .addPanel(
-          g.panel('Rate') +
-          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
-        )
-        .addPanel(
-          g.panel('Errors') +
-          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
-        )
-        .addPanel(
-          g.panel('Duration') +
-          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
-        )
-      )
-      .addRow(
-        g.row('Detailed')
-        .addPanel(
-          g.panel('Rate') +
-          g.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
-        )
-        .addPanel(
-          g.panel('Errors') +
-          g.grpcErrDetailsPanel('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
-        )
-        .addPanel(
-          g.panel('Duration') +
-          g.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="server_stream"' % $._config)
-        ) +
-        g.collapse
       )
       .addRow(
         g.row('Resources')

@@ -30,7 +30,7 @@
         list+: [
           template.interval(
             'interval',
-            '5m,10m,30m,1h,6h,12h,1d,7d,14d,30d,auto',
+            '5m,10m,30m,1h,6h,12h,auto',
             label='interval',
             current='5m',
           ),
