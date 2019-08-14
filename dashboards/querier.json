@@ -247,22 +247,6 @@
                      "legendFormat": "P99 {{pod}}",
                      "legendLink": null,
                      "step": 10
-                  },
-                  {
-                     "expr": "sum(\n  rate(thanos_query_api_instant_query_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n/\n  rate(thanos_query_api_instant_query_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n) by (pod)\n",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "mean {{pod}}",
-                     "legendLink": null,
-                     "step": 10
-                  },
-                  {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (pod, le))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P50 {{pod}}",
-                     "legendLink": null,
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -337,22 +321,6 @@
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{pod}}",
-                     "legendLink": null,
-                     "step": 10
-                  },
-                  {
-                     "expr": "sum(\n  rate(thanos_query_api_range_query_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n/\n  rate(thanos_query_api_range_query_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])\n) by (pod)\n",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "mean {{pod}}",
-                     "legendLink": null,
-                     "step": 10
-                  },
-                  {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (pod, le))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P50 {{pod}}",
                      "legendLink": null,
                      "step": 10
                   }

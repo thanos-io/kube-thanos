@@ -21,43 +21,15 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Instant Query') +
           g.queryPanel(
-            [
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-              |||
-                sum(
-                  rate(thanos_query_api_instant_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-                /
-                  rate(thanos_query_api_instant_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-                ) by (pod)
-              ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-            ],
-            [
-              'P99 {{pod}}',
-              'mean {{pod}}',
-              'P50 {{pod}}',
-            ]
+            'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
+            'P99 {{pod}}'
           )
         )
         .addPanel(
           g.panel('Range Query') +
           g.queryPanel(
-            [
-              'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-              |||
-                sum(
-                  rate(thanos_query_api_range_query_duration_seconds_sum{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-                /
-                  rate(thanos_query_api_range_query_duration_seconds_count{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])
-                ) by (pod)
-              ||| % $._config,
-              'histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-            ],
-            [
-              'P99 {{pod}}',
-              'mean {{pod}}',
-              'P50 {{pod}}',
-            ]
+            'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
+            'P99 {{pod}}'
           )
         ) +
         g.collapse
