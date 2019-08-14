@@ -22,7 +22,7 @@
           {
             alert: 'ThanosReceiveHighForwardRequestFailures',
             annotations: {
-              message: 'Thanos Receive has {{ $value }} of failing forward requests.',
+              message: 'Thanos Receive failling to forward {{ $value | humanize }}% of requests.',
             },
             expr: |||
               sum(
@@ -39,7 +39,7 @@
           {
             alert: 'ThanosReceiveHighHashringFileRefreshFailures',
             annotations: {
-              message: 'Thanos Receive has {{ $value }} of failing hashring file refreshes.',
+              message: 'Thanos Receive failling to refresh hashring file, {{ $value | humanize }} of attempts failed.',
             },
             expr: |||
               sum(

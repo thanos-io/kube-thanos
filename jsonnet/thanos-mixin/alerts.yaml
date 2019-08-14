@@ -62,7 +62,7 @@ groups:
       severity: warning
   - alert: ThanosReceiveHighForwardRequestFailures
     annotations:
-      message: Thanos Receive has {{ $value }} of failing forward requests.
+      message: Thanos Receive failling to forward {{ $value | humanize }}% of requests.
     expr: |
       sum(
         rate(thanos_receive_forward_requests_total{result="error", job="thanos-receive"}[5m])
@@ -74,7 +74,8 @@ groups:
       severity: warning
   - alert: ThanosReceiveHighHashringFileRefreshFailures
     annotations:
-      message: Thanos Receive has {{ $value }} of failing hashring file refreshes.
+      message: Thanos Receive failling to refresh hashring file, {{ $value | humanize
+        }} of attempts failed.
     expr: |
       sum(
         rate(thanos_receive_hashrings_file_errors_total{job="thanos-receive"}[5m])
@@ -82,6 +83,16 @@ groups:
         rate(thanos_receive_hashrings_file_refreshes_total{job="thanos-receive"}[5m])
       ) > 0
     for: 15m
+    labels:
+      severity: warning
+- name: thanos-sidecar.rules
+  rules:
+  - alert: ThanosSidecarAllUnhealthy
+    annotations:
+      message: All Thanos Sidecars are unhealthy for {{ $value }} seconds.
+    expr: |
+      count(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{job="thanos-sidecar"}) by (pod) > 300) == 0
+    for: 5m
     labels:
       severity: warning
 - name: thanos-store.rules

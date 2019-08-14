@@ -8,7 +8,7 @@
                     "subdir": "jsonnet/kube-thanos"
                 }
             },
-            "version": "8a0f1c2f310e085267905f23a613694a61bb1fa0"
+            "version": "5109c208a7d6463fd590205583b05d9f0ef5d0d7"
         },
         {
             "name": "ksonnet",
@@ -19,6 +19,26 @@
                 }
             },
             "version": "0d2f82676817bbf9e4acf6495b2090205f323b9f"
+        },
+        {
+            "name": "grafonnet",
+            "source": {
+                "git": {
+                    "remote": "https://github.com/grafana/grafonnet-lib",
+                    "subdir": "grafonnet"
+                }
+            },
+            "version": "69bc267211790a1c3f4ea6e6211f3e8ffe22f987"
+        },
+        {
+            "name": "grafana-builder",
+            "source": {
+                "git": {
+                    "remote": "https://github.com/grafana/jsonnet-libs",
+                    "subdir": "grafana-builder"
+                }
+            },
+            "version": "3c44dfa9bfe2b66985733d4b16e0afd29094b4a0"
         }
     ]
 }
