@@ -5,7 +5,7 @@
         name: 'thanos-store.rules',
         rules: [
           {
-            record: 'thanos_store:grpc_server_failures_per_unary:rate5m',
+            record: ':grpc_server_failures_per_unary:sum_rate',
             expr: |||
               sum(
                 rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", %(thanosStoreSelector)s, grpc_type="unary"}[5m])
@@ -17,7 +17,7 @@
             },
           },
           {
-            record: 'thanos_store:grpc_server_failures_per_stream:rate5m',
+            record: ':grpc_server_failures_per_stream:sum_rate',
             expr: |||
               sum(
                 rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", %(thanosStoreSelector)s, grpc_type="server_stream"}[5m])
@@ -29,7 +29,7 @@
             },
           },
           {
-            record: 'thanos_store:objstore_bucket_failures_per_operation:rate5m',
+            record: ':thanos_objstore_bucket_failures_per_operation:sum_rate',
             expr: |||
               sum(
                 rate(thanos_objstore_bucket_operation_failures_total{%(thanosStoreSelector)s}[5m])
@@ -41,7 +41,7 @@
             },
           },
           {
-            record: 'thanos_store:objstore_bucket_operation_duration_seconds:p99:sum',
+            record: ':thanos_objstore_bucket_operation_duration_seconds:histogram_quantile',
             expr: |||
               histogram_quantile(0.99,
                 sum(thanos_objstore_bucket_operation_duration_seconds_bucket{%(thanosStoreSelector)s}) by (le)
@@ -52,7 +52,7 @@
             },
           },
           {
-            record: 'thanos_store:objstore_bucket_operation_duration_seconds:p99:rate5m',
+            record: ':thanos_objstore_bucket_operation_duration_seconds:histogram_quantile',
             expr: |||
               histogram_quantile(0.99,
                 sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{%(thanosStoreSelector)s}[5m])) by (le)
