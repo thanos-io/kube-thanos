@@ -6,35 +6,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.dashboard($._config.grafanaThanos.dashboardSidecarTitle)
       .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
-        g.row('Last Updated')
-        .addPanel(
-          g.panel('Successful Upload') +
-          g.tablePanel(
-            ['time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace="$namespace",%(thanosSidecarSelector)s}) by (bucket)' % $._config],
-            {
-              Value: {
-                alias: 'Uploaded Ago',
-                unit: 's',
-                type: 'number',
-              },
-            },
-          )
-        )
-        .addPanel(
-          g.panel('Successful Hearthbeat') +
-          g.tablePanel(
-            ['time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{namespace="$namespace",%(thanosSidecarSelector)s}) by (pod)' % $._config],
-            {
-              Value: {
-                alias: 'Ago',
-                unit: 's',
-                type: 'number',
-              },
-            },
-          )
-        )
-      )
-      .addRow(
         g.row('gRPC (Unary)')
         .addPanel(
           g.panel('Rate') +
@@ -95,6 +66,22 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="server_stream"' % $._config)
         ) +
         g.collapse
+      )
+      .addRow(
+        g.row('Last Updated')
+        .addPanel(
+          g.panel('Successful Upload') +
+          g.tablePanel(
+            ['time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace="$namespace",%(thanosSidecarSelector)s}) by (bucket)' % $._config],
+            {
+              Value: {
+                alias: 'Uploaded Ago',
+                unit: 's',
+                type: 'number',
+              },
+            },
+          )
+        )
       )
       .addRow(
         g.row('Bucket Operations')
