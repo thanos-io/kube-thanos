@@ -6,7 +6,7 @@
     thanosRule: 'thanos-rule',
     thanosCompact: 'thanos-compact',
     thanosSidecar: 'thanos-sidecar',
-    thanosPrometheus: 'prometheus-telemeter',
+    thanosPrometheus: 'prometheus-thanos',
 
     thanosQuerierSelector: 'job="%s"' % self.thanosQuerier,
     thanosStoreSelector: 'job="%s"' % self.thanosStore,
