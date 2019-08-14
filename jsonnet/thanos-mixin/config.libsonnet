@@ -6,7 +6,6 @@
     thanosRule: 'thanos-rule',
     thanosCompact: 'thanos-compact',
     thanosSidecar: 'thanos-sidecar',
-    thanosPrometheus: 'prometheus-thanos',
 
     thanosQuerierSelector: 'job="%s"' % self.thanosQuerier,
     thanosStoreSelector: 'job="%s"' % self.thanosStore,
@@ -14,7 +13,6 @@
     thanosRuleSelector: 'job="%s"' % self.thanosRule,
     thanosCompactSelector: 'job="%s"' % self.thanosCompact,
     thanosSidecarSelector: 'job="%s"' % self.thanosSidecar,
-    thanosPrometheusSelector: 'job="%s"' % self.thanosPrometheus,
 
     // Config for the Grafana dashboards in the thanos-mixin
     grafanaThanos: {

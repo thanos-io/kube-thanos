@@ -114,29 +114,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
       )
       .addRow(
-        g.row('Prometheus')
-        .addPanel(
-          g.panel('Rate') +
-          g.queryPanel(
-            'prometheus_engine_queries{namespace="$namespace",%(thanosPrometheusSelector)s}' % $._config,
-            '{{pod}}'
-          )
-        )
-        .addPanel(
-          g.panel('Duration') +
-          g.queryPanel(
-            [
-              'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,quantile="0.99"}' % $._config,
-              'prometheus_engine_query_duration_seconds{namespace="$namespace",%(thanosPrometheusSelector)s,quantile="0.50"}' % $._config,
-            ],
-            [
-              'P99 {{pod}} {{slice}}',
-              'P50 {{pod}} {{slice}}',
-            ],
-          )
-        )
-      )
-      .addRow(
         g.resourceUtilizationRow('%(thanosQuerierSelector)s' % $._config)
       ) +
       g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosQuerier)s.*"' % $._config),
