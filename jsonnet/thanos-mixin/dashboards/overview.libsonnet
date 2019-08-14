@@ -156,7 +156,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Compaction Rate') +
           g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
             'compaction'
           ) +
           g.stack +
@@ -165,18 +165,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Compaction Errors') +
           g.qpsErrTotalPanel(
-            'prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            'prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-          ) +
-          g.addDashboardLink($._config.grafanaThanos.dashboardCompactTitle)
-        )
-        .addPanel(
-          g.sloLatency(
-            'Compaction Latency 99th Percentile',
-            'prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            0.99,
-            0.5,
-            1
+            'thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardCompactTitle)
         ) +

@@ -1787,12 +1787,12 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 4,
+               "span": 6,
                "stack": true,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "expr": "sum(rate(thanos_compact_group_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "compaction",
@@ -1874,12 +1874,12 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 4,
+               "span": 6,
                "stack": true,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) ",
+                     "expr": "sum(rate(thanos_compact_group_compactions_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) / sum(rate(thanos_compact_group_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) ",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -1887,7 +1887,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "(sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(prometheus_tsdb_compactions_failed_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))) / sum(rate(prometheus_tsdb_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
+                     "expr": "(sum(rate(thanos_compact_group_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) - sum(rate(thanos_compact_group_compactions_failures_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))) / sum(rate(thanos_compact_group_compactions_total{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -1918,107 +1918,6 @@
                      "label": null,
                      "logBase": 1,
                      "max": 1,
-                     "min": 0,
-                     "show": true
-                  },
-                  {
-                     "format": "short",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
-                     "min": null,
-                     "show": false
-                  }
-               ]
-            },
-            {
-               "aliasColors": { },
-               "bars": false,
-               "dashLength": 10,
-               "dashes": false,
-               "datasource": "$datasource",
-               "fill": 1,
-               "id": 20,
-               "legend": {
-                  "avg": false,
-                  "current": false,
-                  "max": false,
-                  "min": false,
-                  "show": true,
-                  "total": false,
-                  "values": false
-               },
-               "lines": true,
-               "linewidth": 1,
-               "links": [
-                  {
-                     "dashboard": "Thanos / Compact",
-                     "includeVars": true,
-                     "keepTime": true,
-                     "title": "Thanos / Compact",
-                     "type": "dashboard"
-                  }
-               ],
-               "nullPointMode": "null as zero",
-               "percentage": false,
-               "pointradius": 5,
-               "points": false,
-               "renderer": "flot",
-               "seriesOverrides": [ ],
-               "spaceLength": 10,
-               "span": 4,
-               "stack": false,
-               "steppedLine": false,
-               "targets": [
-                  {
-                     "expr": "histogram_quantile(0.99, sum(rate(prometheus_tsdb_compaction_duration_seconds_bucket{namespace=~\"$namespace\",job=\"thanos-compact\"}[$interval])) by (le))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P99",
-                     "legendLink": null,
-                     "step": 10
-                  }
-               ],
-               "thresholds": [
-                  {
-                     "colorMode": "warning",
-                     "fill": true,
-                     "line": true,
-                     "op": "gt",
-                     "value": 0.5,
-                     "yaxis": "left"
-                  },
-                  {
-                     "colorMode": "critical",
-                     "fill": true,
-                     "line": true,
-                     "op": "gt",
-                     "value": 1,
-                     "yaxis": "left"
-                  }
-               ],
-               "timeFrom": null,
-               "timeShift": null,
-               "title": "Compaction Latency 99th Percentile",
-               "tooltip": {
-                  "shared": false,
-                  "sort": 0,
-                  "value_type": "individual"
-               },
-               "type": "graph",
-               "xaxis": {
-                  "buckets": null,
-                  "mode": "time",
-                  "name": null,
-                  "show": true,
-                  "values": [ ]
-               },
-               "yaxes": [
-                  {
-                     "format": "s",
-                     "label": null,
-                     "logBase": 1,
-                     "max": null,
                      "min": 0,
                      "show": true
                   },

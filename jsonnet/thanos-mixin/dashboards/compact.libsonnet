@@ -6,11 +6,11 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.dashboard($._config.grafanaThanos.dashboardCompactTitle)
       .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
-        g.row('Compaction')
+        g.row('Group Compaction')
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
+            'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (group)' % $._config,
             'compaction'
           ) +
           g.stack
@@ -18,13 +18,9 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Errors') +
           g.qpsErrTotalPanel(
-            'prometheus_tsdb_compactions_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            'prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
           )
-        )
-        .addPanel(
-          g.panel('Duration') +
-          g.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
         )
       )
       .addRow(
@@ -65,24 +61,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Duration') +
           g.latencyPanel('thanos_compact_garbage_collection_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
-        )
-      )
-      .addRow(
-        g.row('Group Compaction')
-        .addPanel(
-          g.panel('Rate') +
-          g.queryPanel(
-            'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (group)' % $._config,
-            'compaction'
-          ) +
-          g.stack
-        )
-        .addPanel(
-          g.panel('Errors') +
-          g.qpsErrTotalPanel(
-            'thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            'thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-          )
         )
       )
       .addRow(

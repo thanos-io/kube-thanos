@@ -97,27 +97,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.collapse
       )
       .addRow(
-        g.row('Compaction')
-        .addPanel(
-          g.panel('Rate') +
-          g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval]))' % $._config,
-            'compaction'
-          )
-        )
-        .addPanel(
-          g.panel('Errors') +
-          g.qpsErrTotalPanel(
-            'prometheus_tsdb_compactions_failed_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
-            'prometheus_tsdb_compactions_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
-          )
-        )
-        .addPanel(
-          g.panel('Duration') +
-          g.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosRuleSelector)s' % $._config)
-        )
-      )
-      .addRow(
         g.resourceUtilizationRow('%(thanosRuleSelector)s' % $._config)
       ) +
       g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosRule)s.*"' % $._config),

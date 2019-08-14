@@ -132,27 +132,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
       )
       .addRow(
-        g.row('Compaction')
-        .addPanel(
-          g.panel('Rate') +
-          g.queryPanel(
-            'sum(rate(prometheus_tsdb_compactions_total{namespace=~"$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
-            'compaction'
-          )
-        )
-        .addPanel(
-          g.panel('Errors') +
-          g.qpsErrTotalPanel(
-            'prometheus_tsdb_compactions_failed_total{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
-            'prometheus_tsdb_compactions_total{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
-          )
-        )
-        .addPanel(
-          g.panel('Duration') +
-          g.latencyPanel('prometheus_tsdb_compaction_duration_seconds', 'namespace=~"$namespace",%(thanosReceiveSelector)s' % $._config)
-        )
-      )
-      .addRow(
         g.resourceUtilizationRow('%(thanosReceiveSelector)s' % $._config)
       ) +
       g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosReceive)s.*"' % $._config),
