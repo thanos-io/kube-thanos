@@ -29,6 +29,29 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
       )
       .addRow(
+        g.row('Query')
+        .addPanel(
+          g.panel('gPRC (Unary) Rate') +
+          g.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config) +
+          g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+        )
+        .addPanel(
+          g.panel('gPRC (Unary) Errors') +
+          g.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config) +
+          g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+        )
+        .addPanel(
+          g.sloLatency(
+            'gRPC Latency 99th Percentile',
+            'grpc_client_handling_seconds_bucket{grpc_type="unary",namespace=~"$namespace",%(thanosQuerierSelector)s}' % $._config,
+            0.99,
+            0.5,
+            1
+          ) +
+          g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+        )
+      )
+      .addRow(
         g.row('Store')
         .addPanel(
           g.panel('gPRC (Unary) Rate') +
