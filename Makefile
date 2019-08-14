@@ -33,8 +33,8 @@ dashboards: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.lib
 jsonnet/thanos-mixin/alerts.yaml: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/alerts/*
 	jsonnet jsonnet/thanos-mixin/alerts.jsonnet | gojsontoyaml > $@
 
-jsonnet/thanos-mixin/records.yaml: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/records/*
-	jsonnet jsonnet/thanos-mixin/records.jsonnet | gojsontoyaml > $@
+jsonnet/thanos-mixin/rules.yaml: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/rules/*
+	jsonnet jsonnet/thanos-mixin/rules.jsonnet | gojsontoyaml > $@
 
 vendor: jsonnetfile.json jsonnetfile.lock.json
 	rm -rf vendor
@@ -46,8 +46,8 @@ fmt:
 		xargs -n 1 -- $(JSONNET_FMT) -i
 
 .PHONY: lint
-lint: fmt jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/records.yaml
-	promtool check rules jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/records.yaml
+lint: fmt jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml
+	promtool check rules jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml
 
 .PHONY: clean
 clean:

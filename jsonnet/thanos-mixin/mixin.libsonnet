@@ -1,4 +1,4 @@
 (import 'config.libsonnet') +
 (import 'alerts/alerts.libsonnet') +
-(import 'records/records.libsonnet') +
+(import 'rules/rules.libsonnet') +
 (import 'dashboards/dashboards.libsonnet')

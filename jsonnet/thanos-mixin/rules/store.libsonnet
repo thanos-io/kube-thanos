@@ -1,5 +1,5 @@
 {
-  prometheusRecords+:: {
+  prometheusRules+:: {
     groups+: [
       {
         name: 'thanos-store.rules',
