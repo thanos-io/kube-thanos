@@ -116,6 +116,22 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.collapse
       )
       .addRow(
+        g.row('Last Updated')
+        .addPanel(
+          g.panel('Successful Upload') +
+          g.tablePanel(
+            ['time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace="$namespace",%(thanosReceiveSelector)s}) by (bucket)' % $._config],
+            {
+              Value: {
+                alias: 'Uploaded Ago',
+                unit: 's',
+                type: 'number',
+              },
+            },
+          )
+        )
+      )
+      .addRow(
         g.row('Hashring Status')
         .addPanel(
           g.panel('Nodes per Hashring') +
