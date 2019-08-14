@@ -4,8 +4,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
   grafanaDashboards+:: {
     'receive.json':
       g.dashboard($._config.grafanaThanos.dashboardReceiveTitle)
-      .addTemplate('cluster', 'kube_pod_info', 'cluster', hide=if $._config.showMultiCluster then 0 else 2)
-      .addTemplate('namespace', 'kube_pod_info{%(clusterLabel)s="$cluster"}' % $._config, 'namespace')
+      .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
         g.row('Incoming Request')
         .addPanel(

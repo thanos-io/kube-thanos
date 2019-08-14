@@ -1696,7 +1696,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_queries{namespace=\"$namespace\",job=\"prometheus-telemeter\"}",
+                     "expr": "prometheus_engine_queries{namespace=\"$namespace\",job=\"prometheus-thanos\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{pod}}",
@@ -1772,7 +1772,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-telemeter\",quantile=\"0.99\"}",
+                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-thanos\",quantile=\"0.99\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{pod}} {{slice}}",
@@ -1780,7 +1780,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-telemeter\",quantile=\"0.50\"}",
+                     "expr": "prometheus_engine_query_duration_seconds{namespace=\"$namespace\",job=\"prometheus-thanos\",quantile=\"0.50\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{pod}} {{slice}}",
@@ -2331,36 +2331,13 @@
                "value": "prod"
             },
             "datasource": "$datasource",
-            "hide": 2,
-            "includeAll": false,
-            "label": "cluster",
-            "multi": false,
-            "name": "cluster",
-            "options": [ ],
-            "query": "label_values(kube_pod_info, cluster)",
-            "refresh": 1,
-            "regex": "",
-            "sort": 2,
-            "tagValuesQuery": "",
-            "tags": [ ],
-            "tagsQuery": "",
-            "type": "query",
-            "useTags": false
-         },
-         {
-            "allValue": null,
-            "current": {
-               "text": "prod",
-               "value": "prod"
-            },
-            "datasource": "$datasource",
             "hide": 0,
             "includeAll": false,
             "label": "namespace",
             "multi": false,
             "name": "namespace",
             "options": [ ],
-            "query": "label_values(kube_pod_info{cluster=\"$cluster\"}, namespace)",
+            "query": "label_values(kube_pod_info, namespace)",
             "refresh": 1,
             "regex": "",
             "sort": 2,

@@ -16,9 +16,6 @@
     thanosSidecarSelector: 'job="%s"' % self.thanosSidecar,
     thanosPrometheusSelector: 'job="%s"' % self.thanosPrometheus,
 
-    clusterLabel: 'cluster',
-    showMultiCluster: false,
-
     // Config for the Grafana dashboards in the thanos-mixin
     grafanaThanos: {
       dashboardNamePrefix: 'Thanos / ',
