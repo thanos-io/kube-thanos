@@ -113,6 +113,45 @@ local template = grafana.template;
     ],
     yaxes: $.yaxes({ format: 'percentunit', max: 1 }),
   } + $.stack,
+
+  resourceUtilizationRow(selector)::
+    $.row('Resources')
+    .addPanel(
+      $.panel('Memory Used') +
+      $.queryPanel(
+        [
+          'go_memstats_alloc_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
+          'go_memstats_heap_alloc_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
+          'rate(go_memstats_alloc_bytes_total{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}[30s])' % selector,
+          'rate(go_memstats_heap_alloc_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}[30s])' % selector,
+          'go_memstats_stack_inuse_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
+          'go_memstats_heap_inuse_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
+        ],
+        [
+          'alloc all {{pod}}',
+          'alloc heap {{pod}}',
+          'alloc rate all {{pod}}',
+          'alloc rate heap {{pod}}',
+          'inuse stack {{pod}}',
+          'inuse heap {{pod}}',
+        ]
+      ),
+    )
+    .addPanel(
+      $.panel('Goroutines') +
+      $.queryPanel(
+        'go_goroutines{namespace="$namespace",%s}' % selector,
+        '{{pod}}'
+      )
+    )
+    .addPanel(
+      $.panel('GC Time Quantiles') +
+      $.queryPanel(
+        'go_gc_duration_seconds{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
+        '{{quantile}} {{pod}}'
+      )
+    ) +
+    $.collapse,
 } +
 (import 'grpc.libsonnet') +
 (import 'http.libsonnet') +

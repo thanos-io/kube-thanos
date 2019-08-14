@@ -237,43 +237,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
       )
       .addRow(
-        g.row('Resources')
-        .addPanel(
-          g.panel('Memory Used') +
-          g.queryPanel(
-            [
-              'go_memstats_alloc_bytes{namespace="$namespace",%(thanosStoreSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-              'go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosStoreSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-              'rate(go_memstats_alloc_bytes_total{namespace="$namespace",%(thanosStoreSelector)s,kubernetes_pod_name=~"$pod"}[30s])' % $._config,
-              'rate(go_memstats_heap_alloc_bytes{namespace="$namespace",%(thanosStoreSelector)s,kubernetes_pod_name=~"$pod"}[30s])' % $._config,
-              'go_memstats_stack_inuse_bytes{namespace="$namespace",%(thanosStoreSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-              'go_memstats_heap_inuse_bytes{namespace="$namespace",%(thanosStoreSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-            ],
-            [
-              'alloc all {{pod}}',
-              'alloc heap {{pod}}',
-              'alloc rate all {{pod}}',
-              'alloc rate heap {{pod}}',
-              'inuse stack {{pod}}',
-              'inuse heap {{pod}}',
-            ]
-          )
-        )
-        .addPanel(
-          g.panel('Goroutines') +
-          g.queryPanel(
-            'go_goroutines{namespace="$namespace",%(thanosStoreSelector)s}' % $._config,
-            '{{pod}}'
-          )
-        )
-        .addPanel(
-          g.panel('GC Time Quantiles') +
-          g.queryPanel(
-            'go_gc_duration_seconds{namespace="$namespace",%(thanosStoreSelector)s,kubernetes_pod_name=~"$pod"}' % $._config,
-            '{{quantile}} {{pod}}'
-          )
-        )
-        + { collapse: true }
+        g.resourceUtilizationRow('%(thanosStoreSelector)s' % $._config)
       ) +
       g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosStore)s.*"' % $._config),
   },
