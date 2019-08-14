@@ -165,24 +165,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
       )
       .addRow(
-        g.row('Store')
-        .addPanel(
-          g.panel('Connected') +
-          g.statPanel(
-            'sum(thanos_store_nodes_grpc_connections{namespace="$namespace",%(thanosQuerierSelector)s})' % $._config,
-            'none'
-          ) +
-          g.sparkline
-        )
-        .addPanel(
-          g.panel('Node Info') +
-          g.tablePanel(
-            ['min(thanos_store_node_info{namespace="$namespace",%(thanosQuerierSelector)s}) by (external_labels)' % $._config],
-            {},
-          )
-        )
-      )
-      .addRow(
         g.row('Resources')
         .addPanel(
           g.panel('Memory Used') +
