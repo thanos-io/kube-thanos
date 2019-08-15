@@ -3,12 +3,11 @@
         {
             "name": "kube-thanos",
             "source": {
-                "git": {
-                    "remote": ".",
-                    "subdir": "jsonnet/kube-thanos"
+                "local": {
+                    "directory": "jsonnet/kube-thanos"
                 }
             },
-            "version": "948d7ca1e3986ec6113440af5ccc60bf0e98d66d"
+            "version": ""
         },
         {
             "name": "ksonnet",
