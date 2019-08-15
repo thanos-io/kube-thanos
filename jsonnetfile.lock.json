@@ -3,12 +3,11 @@
         {
             "name": "kube-thanos",
             "source": {
-                "git": {
-                    "remote": ".",
-                    "subdir": "jsonnet/kube-thanos"
+                "local": {
+                    "directory": "jsonnet/kube-thanos"
                 }
             },
-            "version": "5109c208a7d6463fd590205583b05d9f0ef5d0d7"
+            "version": ""
         },
         {
             "name": "ksonnet",
@@ -38,7 +37,7 @@
                     "subdir": "grafana-builder"
                 }
             },
-            "version": "3c44dfa9bfe2b66985733d4b16e0afd29094b4a0"
+            "version": "f4c59f64f80442f871a06c91edf74d014b82acaf"
         }
     ]
 }

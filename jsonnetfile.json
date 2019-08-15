@@ -3,9 +3,8 @@
         {
             "name": "kube-thanos",
             "source": {
-                "git": {
-                    "remote": ".",
-                    "subdir": "jsonnet/kube-thanos"
+                "local": {
+                    "directory": "jsonnet/kube-thanos"
                 }
             },
             "version": "."
