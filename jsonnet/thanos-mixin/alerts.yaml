@@ -91,7 +91,7 @@ groups:
     annotations:
       message: All Thanos Sidecars are unhealthy for {{ $value }} seconds.
     expr: |
-      absent(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{job="thanos-sidecar"}) by (pod) > 300)
+      count(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{job="thanos-sidecar"}) by (pod) >= 300) > 0
     labels:
       severity: warning
 - name: thanos-store.rules

@@ -49,6 +49,10 @@ fmt:
 lint: fmt jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml
 	promtool check rules jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml
 
+.PHONY: test
+test: jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml
+	promtool test rules tests.yaml
+
 .PHONY: clean
 clean:
 	rm -rf manifests/
