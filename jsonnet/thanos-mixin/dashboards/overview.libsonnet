@@ -4,7 +4,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
   grafanaDashboards+:: {
     'overview.json':
       g.dashboard($._config.grafanaThanos.dashboardOverviewTitle)
-      .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
         g.row('Instant Query')
         .addPanel(
@@ -20,7 +19,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.sloLatency(
             'Latency 99th Percentile',
-            'http_request_duration_seconds_bucket{namespace=~"$namespace",%(thanosQuerierSelector)s,handler="query"}' % $._config,
+            'http_request_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,handler="query"}' % $._config,
             0.99,
             0.5,
             1
@@ -43,7 +42,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.sloLatency(
             'Latency 99th Percentile',
-            'http_request_duration_seconds_bucket{namespace=~"$namespace",%(thanosQuerierSelector)s,handler="query_range"}' % $._config,
+            'http_request_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"}' % $._config,
             0.99,
             0.5,
             1
@@ -66,7 +65,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.sloLatency(
             'gRPC Latency 99th Percentile',
-            'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace=~"$namespace",%(thanosStoreSelector)s}' % $._config,
+            'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace="$namespace",%(thanosStoreSelector)s}' % $._config,
             0.99,
             0.5,
             1
@@ -89,7 +88,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.sloLatency(
             'gPRC (Unary) Latency 99th Percentile',
-            'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace=~"$namespace",%(thanosSidecarSelector)s}' % $._config,
+            'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace="$namespace",%(thanosSidecarSelector)s}' % $._config,
             0.99,
             0.5,
             1
@@ -112,7 +111,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.sloLatency(
             'Incoming Requests Latency 99th Percentile',
-            'thanos_http_request_duration_seconds_bucket{namespace=~"$namespace",%(thanosReceiveSelector)s}' % $._config,
+            'thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
             0.99,
             0.5,
             1
@@ -125,8 +124,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Alert Sent Rate') +
           g.queryPanel(
-            'sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager)' % $._config,
-            '{{alertmanager}}'
+            'sum(rate(thanos_alert_sender_alerts_sent_total{namespace="$namespace",%(thanosRuleSelector)s}[$interval])) by (job, alertmanager)' % $._config,
+            '{{job}} {{alertmanager}}'
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardRuleTitle) +
           g.stack
@@ -142,7 +141,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.sloLatency(
             'Sent Error Duration',
-            'thanos_alert_sender_latency_seconds_bucket{namespace=~"$namespace",%(thanosRuleSelector)s}' % $._config,
+            'thanos_alert_sender_latency_seconds_bucket{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
             0.99,
             0.5,
             1
@@ -156,8 +155,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Compaction Rate') +
           g.queryPanel(
-            'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'compaction'
+            'sum(rate(thanos_compact_group_compactions_total{namespace="$namespace",%(thanosCompactSelector)s}[$interval])) by (job)' % $._config,
+            'compaction {{job}}'
           ) +
           g.stack +
           g.addDashboardLink($._config.grafanaThanos.dashboardCompactTitle)
@@ -165,12 +164,13 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Compaction Errors') +
           g.qpsErrTotalPanel(
-            'thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            'thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_group_compactions_failures_total{namespace="$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_group_compactions_total{namespace="$namespace",%(thanosCompactSelector)s}' % $._config,
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardCompactTitle)
         ) +
         g.collapse
-      ),
+      ) +
+      g.template('namespace', 'kube_pod_info'),
   },
 }

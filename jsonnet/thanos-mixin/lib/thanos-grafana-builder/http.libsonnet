@@ -11,10 +11,10 @@
     },
     targets: [
       {
-        expr: 'sum(label_replace(rate(%s{%s}[$interval]),"status_code", "${1}xx", "code", "([0-9])..")) by (status_code)' % [metricName, selector],
+        expr: 'sum(label_replace(rate(%s{%s}[$interval]),"status_code", "${1}xx", "code", "([0-9])..")) by (job, status_code)' % [metricName, selector],
         format: 'time_series',
         intervalFactor: 2,
-        legendFormat: '{{status_code}}',
+        legendFormat: '{{job}} {{status_code}}',
         refId: 'A',
         step: 10,
       },
@@ -25,10 +25,10 @@
     $.httpQpsPanel(metricName, selector) {
       targets: [
         {
-          expr: 'sum(label_replace(rate(%s{%s}[$interval]),"status_code", "${1}xx", "code", "([0-9])..")) by (handler, status_code)' % [metricName, selector],
+          expr: 'sum(label_replace(rate(%s{%s}[$interval]),"status_code", "${1}xx", "code", "([0-9])..")) by (job, handler, status_code)' % [metricName, selector],
           format: 'time_series',
           intervalFactor: 2,
-          legendFormat: '{{handler}} {{status_code}}',
+          legendFormat: '{{job}} {{handler}} {{status_code}}',
           refId: 'A',
           step: 10,
         },
@@ -44,11 +44,11 @@
   httpErrDetailsPanel(metricName, selector)::
     $.queryPanel(
       |||
-        sum(rate(%s{%s,code!~"2.."}[$interval])) by (handler, code)
+        sum(rate(%s{%s,code!~"2.."}[$interval])) by (job, handler, code)
         /
-        sum(rate(%s{%s}[$interval])) by (handler, code)
+        sum(rate(%s{%s}[$interval])) by (job, handler, code)
       ||| % [metricName, selector, metricName, selector],
-      '{{handler}} {{code}}'
+      '{{job}} {{handler}} {{code}}'
     ) +
     { yaxes: $.yaxes({ format: 'percentunit', max: 1 }) } +
     $.stack,
@@ -57,26 +57,26 @@
     nullPointMode: 'null as zero',
     targets: [
       {
-        expr: 'histogram_quantile(0.99, sum(rate(%s_bucket{%s}[$interval])) by (handler, le)) * %s' % [metricName, selector, multiplier],
+        expr: 'histogram_quantile(0.99, sum(rate(%s_bucket{%s}[$interval])) by (job, handler, le)) * %s' % [metricName, selector, multiplier],
         format: 'time_series',
         intervalFactor: 2,
-        legendFormat: 'P99 {{handler}}',
+        legendFormat: 'P99 {{job}} {{handler}}',
         refId: 'A',
         step: 10,
       },
       {
-        expr: 'sum(rate(%s_sum{%s}[$interval])) * %s / sum(rate(%s_count{%s}[$interval]))' % [metricName, selector, multiplier, metricName, selector],
+        expr: 'sum(rate(%s_sum{%s}[$interval])) by (job, handler) * %s / sum(rate(%s_count{%s}[$interval])) by (job, handler)' % [metricName, selector, multiplier, metricName, selector],
         format: 'time_series',
         intervalFactor: 2,
-        legendFormat: 'mean',
+        legendFormat: 'mean {{job}} {{handler}}',
         refId: 'B',
         step: 10,
       },
       {
-        expr: 'histogram_quantile(0.50, sum(rate(%s_bucket{%s}[$interval])) by (lhandler, e)) * %s' % [metricName, selector, multiplier],
+        expr: 'histogram_quantile(0.50, sum(rate(%s_bucket{%s}[$interval])) by (job, handler, le)) * %s' % [metricName, selector, multiplier],
         format: 'time_series',
         intervalFactor: 2,
-        legendFormat: 'P50 {{handler}}',
+        legendFormat: 'P50 {{job}} {{handler}}',
         refId: 'C',
         step: 10,
       },

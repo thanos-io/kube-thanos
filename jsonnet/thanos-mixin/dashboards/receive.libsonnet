@@ -4,35 +4,34 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
   grafanaDashboards+:: {
     'receive.json':
       g.dashboard($._config.grafanaThanos.dashboardReceiveTitle)
-      .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
         g.row('Incoming Request')
         .addPanel(
           g.panel('Rate') +
-          g.httpQpsPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpQpsPanel('thanos_http_requests_total', 'namespace="$namespace",job=~"$job"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.httpErrPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpErrPanel('thanos_http_requests_total', 'namespace="$namespace",job=~"$job"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.latencyPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.latencyPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",job=~"$job"')
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          g.httpQpsPanelDetailed('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpQpsPanelDetailed('thanos_http_requests_total', 'namespace="$namespace",job=~"$job"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.httpErrDetailsPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpErrDetailsPanel('thanos_http_requests_total', 'namespace="$namespace",job=~"$job"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.httpLatencyDetailsPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config)
+          g.httpLatencyDetailsPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",job=~"$job"')
         ) +
         g.collapse
       )
@@ -41,15 +40,15 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}[$interval]))' % $._config,
-            'all',
+            'sum(rate(thanos_receive_forward_requests_total{namespace="$namespace",job=~"$job"}[$interval])) by (job)',
+            'all {{job}}',
           )
         )
         .addPanel(
           g.panel('Errors') +
           g.qpsErrTotalPanel(
-            'thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s,result="error"}' % $._config,
-            'thanos_receive_forward_requests_total{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+            'thanos_receive_forward_requests_total{namespace="$namespace",job=~"$job",result="error"}',
+            'thanos_receive_forward_requests_total{namespace="$namespace",job=~"$job"}',
           )
         )
       )
@@ -57,30 +56,30 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.row('gRPC (Unary)')
         .addPanel(
           g.panel('Rate') +
-          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrorsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrDetailsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         ) +
         g.collapse
       )
@@ -88,30 +87,30 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.row('gRPC (Stream)')
         .addPanel(
           g.panel('Rate') +
-          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrorsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrDetailsPanel('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrDetailsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosReceiveSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         ) +
         g.collapse
       )
@@ -120,7 +119,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Successful Upload') +
           g.tablePanel(
-            ['time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace="$namespace",%(thanosReceiveSelector)s}) by (bucket)' % $._config],
+            ['time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace="$namespace",job=~"$job"}) by (job, bucket)'],
             {
               Value: {
                 alias: 'Uploaded Ago',
@@ -132,8 +131,10 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
       )
       .addRow(
-        g.resourceUtilizationRow('%(thanosReceiveSelector)s' % $._config)
+        g.resourceUtilizationRow()
       ) +
-      g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosReceive)s.*"' % $._config),
+      g.template('namespace', 'kube_pod_info') +
+      g.template('job', 'up', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config, true, "%(thanosReceiveJobPrefix)s.*" % $._config) +
+      g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosReceiveJobPrefix)s.*"' % $._config, true, '.*'),
   },
 }
