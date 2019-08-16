@@ -14,7 +14,7 @@
                 rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m])
                 /
                 rate(grpc_server_started_total{%(thanosQuerierSelector)s}[5m])
-              ) > 0.05
+              ) by (job) > 0.05
             ||| % $._config,
             'for': '5m',
             labels: {
@@ -31,7 +31,7 @@
                 rate(thanos_querier_store_apis_dns_failures_total{%(thanosQuerierSelector)s}[5m])
               /
                 rate(thanos_querier_store_apis_dns_lookups_total{%(thanosQuerierSelector)s}[5m])
-              ) > 1
+              ) by (job) > 1
             ||| % $._config,
             'for': '15m',
             labels: {
@@ -45,7 +45,7 @@
             },
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_query_api_instant_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (le)
+                sum(thanos_query_api_instant_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (job, le)
               ) > 10
             ||| % $._config,
             'for': '10m',
@@ -60,7 +60,7 @@
             },
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_query_api_range_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (le)
+                sum(thanos_query_api_range_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (job, le)
               ) > 10
             ||| % $._config,
             'for': '10m',

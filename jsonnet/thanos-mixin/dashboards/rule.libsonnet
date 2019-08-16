@@ -9,14 +9,14 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Dropped Rate') +
           g.queryPanel(
-            'sum(rate(thanos_alert_sender_alerts_dropped_total{namespace=~"$namespace",job=~"$job"}[$interval])) by (job, alertmanager)',
+            'sum(rate(thanos_alert_sender_alerts_dropped_total{namespace="$namespace",job=~"$job"}[$interval])) by (job, alertmanager)',
             '{{job}} {{alertmanager}}'
           )
         )
         .addPanel(
           g.panel('Sent Rate') +
           g.queryPanel(
-            'sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",job=~"$job"}[$interval])) by (job, alertmanager)',
+            'sum(rate(thanos_alert_sender_alerts_sent_total{namespace="$namespace",job=~"$job"}[$interval])) by (job, alertmanager)',
             '{{job}} {{alertmanager}}'
           ) +
           g.stack
@@ -30,7 +30,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
         .addPanel(
           g.panel('Sent Duration') +
-          g.latencyPanel('thanos_alert_sender_latency_seconds', 'namespace=~"$namespace",job=~"$job"'),
+          g.latencyPanel('thanos_alert_sender_latency_seconds', 'namespace="$namespace",job=~"$job"'),
         )
       )
       .addRow(

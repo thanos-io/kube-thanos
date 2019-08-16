@@ -9,7 +9,7 @@ groups:
         rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-querier.*"}[5m])
         /
         rate(grpc_server_started_total{job=~"thanos-querier.*"}[5m])
-      ) > 0.05
+      ) by (job) > 0.05
     for: 5m
     labels:
       severity: warning
@@ -21,7 +21,7 @@ groups:
         rate(thanos_querier_store_apis_dns_failures_total{job=~"thanos-querier.*"}[5m])
       /
         rate(thanos_querier_store_apis_dns_lookups_total{job=~"thanos-querier.*"}[5m])
-      ) > 1
+      ) by (job) > 1
     for: 15m
     labels:
       severity: warning
@@ -31,7 +31,7 @@ groups:
         $value }} seconds for instant queries.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_query_api_instant_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (le)
+        sum(thanos_query_api_instant_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (job, le)
       ) > 10
     for: 10m
     labels:
@@ -42,7 +42,7 @@ groups:
         $value }} seconds for instant queries.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_query_api_range_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (le)
+        sum(thanos_query_api_range_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (job, le)
       ) > 10
     for: 10m
     labels:
@@ -55,7 +55,7 @@ groups:
         $value }} seconds for HTTP requests.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_http_request_duration_seconds_bucket{job=~"thanos-receive.*"}) by (le)
+        sum(thanos_http_request_duration_seconds_bucket{job=~"thanos-receive.*"}) by (job, le)
       ) > 10
     for: 10m
     labels:
@@ -69,7 +69,7 @@ groups:
         rate(thanos_receive_forward_requests_total{result="error", job=~"thanos-receive.*"}[5m])
       /
         rate(thanos_receive_forward_requests_total{job=~"thanos-receive.*"}[5m])
-      ) > 0.05
+      ) by (job)  > 0.05
     for: 15m
     labels:
       severity: warning
@@ -82,13 +82,14 @@ groups:
         rate(thanos_receive_hashrings_file_errors_total{job=~"thanos-receive.*"}[5m])
       /
         rate(thanos_receive_hashrings_file_refreshes_total{job=~"thanos-receive.*"}[5m])
-      ) > 0
+      ) by (job) > 0
     for: 15m
     labels:
       severity: warning
   - alert: ThanosReceiveConfigReloadFailure
     annotations:
-      message: Thanos Receive has not been able to reload hashring configurations.
+      message: Thanos Receive {{$labels.pod}} has not been able to reload hashring
+        configurations.
     expr: thanos_receive_config_last_reload_successful{job=~"thanos-receive.*"} ==
       0
     for: 5m
@@ -114,7 +115,7 @@ groups:
         rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-store.*"}[5m])
         /
         rate(grpc_server_started_total{job=~"thanos-store.*"}[5m])
-      ) > 0.05
+      ) by (job) > 0.05
     for: 5m
     labels:
       severity: warning
@@ -124,7 +125,7 @@ groups:
         }} seconds for store series gate requests.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_bucket_store_series_gate_duration_seconds_bucket{job=~"thanos-store.*"}) by (le)
+        sum(thanos_bucket_store_series_gate_duration_seconds_bucket{job=~"thanos-store.*"}) by (job, le)
       ) > 2
     for: 10m
     labels:
@@ -137,7 +138,7 @@ groups:
         rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-store.*"}[5m])
       /
         rate(thanos_objstore_bucket_operations_total{job=~"thanos-store.*"}[5m])
-      ) > 0.05
+      ) by (job) > 0.05
     for: 15m
     labels:
       severity: warning
@@ -147,7 +148,7 @@ groups:
         {{ $value }} seconds for bucket operations.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"}) by (le)
+        sum(thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"}) by (job, le)
       ) > 15
     for: 10m
     labels:

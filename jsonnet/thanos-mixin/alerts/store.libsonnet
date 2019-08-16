@@ -14,7 +14,7 @@
                 rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosStoreSelector)s}[5m])
                 /
                 rate(grpc_server_started_total{%(thanosStoreSelector)s}[5m])
-              ) > 0.05
+              ) by (job) > 0.05
             ||| % $._config,
             'for': '5m',
             labels: {
@@ -28,7 +28,7 @@
             },
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_bucket_store_series_gate_duration_seconds_bucket{%(thanosStoreSelector)s}) by (le)
+                sum(thanos_bucket_store_series_gate_duration_seconds_bucket{%(thanosStoreSelector)s}) by (job, le)
               ) > 2
             ||| % $._config,
             'for': '10m',
@@ -46,7 +46,7 @@
                 rate(thanos_objstore_bucket_operation_failures_total{%(thanosStoreSelector)s}[5m])
               /
                 rate(thanos_objstore_bucket_operations_total{%(thanosStoreSelector)s}[5m])
-              ) > 0.05
+              ) by (job) > 0.05
             ||| % $._config,
             'for': '15m',
             labels: {
@@ -60,7 +60,7 @@
             },
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_objstore_bucket_operation_duration_seconds_bucket{%(thanosStoreSelector)s}) by (le)
+                sum(thanos_objstore_bucket_operation_duration_seconds_bucket{%(thanosStoreSelector)s}) by (job, le)
               ) > 15
             ||| % $._config,
             'for': '10m',

@@ -45,7 +45,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_alert_sender_alerts_dropped_total{namespace=~\"$namespace\",job=~\"$job\"}[$interval])) by (job, alertmanager)",
+                     "expr": "sum(rate(thanos_alert_sender_alerts_dropped_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, alertmanager)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{alertmanager}}",
@@ -121,7 +121,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~\"$namespace\",job=~\"$job\"}[$interval])) by (job, alertmanager)",
+                     "expr": "sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, alertmanager)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{alertmanager}}",
@@ -284,7 +284,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{job}}",
@@ -292,7 +292,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_alert_sender_latency_seconds_sum{namespace=~\"$namespace\",job=~\"$job\"}[$interval])) by (job) * 1 / sum(rate(thanos_alert_sender_latency_seconds_count{namespace=~\"$namespace\",job=~\"$job\"}[$interval])) by (job)",
+                     "expr": "sum(rate(thanos_alert_sender_latency_seconds_sum{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job) * 1 / sum(rate(thanos_alert_sender_latency_seconds_count{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean {{job}}",
@@ -300,7 +300,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=~\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.50, sum(rate(thanos_alert_sender_latency_seconds_bucket{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{job}}",
