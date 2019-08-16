@@ -85,6 +85,13 @@ groups:
     for: 15m
     labels:
       severity: warning
+  - alert: ThanosReceiveConfigReloadFailure
+    annotations:
+      message: Thanos Receive has not been able to reload hashring configurations.
+    expr: thanos_receive_config_last_reload_successful{job="thanos-receive"} == 0
+    for: 5m
+    labels:
+      severity: warning
 - name: thanos-sidecar.rules
   rules:
   - alert: ThanosSidecarUnhealthy
