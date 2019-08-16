@@ -14,12 +14,20 @@
          "height": "250px",
          "panels": [
             {
-               "aliasColors": { },
+               "aliasColors": {
+                  "1xx": "#EAB839",
+                  "2xx": "#7EB26D",
+                  "3xx": "#6ED0E0",
+                  "4xx": "#EF843C",
+                  "5xx": "#E24D42",
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
                "bars": false,
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "fill": 1,
+               "fill": 10,
                "id": 1,
                "legend": {
                   "avg": false,
@@ -31,7 +39,7 @@
                   "values": false
                },
                "lines": true,
-               "linewidth": 1,
+               "linewidth": 0,
                "links": [ ],
                "nullPointMode": "null as zero",
                "percentage": false,
@@ -40,39 +48,23 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 6,
-               "stack": false,
+               "span": 4,
+               "stack": true,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le)) * 1",
+                     "expr": "sum(label_replace(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (status_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "P99",
+                     "legendFormat": "{{status_code}}",
                      "refId": "A",
-                     "step": 10
-                  },
-                  {
-                     "expr": "sum(rate(thanos_query_api_instant_query_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) * 1 / sum(rate(thanos_query_api_instant_query_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "mean",
-                     "refId": "B",
-                     "step": 10
-                  },
-                  {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le)) * 1",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "P50",
-                     "refId": "C",
                      "step": 10
                   }
                ],
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Instant Query",
+               "title": "Rate",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -88,10 +80,97 @@
                },
                "yaxes": [
                   {
-                     "format": "s",
+                     "format": "short",
                      "label": null,
                      "logBase": 1,
                      "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 2,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\",code!~\"2..\"}[$interval])) / sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "(sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\"}[$interval])) - sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\",code!~\"2..\"}[$interval]))) / sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
                      "min": 0,
                      "show": true
                   },
@@ -112,7 +191,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 2,
+               "id": 3,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -132,12 +211,12 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 6,
+               "span": 4,
                "stack": false,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le)) * 1",
+                     "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\"}[$interval])) by (le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99",
@@ -145,7 +224,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_query_api_range_query_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) * 1 / sum(rate(thanos_query_api_range_query_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval]))",
+                     "expr": "sum(rate(http_request_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\"}[$interval])) * 1 / sum(rate(http_request_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean",
@@ -153,7 +232,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (le)) * 1",
+                     "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query\"}[$interval])) by (le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50",
@@ -164,7 +243,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Range Query",
+               "title": "Duration",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -202,13 +281,184 @@
          "repeatIteration": null,
          "repeatRowId": null,
          "showTitle": true,
-         "title": "Query API",
+         "title": "Instant Query API",
          "titleSize": "h6"
       },
       {
-         "collapse": true,
+         "collapse": false,
          "height": "250px",
          "panels": [
+            {
+               "aliasColors": {
+                  "1xx": "#EAB839",
+                  "2xx": "#7EB26D",
+                  "3xx": "#6ED0E0",
+                  "4xx": "#EF843C",
+                  "5xx": "#E24D42",
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 4,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(label_replace(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (status_code)",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{status_code}}",
+                     "refId": "A",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Rate",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": {
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 5,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\",code!~\"2..\"}[$interval])) / sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\"}[$interval])) ",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "error",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "(sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\"}[$interval])) - sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\",code!~\"2..\"}[$interval]))) / sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "success",
+                     "refId": "B",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
             {
                "aliasColors": { },
                "bars": false,
@@ -216,7 +466,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 3,
+               "id": 6,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -236,23 +486,135 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 6,
+               "span": 4,
                "stack": false,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (pod, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\"}[$interval])) by (le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "P99 {{pod}}",
-                     "legendLink": null,
+                     "legendFormat": "P99",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(http_request_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\"}[$interval])) * 1 / sum(rate(http_request_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "mean",
+                     "refId": "B",
+                     "step": 10
+                  },
+                  {
+                     "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\",handler=\"query_range\"}[$interval])) by (le)) * 1",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "P50",
+                     "refId": "C",
                      "step": 10
                   }
                ],
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Instant Query",
+               "title": "Duration",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "s",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            }
+         ],
+         "repeat": null,
+         "repeatIteration": null,
+         "repeatRowId": null,
+         "showTitle": true,
+         "title": "Range Query API",
+         "titleSize": "h6"
+      },
+      {
+         "collapse": true,
+         "height": "250px",
+         "panels": [
+            {
+               "aliasColors": {
+                  "1xx": "#EAB839",
+                  "2xx": "#7EB26D",
+                  "3xx": "#6ED0E0",
+                  "4xx": "#EF843C",
+                  "5xx": "#E24D42",
+                  "error": "#E24D42",
+                  "success": "#7EB26D"
+               },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
+               "fill": 10,
+               "id": 7,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(label_replace(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (handler, status_code)",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{handler}} {{status_code}}",
+                     "refId": "A",
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Rate",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -291,8 +653,84 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
+               "fill": 10,
+               "id": 8,
+               "legend": {
+                  "avg": false,
+                  "current": false,
+                  "max": false,
+                  "min": false,
+                  "show": true,
+                  "total": false,
+                  "values": false
+               },
+               "lines": true,
+               "linewidth": 0,
+               "links": [ ],
+               "nullPointMode": "null as zero",
+               "percentage": false,
+               "pointradius": 5,
+               "points": false,
+               "renderer": "flot",
+               "seriesOverrides": [ ],
+               "spaceLength": 10,
+               "span": 4,
+               "stack": true,
+               "steppedLine": false,
+               "targets": [
+                  {
+                     "expr": "sum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\",code!~\"2..\"}[$interval])) by (handler, code)\n/\nsum(rate(http_requests_total{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (handler, code)\n",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "{{handler}} {{code}}",
+                     "legendLink": null,
+                     "step": 10
+                  }
+               ],
+               "thresholds": [ ],
+               "timeFrom": null,
+               "timeShift": null,
+               "title": "Errors",
+               "tooltip": {
+                  "shared": false,
+                  "sort": 0,
+                  "value_type": "individual"
+               },
+               "type": "graph",
+               "xaxis": {
+                  "buckets": null,
+                  "mode": "time",
+                  "name": null,
+                  "show": true,
+                  "values": [ ]
+               },
+               "yaxes": [
+                  {
+                     "format": "percentunit",
+                     "label": null,
+                     "logBase": 1,
+                     "max": 1,
+                     "min": 0,
+                     "show": true
+                  },
+                  {
+                     "format": "short",
+                     "label": null,
+                     "logBase": 1,
+                     "max": null,
+                     "min": null,
+                     "show": false
+                  }
+               ]
+            },
+            {
+               "aliasColors": { },
+               "bars": false,
+               "dashLength": 10,
+               "dashes": false,
+               "datasource": "$datasource",
                "fill": 1,
-               "id": 4,
+               "id": 9,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -312,23 +750,39 @@
                "renderer": "flot",
                "seriesOverrides": [ ],
                "spaceLength": 10,
-               "span": 6,
+               "span": 4,
                "stack": false,
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (pod, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (handler, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
-                     "legendFormat": "P99 {{pod}}",
-                     "legendLink": null,
+                     "legendFormat": "P99 {{handler}}",
+                     "refId": "A",
+                     "step": 10
+                  },
+                  {
+                     "expr": "sum(rate(http_request_duration_seconds_sum{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) * 1 / sum(rate(http_request_duration_seconds_count{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval]))",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "mean",
+                     "refId": "B",
+                     "step": 10
+                  },
+                  {
+                     "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{namespace=\"$namespace\",job=\"thanos-querier\"}[$interval])) by (lhandler, e)) * 1",
+                     "format": "time_series",
+                     "intervalFactor": 2,
+                     "legendFormat": "P50 {{handler}}",
+                     "refId": "C",
                      "step": 10
                   }
                ],
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Range Query",
+               "title": "Duration",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -344,7 +798,7 @@
                },
                "yaxes": [
                   {
-                     "format": "short",
+                     "format": "s",
                      "label": null,
                      "logBase": 1,
                      "max": null,
@@ -399,7 +853,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 5,
+               "id": 10,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -478,7 +932,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 6,
+               "id": 11,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -562,7 +1016,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 7,
+               "id": 12,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -666,7 +1120,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 8,
+               "id": 13,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -742,7 +1196,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 9,
+               "id": 14,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -818,7 +1272,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 10,
+               "id": 15,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -941,7 +1395,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 11,
+               "id": 16,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1020,7 +1474,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 12,
+               "id": 17,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1104,7 +1558,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 13,
+               "id": 18,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1208,7 +1662,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 14,
+               "id": 19,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1284,7 +1738,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 15,
+               "id": 20,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1360,7 +1814,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 16,
+               "id": 21,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1464,7 +1918,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 17,
+               "id": 22,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1543,7 +1997,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 10,
-               "id": 18,
+               "id": 23,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1639,7 +2093,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 19,
+               "id": 24,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1755,7 +2209,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 20,
+               "id": 25,
                "legend": {
                   "avg": false,
                   "current": false,
@@ -1831,7 +2285,7 @@
                "dashes": false,
                "datasource": "$datasource",
                "fill": 1,
-               "id": 21,
+               "id": 26,
                "legend": {
                   "avg": false,
                   "current": false,

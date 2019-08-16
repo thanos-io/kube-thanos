@@ -6,31 +6,48 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.dashboard($._config.grafanaThanos.dashboardQuerierTitle)
       .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
-        g.row('Query API')
+        g.row('Instant Query API')
         .addPanel(
-          g.panel('Instant Query') +
-          g.latencyPanel('thanos_query_api_instant_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
+          g.panel('Rate') +
+          g.httpQpsPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query"' % $._config)
         )
         .addPanel(
-          g.panel('Range Query') +
-          g.latencyPanel('thanos_query_api_range_query_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
+          g.panel('Errors') +
+          g.httpErrPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          g.latencyPanel('http_request_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query"' % $._config)
+        )
+      )
+      .addRow(
+        g.row('Range Query API')
+        .addPanel(
+          g.panel('Rate') +
+          g.httpQpsPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"' % $._config)
+        )
+        .addPanel(
+          g.panel('Errors') +
+          g.httpErrPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          g.latencyPanel('http_request_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"' % $._config)
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
-          g.panel('Instant Query') +
-          g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-            'P99 {{pod}}'
-          )
+          g.panel('Rate') +
+          g.httpQpsPanelDetailed('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
         )
         .addPanel(
-          g.panel('Range Query') +
-          g.queryPanel(
-            'histogram_quantile(0.99, sum(rate(thanos_query_api_range_query_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s}[$interval])) by (pod, le))' % $._config,
-            'P99 {{pod}}'
-          )
+          g.panel('Errors') +
+          g.httpErrDetailsPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
+        )
+        .addPanel(
+          g.panel('Duration') +
+          g.httpLatencyDetailsPanel('http_request_duration_seconds', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config)
         ) +
         g.collapse
       )

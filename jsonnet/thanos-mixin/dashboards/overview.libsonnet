@@ -6,21 +6,21 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.dashboard($._config.grafanaThanos.dashboardOverviewTitle)
       .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
-        g.row('Query')
+        g.row('Instant Query')
         .addPanel(
-          g.sloLatency(
-            'Instant Query Latency 99th Percentile',
-            'thanos_query_api_instant_query_duration_seconds_bucket{namespace=~"$namespace",%(thanosQuerierSelector)s}' % $._config,
-            0.99,
-            0.5,
-            1
-          ) +
+          g.panel('Requests Rate') +
+          g.httpQpsPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query"' % $._config) +
+          g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+        )
+        .addPanel(
+          g.panel('Requests Errors') +
+          g.httpErrPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query"' % $._config) +
           g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
         )
         .addPanel(
           g.sloLatency(
-            'Range Query Latency 99th Percentile',
-            'thanos_query_api_range_query_duration_seconds_bucket{namespace=~"$namespace",%(thanosQuerierSelector)s}' % $._config,
+            'Latency 99th Percentile',
+            'http_request_duration_seconds_bucket{namespace=~"$namespace",%(thanosQuerierSelector)s,handler="query"}' % $._config,
             0.99,
             0.5,
             1
@@ -29,21 +29,21 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         )
       )
       .addRow(
-        g.row('Query')
+        g.row('Range Query')
         .addPanel(
-          g.panel('gPRC (Unary) Rate') +
-          g.grpcQpsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config) +
+          g.panel('Requests Rate') +
+          g.httpQpsPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"' % $._config) +
           g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
         )
         .addPanel(
-          g.panel('gPRC (Unary) Errors') +
-          g.grpcErrorsPanel('client', 'namespace="$namespace",%(thanosQuerierSelector)s,grpc_type="unary"' % $._config) +
+          g.panel('Requests Errors') +
+          g.httpErrPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"' % $._config) +
           g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
         )
         .addPanel(
           g.sloLatency(
-            'gRPC Latency 99th Percentile',
-            'grpc_client_handling_seconds_bucket{grpc_type="unary",namespace=~"$namespace",%(thanosQuerierSelector)s}' % $._config,
+            'Latency 99th Percentile',
+            'http_request_duration_seconds_bucket{namespace=~"$namespace",%(thanosQuerierSelector)s,handler="query_range"}' % $._config,
             0.99,
             0.5,
             1
