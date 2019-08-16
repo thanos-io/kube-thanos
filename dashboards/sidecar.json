@@ -64,7 +64,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_code)",
+                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{grpc_code}}",
@@ -143,7 +143,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job)",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -151,7 +151,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job)) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job)",
+                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -227,7 +227,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{job}}",
@@ -235,7 +235,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(grpc_server_handling_seconds_sum{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job) * 1\n/\nsum(rate(grpc_server_handling_seconds_count{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job)\n",
+                     "expr": "sum(rate(grpc_server_handling_seconds_sum{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job) * 1\n/\nsum(rate(grpc_server_handling_seconds_count{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean {{job}}",
@@ -243,7 +243,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{job}}",
@@ -331,7 +331,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_method, grpc_code)",
+                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_method, grpc_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{grpc_method}} {{grpc_code}}",
@@ -407,7 +407,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_method, grpc_code)\n",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_method, grpc_code)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{grpc_method}} {{grpc_code}}",
@@ -483,7 +483,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_method, le)) * 1",
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_method, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{job}} {{grpc_method}}",
@@ -491,7 +491,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(grpc_server_handling_seconds_sum{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job) * 1\n/\nsum(rate(grpc_server_handling_seconds_count{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job)\n",
+                     "expr": "sum(rate(grpc_server_handling_seconds_sum{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job) * 1\n/\nsum(rate(grpc_server_handling_seconds_count{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean {{job}} {{grpc_method}}",
@@ -499,7 +499,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_method, le)) * 1",
+                     "expr": "histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) by (job, grpc_method, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{job}} {{grpc_method}}",
@@ -606,7 +606,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_code)",
+                     "expr": "sum(rate(grpc_server_handled_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{grpc_code}}",
@@ -685,7 +685,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job)",
+                     "expr": "sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -693,7 +693,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job)) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job)",
+                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -769,7 +769,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{job}}",
@@ -777,7 +777,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(grpc_server_handling_seconds_sum{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job) * 1\n/\nsum(rate(grpc_server_handling_seconds_count{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job)\n",
+                     "expr": "sum(rate(grpc_server_handling_seconds_sum{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job) * 1\n/\nsum(rate(grpc_server_handling_seconds_count{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean {{job}}",
@@ -785,7 +785,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.50, sum(rate(grpc_server_handling_seconds_bucket{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{job}}",
@@ -873,7 +873,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_client_handled_total{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_method, grpc_code)",
+                     "expr": "sum(rate(grpc_client_handled_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_method, grpc_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{grpc_method}} {{grpc_code}}",
@@ -949,7 +949,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_method, grpc_code)\n",
+                     "expr": "sum(rate(grpc_client_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_method, grpc_code)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{grpc_method}} {{grpc_code}}",
@@ -1025,7 +1025,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_method, le)) * 1",
+                     "expr": "histogram_quantile(0.99, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_method, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{job}} {{grpc_method}}",
@@ -1033,7 +1033,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(grpc_client_handling_seconds_sum{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job) * 1\n/\nsum(rate(grpc_client_handling_seconds_count{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job)\n",
+                     "expr": "sum(rate(grpc_client_handling_seconds_sum{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job) * 1\n/\nsum(rate(grpc_client_handling_seconds_count{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job)\n",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean {{job}} {{grpc_method}}",
@@ -1041,7 +1041,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_method, le)) * 1",
+                     "expr": "histogram_quantile(0.50, sum(rate(grpc_client_handling_seconds_bucket{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) by (job, grpc_method, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{job}} {{grpc_method}}",
@@ -1162,7 +1162,7 @@
                ],
                "targets": [
                   {
-                     "expr": "time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace=\"$namespace\",job=\"$job\"}) by (job, bucket)",
+                     "expr": "time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace=\"$namespace\",job=~\"$job\"}) by (job, bucket)",
                      "format": "table",
                      "instant": true,
                      "intervalFactor": 2,
@@ -1252,7 +1252,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job, operation)",
+                     "expr": "sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, operation)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{operation}}",
@@ -1331,7 +1331,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job) / sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job)",
+                     "expr": "sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) / sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -1339,7 +1339,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "(sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job) - sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job)) / sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job)",
+                     "expr": "(sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) - sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))) / sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "success",
@@ -1415,7 +1415,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.99, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{job}}",
@@ -1423,7 +1423,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_objstore_bucket_operation_duration_seconds_sum{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job) * 1 / sum(rate(thanos_objstore_bucket_operation_duration_seconds_count{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job)",
+                     "expr": "sum(rate(thanos_objstore_bucket_operation_duration_seconds_sum{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job) * 1 / sum(rate(thanos_objstore_bucket_operation_duration_seconds_count{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean {{job}}",
@@ -1431,7 +1431,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=\"$namespace\",job=\"$job\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.50, sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{job}}",
@@ -1519,7 +1519,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_memstats_alloc_bytes{namespace=\"$namespace\",job=\"$job\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "go_memstats_alloc_bytes{namespace=\"$namespace\",job=~\"$job\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "alloc all {{pod}}",
@@ -1527,7 +1527,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"$job\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=~\"$job\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "alloc heap {{pod}}",
@@ -1535,7 +1535,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "rate(go_memstats_alloc_bytes_total{namespace=\"$namespace\",job=\"$job\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "expr": "rate(go_memstats_alloc_bytes_total{namespace=\"$namespace\",job=~\"$job\",kubernetes_pod_name=~\"$pod\"}[30s])",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "alloc rate all {{pod}}",
@@ -1543,7 +1543,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "rate(go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=\"$job\",kubernetes_pod_name=~\"$pod\"}[30s])",
+                     "expr": "rate(go_memstats_heap_alloc_bytes{namespace=\"$namespace\",job=~\"$job\",kubernetes_pod_name=~\"$pod\"}[30s])",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "alloc rate heap {{pod}}",
@@ -1551,7 +1551,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "go_memstats_stack_inuse_bytes{namespace=\"$namespace\",job=\"$job\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "go_memstats_stack_inuse_bytes{namespace=\"$namespace\",job=~\"$job\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "inuse stack {{pod}}",
@@ -1559,7 +1559,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "go_memstats_heap_inuse_bytes{namespace=\"$namespace\",job=\"$job\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "go_memstats_heap_inuse_bytes{namespace=\"$namespace\",job=~\"$job\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "inuse heap {{pod}}",
@@ -1635,7 +1635,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_goroutines{namespace=\"$namespace\",job=\"$job\"}",
+                     "expr": "go_goroutines{namespace=\"$namespace\",job=~\"$job\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{pod}}",
@@ -1711,7 +1711,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=\"$job\",kubernetes_pod_name=~\"$pod\"}",
+                     "expr": "go_gc_duration_seconds{namespace=\"$namespace\",job=~\"$job\",kubernetes_pod_name=~\"$pod\"}",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{quantile}} {{pod}}",
@@ -1806,7 +1806,7 @@
             "useTags": false
          },
          {
-            "allValue": "",
+            "allValue": "thanos-sidecar.*",
             "current": {
                "text": "all",
                "value": "$__all"
