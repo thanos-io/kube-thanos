@@ -15,26 +15,37 @@ local template = grafana.template;
         keepTime: true,
         title: name,
         type: 'dashboard',
-        // url: '/d/916a852b00ccc5ed81056644718fa4fb/thanos-receive',
       },
     ],
   },
 
-  podTemplate(selector)::
+  template(name, metricName, selector='', includeAll=false, allValues='')::
+    local t = if includeAll then
+      template.new(
+        name,
+        '$datasource',
+        'label_values(%s{%s}, %s)' % [metricName, selector, name],
+        label=name,
+        refresh=1,
+        sort=2,
+        current='all',
+        allValues=allValues,
+        includeAll=true
+      )
+    else
+      template.new(
+        name,
+        '$datasource',
+        'label_values(%s{%s}, %s)' % [metricName, selector, name],
+        label=name,
+        refresh=1,
+        sort=2,
+      );
+
     {
       templating+: {
         list+: [
-          template.new(
-            'pod',
-            '$datasource',
-            'label_values(kube_pod_info{%s}, pod)' % selector,
-            label='pod',
-            refresh=1,
-            sort=2,
-            current='all',
-            allValues='.*',
-            includeAll=true
-          ),
+          t,
         ],
       },
     },
@@ -59,26 +70,26 @@ local template = grafana.template;
     nullPointMode: 'null as zero',
     targets: [
       {
-        expr: 'histogram_quantile(0.99, sum(rate(%s_bucket{%s}[$interval])) by (le)) * %s' % [metricName, selector, multiplier],
+        expr: 'histogram_quantile(0.99, sum(rate(%s_bucket{%s}[$interval])) by (job, le)) * %s' % [metricName, selector, multiplier],
         format: 'time_series',
         intervalFactor: 2,
-        legendFormat: 'P99',
+        legendFormat: 'P99 {{job}}',
         refId: 'A',
         step: 10,
       },
       {
-        expr: 'sum(rate(%s_sum{%s}[$interval])) * %s / sum(rate(%s_count{%s}[$interval]))' % [metricName, selector, multiplier, metricName, selector],
+        expr: 'sum(rate(%s_sum{%s}[$interval])) by (job) * %s / sum(rate(%s_count{%s}[$interval])) by (job)' % [metricName, selector, multiplier, metricName, selector],
         format: 'time_series',
         intervalFactor: 2,
-        legendFormat: 'mean',
+        legendFormat: 'mean {{job}}',
         refId: 'B',
         step: 10,
       },
       {
-        expr: 'histogram_quantile(0.50, sum(rate(%s_bucket{%s}[$interval])) by (le)) * %s' % [metricName, selector, multiplier],
+        expr: 'histogram_quantile(0.50, sum(rate(%s_bucket{%s}[$interval])) by (job, le)) * %s' % [metricName, selector, multiplier],
         format: 'time_series',
         intervalFactor: 2,
-        legendFormat: 'P50',
+        legendFormat: 'P50 {{job}}',
         refId: 'C',
         step: 10,
       },
@@ -87,7 +98,7 @@ local template = grafana.template;
   },
 
   qpsErrTotalPanel(selectorErr, selectorTotal):: {
-    local expr(selector) = 'sum(rate(' + selector + '[$interval]))',
+    local expr(selector) = 'sum(rate(' + selector + '[$interval])) by (job)',
 
     aliasColors: {
       success: '#7EB26D',
@@ -95,7 +106,7 @@ local template = grafana.template;
     },
     targets: [
       {
-        expr: '%s / %s ' % [expr(selectorErr), expr(selectorTotal)],
+        expr: '%s / %s' % [expr(selectorErr), expr(selectorTotal)],
         format: 'time_series',
         intervalFactor: 2,
         legendFormat: 'error',
@@ -114,18 +125,18 @@ local template = grafana.template;
     yaxes: $.yaxes({ format: 'percentunit', max: 1 }),
   } + $.stack,
 
-  resourceUtilizationRow(selector)::
+  resourceUtilizationRow()::
     $.row('Resources')
     .addPanel(
       $.panel('Memory Used') +
       $.queryPanel(
         [
-          'go_memstats_alloc_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
-          'go_memstats_heap_alloc_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
-          'rate(go_memstats_alloc_bytes_total{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}[30s])' % selector,
-          'rate(go_memstats_heap_alloc_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}[30s])' % selector,
-          'go_memstats_stack_inuse_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
-          'go_memstats_heap_inuse_bytes{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
+          'go_memstats_alloc_bytes{namespace="$namespace",job="$job",kubernetes_pod_name=~"$pod"}',
+          'go_memstats_heap_alloc_bytes{namespace="$namespace",job="$job",kubernetes_pod_name=~"$pod"}',
+          'rate(go_memstats_alloc_bytes_total{namespace="$namespace",job="$job",kubernetes_pod_name=~"$pod"}[30s])',
+          'rate(go_memstats_heap_alloc_bytes{namespace="$namespace",job="$job",kubernetes_pod_name=~"$pod"}[30s])',
+          'go_memstats_stack_inuse_bytes{namespace="$namespace",job="$job",kubernetes_pod_name=~"$pod"}',
+          'go_memstats_heap_inuse_bytes{namespace="$namespace",job="$job",kubernetes_pod_name=~"$pod"}',
         ],
         [
           'alloc all {{pod}}',
@@ -140,14 +151,14 @@ local template = grafana.template;
     .addPanel(
       $.panel('Goroutines') +
       $.queryPanel(
-        'go_goroutines{namespace="$namespace",%s}' % selector,
+        'go_goroutines{namespace="$namespace",job="$job"}',
         '{{pod}}'
       )
     )
     .addPanel(
       $.panel('GC Time Quantiles') +
       $.queryPanel(
-        'go_gc_duration_seconds{namespace="$namespace",%s,kubernetes_pod_name=~"$pod"}' % selector,
+        'go_gc_duration_seconds{namespace="$namespace",job="$job",kubernetes_pod_name=~"$pod"}',
         '{{quantile}} {{pod}}'
       )
     ) +

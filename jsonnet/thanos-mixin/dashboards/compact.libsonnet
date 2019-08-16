@@ -4,22 +4,21 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
   grafanaDashboards+:: {
     'compact.json':
       g.dashboard($._config.grafanaThanos.dashboardCompactTitle)
-      .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
         g.row('Group Compaction')
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (group)' % $._config,
-            'compaction'
+            'sum(rate(thanos_compact_group_compactions_total{namespace="$namespace",job="$job"}[$interval])) by (job, group)',
+            'compaction {{job}} {{group}}'
           ) +
           g.stack
         )
         .addPanel(
           g.panel('Errors') +
           g.qpsErrTotalPanel(
-            'thanos_compact_group_compactions_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            'thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_group_compactions_failures_total{namespace="$namespace",job="$job"}',
+            'thanos_compact_group_compactions_total{namespace="$namespace",job="$job"}',
           )
         )
       )
@@ -28,16 +27,16 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(thanos_compact_downsample_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (group)' % $._config,
-            'compaction'
+            'sum(rate(thanos_compact_downsample_total{namespace="$namespace",job="$job"}[$interval])) by (job, group)',
+            'downsample {{job}} {{group}}'
           ) +
           g.stack
         )
         .addPanel(
           g.panel('Errors') +
           g.qpsErrTotalPanel(
-            'thanos_compact_downsample_failed_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            'thanos_compact_downsample_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_downsample_failed_total{namespace="$namespace",job="$job"}',
+            'thanos_compact_downsample_total{namespace="$namespace",job="$job"}',
           )
         )
       )
@@ -46,21 +45,21 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(thanos_compact_garbage_collection_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'compaction'
+            'sum(rate(thanos_compact_garbage_collection_total{namespace="$namespace",job="$job"}[$interval])) by (job)',
+            'garbage collection {{job}}'
           ) +
           g.stack
         )
         .addPanel(
           g.panel('Errors') +
           g.qpsErrTotalPanel(
-            'thanos_compact_garbage_collection_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            'thanos_compact_garbage_collection_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_garbage_collection_failures_total{namespace="$namespace",job="$job"}',
+            'thanos_compact_garbage_collection_total{namespace="$namespace",job="$job"}',
           )
         )
         .addPanel(
           g.panel('Duration') +
-          g.latencyPanel('thanos_compact_garbage_collection_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+          g.latencyPanel('thanos_compact_garbage_collection_duration_seconds', 'namespace="$namespace",job="$job"')
         )
       )
       .addRow(
@@ -68,21 +67,21 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(thanos_compact_sync_meta_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'compaction'
+            'sum(rate(thanos_compact_sync_meta_total{namespace="$namespace",job="$job"}[$interval])) by (job)',
+            'sync {{job}}'
           ) +
           g.stack
         )
         .addPanel(
           g.panel('Errors') +
           g.qpsErrTotalPanel(
-            'thanos_compact_sync_meta_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            'thanos_compact_sync_meta_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_compact_sync_meta_failures_total{namespace="$namespace",job="$job"}',
+            'thanos_compact_sync_meta_total{namespace="$namespace",job="$job"}',
           )
         )
         .addPanel(
           g.panel('Duration') +
-          g.latencyPanel('thanos_compact_sync_meta_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+          g.latencyPanel('thanos_compact_sync_meta_duration_seconds', 'namespace="$namespace",job="$job"')
         )
       )
       .addRow(
@@ -90,26 +89,28 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(thanos_objstore_bucket_operations_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (operation)' % $._config,
-            '{{operation}}'
+            'sum(rate(thanos_objstore_bucket_operations_total{namespace="$namespace",job="$job"}[$interval])) by (job, operation)',
+            '{{job}} {{operation}}'
           ) +
           g.stack
         )
         .addPanel(
           g.panel('Errors') +
           g.qpsErrTotalPanel(
-            'thanos_objstore_bucket_operation_failures_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
-            'thanos_objstore_bucket_operations_total{namespace=~"$namespace",%(thanosCompactSelector)s}' % $._config,
+            'thanos_objstore_bucket_operation_failures_total{namespace="$namespace",job="$job"}',
+            'thanos_objstore_bucket_operations_total{namespace="$namespace",job="$job"}',
           )
         )
         .addPanel(
           g.panel('Duration') +
-          g.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace=~"$namespace",%(thanosCompactSelector)s' % $._config)
+          g.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace="$namespace",job="$job"')
         )
       )
       .addRow(
-        g.resourceUtilizationRow('%(thanosCompactSelector)s' % $._config)
+        g.resourceUtilizationRow()
       ) +
-      g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosCompact)s.*"' % $._config),
+      g.template('namespace', 'kube_pod_info') +
+      g.template('job', 'up', 'namespace="$namespace",%(thanosCompactSelector)s' % $._config, true) +
+      g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosCompactJobPrefix)s.*"' % $._config, true, '.*'),
   },
 }

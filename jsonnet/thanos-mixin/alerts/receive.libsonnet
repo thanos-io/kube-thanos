@@ -7,7 +7,7 @@
           {
             alert: 'ThanosReceiveHttpRequestLatencyHigh',
             annotations: {
-              message: 'Thanos Receive has a 99th percentile latency of {{ $value }} seconds for HTTP requests.',
+              message: 'Thanos Receive {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for HTTP requests.',
             },
             expr: |||
               histogram_quantile(0.99,
@@ -22,7 +22,7 @@
           {
             alert: 'ThanosReceiveHighForwardRequestFailures',
             annotations: {
-              message: 'Thanos Receive failling to forward {{ $value | humanize }}% of requests.',
+              message: 'Thanos Receive {{$labels.job}} failling to forward {{ $value | humanize }}% of requests.',
             },
             expr: |||
               sum(
@@ -39,7 +39,7 @@
           {
             alert: 'ThanosReceiveHighHashringFileRefreshFailures',
             annotations: {
-              message: 'Thanos Receive failling to refresh hashring file, {{ $value | humanize }} of attempts failed.',
+              message: 'Thanos Receive {{$labels.job}} failling to refresh hashring file, {{ $value | humanize }} of attempts failed.',
             },
             expr: |||
               sum(

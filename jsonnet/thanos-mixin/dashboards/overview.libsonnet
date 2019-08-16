@@ -4,7 +4,6 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
   grafanaDashboards+:: {
     'overview.json':
       g.dashboard($._config.grafanaThanos.dashboardOverviewTitle)
-      .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
         g.row('Instant Query')
         .addPanel(
@@ -125,8 +124,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Alert Sent Rate') +
           g.queryPanel(
-            'sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (alertmanager)' % $._config,
-            '{{alertmanager}}'
+            'sum(rate(thanos_alert_sender_alerts_sent_total{namespace=~"$namespace",%(thanosRuleSelector)s}[$interval])) by (job, alertmanager)' % $._config,
+            '{{job}} {{alertmanager}}'
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardRuleTitle) +
           g.stack
@@ -156,8 +155,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Compaction Rate') +
           g.queryPanel(
-            'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval]))' % $._config,
-            'compaction'
+            'sum(rate(thanos_compact_group_compactions_total{namespace=~"$namespace",%(thanosCompactSelector)s}[$interval])) by (job)' % $._config,
+            'compaction {{job}}'
           ) +
           g.stack +
           g.addDashboardLink($._config.grafanaThanos.dashboardCompactTitle)
@@ -171,6 +170,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.addDashboardLink($._config.grafanaThanos.dashboardCompactTitle)
         ) +
         g.collapse
-      ),
+      ) +
+      g.template('namespace', 'kube_pod_info'),
   },
 }

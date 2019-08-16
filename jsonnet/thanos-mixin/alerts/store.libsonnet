@@ -7,7 +7,7 @@
           {
             alert: 'ThanosStoreGrpcErrorRate',
             annotations: {
-              message: 'Thanos Store is returning Internal/Unavailable errors.',
+              message: 'Thanos Store {{$labels.job}} is returning Internal/Unavailable errors.',
             },
             expr: |||
               sum(
@@ -24,7 +24,7 @@
           {
             alert: 'ThanosStoreSeriesGateLatencyHigh',
             annotations: {
-              message: 'Thanos Store has a 99th percentile latency of {{ $value }} seconds for store series gate requests.',
+              message: 'Thanos Store {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for store series gate requests.',
             },
             expr: |||
               histogram_quantile(0.99,
@@ -39,7 +39,7 @@
           {
             alert: 'ThanosStoreBucketHighOperationFailures',
             annotations: {
-              message: 'Thanos Store Bucket has {{ $value }} of failing operations.',
+              message: 'Thanos Store {{$labels.job}} Bucket has {{ $value }} of failing operations.',
             },
             expr: |||
               sum(
@@ -56,7 +56,7 @@
           {
             alert: 'ThanosStoreObjstoreOperationLatencyHigh',
             annotations: {
-              message: 'Thanos Store Bucket has a 99th percentile latency of {{ $value }} seconds for bucket operations.',
+              message: 'Thanos Store {{$labels.job}} Bucket has a 99th percentile latency of {{ $value }} seconds for bucket operations.',
             },
             expr: |||
               histogram_quantile(0.99,

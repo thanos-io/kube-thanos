@@ -24,10 +24,10 @@
     },
     targets: [
       {
-        expr: 'sum(rate(%s_handled_total{%s}[$interval])) by (grpc_code)' % [prefix, selector],
+        expr: 'sum(rate(%s_handled_total{%s}[$interval])) by (job, grpc_code)' % [prefix, selector],
         format: 'time_series',
         intervalFactor: 2,
-        legendFormat: '{{grpc_code}}',
+        legendFormat: '{{job}} {{grpc_code}}',
         refId: 'A',
         step: 10,
       },
@@ -38,10 +38,10 @@
     local prefix = if type == 'client' then 'grpc_client' else 'grpc_server',
     targets: [
       {
-        expr: 'sum(rate(%s_handled_total{%s}[$interval])) by (grpc_method, grpc_code)' % [prefix, selector],
+        expr: 'sum(rate(%s_handled_total{%s}[$interval])) by (job, grpc_method, grpc_code)' % [prefix, selector],
         format: 'time_series',
         intervalFactor: 2,
-        legendFormat: '{{grpc_method}} {{grpc_code}}',
+        legendFormat: '{{job}} {{grpc_method}} {{grpc_code}}',
         refId: 'A',
         step: 10,
       },
@@ -59,9 +59,9 @@
     local prefix = if type == 'client' then 'grpc_client' else 'grpc_server';
     $.queryPanel(
       |||
-        sum(rate(%s_handled_total{grpc_code!="OK",%s}[$interval])) by (grpc_method, grpc_code)
+        sum(rate(%s_handled_total{grpc_code!="OK",%s}[$interval])) by (job, grpc_method, grpc_code)
       ||| % [prefix, selector],
-      '{{grpc_method}} {{grpc_code}}'
+      '{{job}} {{grpc_method}} {{grpc_code}}'
     ) +
     $.stack,
 
@@ -69,18 +69,18 @@
     local prefix = if type == 'client' then 'grpc_client' else 'grpc_server';
     $.queryPanel(
       [
-        'histogram_quantile(0.99, sum(rate(%s_handling_seconds_bucket{%s}[$interval])) by (le)) * %s' % [prefix, selector, multiplier],
+        'histogram_quantile(0.99, sum(rate(%s_handling_seconds_bucket{%s}[$interval])) by (job, le)) * %s' % [prefix, selector, multiplier],
         |||
-          sum(rate(%s_handling_seconds_sum{%s}[$interval])) * %s
+          sum(rate(%s_handling_seconds_sum{%s}[$interval])) by (job) * %s
           /
-          sum(rate(%s_handling_seconds_count{%s}[$interval]))
+          sum(rate(%s_handling_seconds_count{%s}[$interval])) by (job)
         ||| % [prefix, selector, multiplier, prefix, selector],
-        'histogram_quantile(0.50, sum(rate(%s_handling_seconds_bucket{%s}[$interval])) by (le)) * %s' % [prefix, selector, multiplier],
+        'histogram_quantile(0.50, sum(rate(%s_handling_seconds_bucket{%s}[$interval])) by (job, le)) * %s' % [prefix, selector, multiplier],
       ],
       [
-        'P99',
-        'mean',
-        'P50',
+        'P99 {{job}}',
+        'mean {{job}}',
+        'P50 {{job}}',
       ]
     ) +
     { yaxes: $.yaxes('s') },
@@ -89,18 +89,18 @@
     local prefix = if type == 'client' then 'grpc_client' else 'grpc_server';
     $.queryPanel(
       [
-        'histogram_quantile(0.99, sum(rate(%s_handling_seconds_bucket{%s}[$interval])) by (grpc_method, le)) * %s' % [prefix, selector, multiplier],
+        'histogram_quantile(0.99, sum(rate(%s_handling_seconds_bucket{%s}[$interval])) by (job, grpc_method, le)) * %s' % [prefix, selector, multiplier],
         |||
-          sum(rate(%s_handling_seconds_sum{%s}[$interval])) * %s
+          sum(rate(%s_handling_seconds_sum{%s}[$interval])) by (job) * %s
           /
-          sum(rate(%s_handling_seconds_count{%s}[$interval]))
+          sum(rate(%s_handling_seconds_count{%s}[$interval])) by (job)
         ||| % [prefix, selector, multiplier, prefix, selector],
-        'histogram_quantile(0.50, sum(rate(%s_handling_seconds_bucket{%s}[$interval])) by (grpc_method, le)) * %s' % [prefix, selector, multiplier],
+        'histogram_quantile(0.50, sum(rate(%s_handling_seconds_bucket{%s}[$interval])) by (job, grpc_method, le)) * %s' % [prefix, selector, multiplier],
       ],
       [
-        'P99 {{grpc_method}}',
-        'mean {{grpc_method}}',
-        'P50 {{grpc_method}}',
+        'P99 {{job}} {{grpc_method}}',
+        'mean {{job}} {{grpc_method}}',
+        'P50 {{job}} {{grpc_method}}',
       ]
     ) +
     { yaxes: $.yaxes('s') },

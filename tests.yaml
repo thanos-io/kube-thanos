@@ -7,9 +7,9 @@ evaluation_interval: 1m
 tests:
 - interval: 1m
   input_series:
-  - series: 'thanos_sidecar_last_heartbeat_success_time_seconds{job="thanos-sidecar", pod="thanos-sidecar-pod-0"}'
+  - series: 'thanos_sidecar_last_heartbeat_success_time_seconds{namespace="production", job="thanos-sidecar", pod="thanos-sidecar-pod-0"}'
     values: '5 10 43 17 11 0 0 0'
-  - series: 'thanos_sidecar_last_heartbeat_success_time_seconds{job="thanos-sidecar", pod="thanos-sidecar-pod-1"}'
+  - series: 'thanos_sidecar_last_heartbeat_success_time_seconds{namespace="production", job="thanos-sidecar", pod="thanos-sidecar-pod-1"}'
     values: '4 9 42 15 10 0 0 0'
   promql_expr_test:
     - expr: time()
@@ -66,29 +66,29 @@ tests:
           value: 720
   alert_rule_test:
   - eval_time: 1m
-    alertname: ThanosSidecarAllUnhealthy
+    alertname: ThanosSidecarUnhealthy
   - eval_time: 2m
-    alertname: ThanosSidecarAllUnhealthy
+    alertname: ThanosSidecarUnhealthy
   - eval_time: 3m
-    alertname: ThanosSidecarAllUnhealthy
+    alertname: ThanosSidecarUnhealthy
   - eval_time: 5m
-    alertname: ThanosSidecarAllUnhealthy
+    alertname: ThanosSidecarUnhealthy
     exp_alerts:
     - exp_labels:
         severity: warning
       exp_annotations:
-        message: 'All Thanos Sidecars are unhealthy for 2 seconds.'
+        message: 'Thanos Sidecar // is unhealthy for 2 seconds.'
   - eval_time: 6m
-    alertname: ThanosSidecarAllUnhealthy
+    alertname: ThanosSidecarUnhealthy
     exp_alerts:
     - exp_labels:
         severity: warning
       exp_annotations:
-        message: 'All Thanos Sidecars are unhealthy for 2 seconds.'
+        message: 'Thanos Sidecar // is unhealthy for 2 seconds.'
   - eval_time: 12m
-    alertname: ThanosSidecarAllUnhealthy
+    alertname: ThanosSidecarUnhealthy
     exp_alerts:
     - exp_labels:
         severity: warning
       exp_annotations:
-        message: 'All Thanos Sidecars are unhealthy for 2 seconds.'
+        message: 'Thanos Sidecar // is unhealthy for 2 seconds.'

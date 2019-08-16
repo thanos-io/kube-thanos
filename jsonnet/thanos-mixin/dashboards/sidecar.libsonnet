@@ -4,35 +4,34 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
   grafanaDashboards+:: {
     'sidecar.json':
       g.dashboard($._config.grafanaThanos.dashboardSidecarTitle)
-      .addTemplate('namespace', 'kube_pod_info', 'namespace')
       .addRow(
         g.row('gRPC (Unary)')
         .addPanel(
           g.panel('Rate') +
-          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanel('server', 'namespace="$namespace",job="$job",grpc_type="unary"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrorsPanel('server', 'namespace="$namespace",job="$job",grpc_type="unary"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanel('server', 'namespace="$namespace",job="$job",grpc_type="unary"')
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="unary"' % $._config)
+          g.grpcQpsPanelDetailed('server', 'namespace="$namespace",job="$job",grpc_type="unary"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrDetailsPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="unary"' % $._config)
+          g.grpcErrDetailsPanel('server', 'namespace="$namespace",job="$job",grpc_type="unary"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="unary"' % $._config)
+          g.grpcLatencyPanelDetailed('server', 'namespace="$namespace",job="$job",grpc_type="unary"')
         ) +
         g.collapse
       )
@@ -40,30 +39,30 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.row('gRPC (Stream)')
         .addPanel(
           g.panel('Rate') +
-          g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanel('server', 'namespace="$namespace",job="$job",grpc_type="server_stream"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrorsPanel('server', 'namespace="$namespace",job="$job",grpc_type="server_stream"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.grpcLatencyPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanel('server', 'namespace="$namespace",job="$job",grpc_type="server_stream"')
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          g.grpcQpsPanelDetailed('client', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcQpsPanelDetailed('client', 'namespace="$namespace",job="$job",grpc_type="server_stream"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.grpcErrDetailsPanel('client', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcErrDetailsPanel('client', 'namespace="$namespace",job="$job",grpc_type="server_stream"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.grpcLatencyPanelDetailed('client', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="server_stream"' % $._config)
+          g.grpcLatencyPanelDetailed('client', 'namespace="$namespace",job="$job",grpc_type="server_stream"')
         ) +
         g.collapse
       )
@@ -72,7 +71,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Successful Upload') +
           g.tablePanel(
-            ['time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace="$namespace",%(thanosSidecarSelector)s}) by (bucket)' % $._config],
+            ['time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace="$namespace",job="$job"}) by (job, bucket)'],
             {
               Value: {
                 alias: 'Uploaded Ago',
@@ -88,26 +87,28 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel('Rate') +
           g.queryPanel(
-            'sum(rate(thanos_objstore_bucket_operations_total{namespace="$namespace",%(thanosSidecarSelector)s}[$interval])) by (operation)' % $._config,
-            '{{operation}}'
+            'sum(rate(thanos_objstore_bucket_operations_total{namespace="$namespace",job="$job"}[$interval])) by (job, operation)',
+            '{{job}} {{operation}}'
           ) +
           g.stack
         )
         .addPanel(
           g.panel('Errors') +
           g.qpsErrTotalPanel(
-            'thanos_objstore_bucket_operation_failures_total{namespace="$namespace",%(thanosSidecarSelector)s}' % $._config,
-            'thanos_objstore_bucket_operations_total{namespace="$namespace",%(thanosSidecarSelector)s}' % $._config,
+            'thanos_objstore_bucket_operation_failures_total{namespace="$namespace",job="$job"}',
+            'thanos_objstore_bucket_operations_total{namespace="$namespace",job="$job"}',
           )
         )
         .addPanel(
           g.panel('Duration') +
-          g.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace="$namespace",%(thanosSidecarSelector)s' % $._config,)
+          g.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace="$namespace",job="$job"')
         )
       )
       .addRow(
-        g.resourceUtilizationRow('%(thanosSidecarSelector)s' % $._config)
+        g.resourceUtilizationRow()
       ) +
-      g.podTemplate('namespace="$namespace",created_by_name=~"%(thanosSidecar)s.*"' % $._config),
+      g.template('namespace', 'kube_pod_info') +
+      g.template('job', 'up', 'namespace="$namespace",%(thanosSidecarSelector)s' % $._config, true) +
+      g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosSidecarJobPrefix)s.*"' % $._config, true, '.*'),
   },
 }

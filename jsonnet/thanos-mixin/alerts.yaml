@@ -3,46 +3,46 @@ groups:
   rules:
   - alert: ThanosQuerierGrpcErrorRate
     annotations:
-      message: Thanos Querier is returning Internal/Unavailable errors.
+      message: Thanos Querier {{$labels.job}} is returning Internal/Unavailable errors.
     expr: |
       sum(
-        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job="thanos-querier"}[5m])
+        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-querier.*"}[5m])
         /
-        rate(grpc_server_started_total{job="thanos-querier"}[5m])
+        rate(grpc_server_started_total{job=~"thanos-querier.*"}[5m])
       ) > 0.05
     for: 5m
     labels:
       severity: warning
   - alert: ThanosQuerierHighDNSFailures
     annotations:
-      message: Thanos Queriers have {{ $value }} of failing DNS queries.
+      message: Thanos Queriers {{$labels.job}} have {{ $value }} of failing DNS queries.
     expr: |
       sum(
-        rate(thanos_querier_store_apis_dns_failures_total{job="thanos-querier"}[5m])
+        rate(thanos_querier_store_apis_dns_failures_total{job=~"thanos-querier.*"}[5m])
       /
-        rate(thanos_querier_store_apis_dns_lookups_total{job="thanos-querier"}[5m])
+        rate(thanos_querier_store_apis_dns_lookups_total{job=~"thanos-querier.*"}[5m])
       ) > 1
     for: 15m
     labels:
       severity: warning
   - alert: ThanosQuerierInstantLatencyHigh
     annotations:
-      message: Thanos Querier has a 99th percentile latency of {{ $value }} seconds
-        for instant queries.
+      message: Thanos Querier {{$labels.job}} has a 99th percentile latency of {{
+        $value }} seconds for instant queries.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_query_api_instant_query_duration_seconds_bucket{job="thanos-querier"}) by (le)
+        sum(thanos_query_api_instant_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (le)
       ) > 10
     for: 10m
     labels:
       severity: warning
   - alert: ThanosQuerierRangeLatencyHigh
     annotations:
-      message: Thanos Querier has a 99th percentile latency of {{ $value }} seconds
-        for instant queries.
+      message: Thanos Querier {{$labels.job}} has a 99th percentile latency of {{
+        $value }} seconds for instant queries.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_query_api_range_query_duration_seconds_bucket{job="thanos-querier"}) by (le)
+        sum(thanos_query_api_range_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (le)
       ) > 10
     for: 10m
     labels:
@@ -51,36 +51,37 @@ groups:
   rules:
   - alert: ThanosReceiveHttpRequestLatencyHigh
     annotations:
-      message: Thanos Receive has a 99th percentile latency of {{ $value }} seconds
-        for HTTP requests.
+      message: Thanos Receive {{$labels.job}} has a 99th percentile latency of {{
+        $value }} seconds for HTTP requests.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_http_request_duration_seconds_bucket{job="thanos-receive"}) by (le)
+        sum(thanos_http_request_duration_seconds_bucket{job=~"thanos-receive.*"}) by (le)
       ) > 10
     for: 10m
     labels:
       severity: warning
   - alert: ThanosReceiveHighForwardRequestFailures
     annotations:
-      message: Thanos Receive failling to forward {{ $value | humanize }}% of requests.
+      message: Thanos Receive {{$labels.job}} failling to forward {{ $value | humanize
+        }}% of requests.
     expr: |
       sum(
-        rate(thanos_receive_forward_requests_total{result="error", job="thanos-receive"}[5m])
+        rate(thanos_receive_forward_requests_total{result="error", job=~"thanos-receive.*"}[5m])
       /
-        rate(thanos_receive_forward_requests_total{job="thanos-receive"}[5m])
+        rate(thanos_receive_forward_requests_total{job=~"thanos-receive.*"}[5m])
       ) > 0.05
     for: 15m
     labels:
       severity: warning
   - alert: ThanosReceiveHighHashringFileRefreshFailures
     annotations:
-      message: Thanos Receive failling to refresh hashring file, {{ $value | humanize
-        }} of attempts failed.
+      message: Thanos Receive {{$labels.job}} failling to refresh hashring file, {{
+        $value | humanize }} of attempts failed.
     expr: |
       sum(
-        rate(thanos_receive_hashrings_file_errors_total{job="thanos-receive"}[5m])
+        rate(thanos_receive_hashrings_file_errors_total{job=~"thanos-receive.*"}[5m])
       /
-        rate(thanos_receive_hashrings_file_refreshes_total{job="thanos-receive"}[5m])
+        rate(thanos_receive_hashrings_file_refreshes_total{job=~"thanos-receive.*"}[5m])
       ) > 0
     for: 15m
     labels:
@@ -88,7 +89,8 @@ groups:
   - alert: ThanosReceiveConfigReloadFailure
     annotations:
       message: Thanos Receive has not been able to reload hashring configurations.
-    expr: thanos_receive_config_last_reload_successful{job="thanos-receive"} == 0
+    expr: thanos_receive_config_last_reload_successful{job=~"thanos-receive.*"} ==
+      0
     for: 5m
     labels:
       severity: warning
@@ -96,56 +98,56 @@ groups:
   rules:
   - alert: ThanosSidecarUnhealthy
     annotations:
-      message: Thanos Sidecar {{$labels.namespace}}/{{$labels.pod}} is unhealthy for
-        {{ $value }} seconds.
+      message: Thanos Sidecar {{$labels.namespace}}/{{$labels.job}}/{{$labels.pod}}
+        is unhealthy for {{ $value }} seconds.
     expr: |
-      count(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{job="thanos-sidecar"}) by (pod) >= 300) > 0
+      count(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{job=~"thanos-sidecar.*"}) by (job, pod) >= 300) > 0
     labels:
       severity: warning
 - name: thanos-store.rules
   rules:
   - alert: ThanosStoreGrpcErrorRate
     annotations:
-      message: Thanos Store is returning Internal/Unavailable errors.
+      message: Thanos Store {{$labels.job}} is returning Internal/Unavailable errors.
     expr: |
       sum(
-        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job="thanos-store"}[5m])
+        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-store.*"}[5m])
         /
-        rate(grpc_server_started_total{job="thanos-store"}[5m])
+        rate(grpc_server_started_total{job=~"thanos-store.*"}[5m])
       ) > 0.05
     for: 5m
     labels:
       severity: warning
   - alert: ThanosStoreSeriesGateLatencyHigh
     annotations:
-      message: Thanos Store has a 99th percentile latency of {{ $value }} seconds
-        for store series gate requests.
+      message: Thanos Store {{$labels.job}} has a 99th percentile latency of {{ $value
+        }} seconds for store series gate requests.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_bucket_store_series_gate_duration_seconds_bucket{job="thanos-store"}) by (le)
+        sum(thanos_bucket_store_series_gate_duration_seconds_bucket{job=~"thanos-store.*"}) by (le)
       ) > 2
     for: 10m
     labels:
       severity: warning
   - alert: ThanosStoreBucketHighOperationFailures
     annotations:
-      message: Thanos Store Bucket has {{ $value }} of failing operations.
+      message: Thanos Store {{$labels.job}} Bucket has {{ $value }} of failing operations.
     expr: |
       sum(
-        rate(thanos_objstore_bucket_operation_failures_total{job="thanos-store"}[5m])
+        rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-store.*"}[5m])
       /
-        rate(thanos_objstore_bucket_operations_total{job="thanos-store"}[5m])
+        rate(thanos_objstore_bucket_operations_total{job=~"thanos-store.*"}[5m])
       ) > 0.05
     for: 15m
     labels:
       severity: warning
   - alert: ThanosStoreObjstoreOperationLatencyHigh
     annotations:
-      message: Thanos Store Bucket has a 99th percentile latency of {{ $value }} seconds
-        for bucket operations.
+      message: Thanos Store {{$labels.job}} Bucket has a 99th percentile latency of
+        {{ $value }} seconds for bucket operations.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_objstore_bucket_operation_duration_seconds_bucket{job="thanos-store"}) by (le)
+        sum(thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"}) by (le)
       ) > 15
     for: 10m
     labels:

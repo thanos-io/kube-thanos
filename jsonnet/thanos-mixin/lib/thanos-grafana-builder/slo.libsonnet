@@ -2,8 +2,8 @@
   sloLatency(title, selector, quantile, warning, critical)::
     $.panel(title) +
     $.queryPanel(
-      'histogram_quantile(%.2f, sum(rate(%s[$interval])) by (le))' % [quantile, selector],
-      'P' + quantile * 100
+      'histogram_quantile(%.2f, sum(rate(%s[$interval])) by (job, le))' % [quantile, selector],
+      '{{job}} P' + quantile * 100
     ) +
     {
       yaxes: $.yaxes('s'),

@@ -7,7 +7,7 @@
           {
             alert: 'ThanosQuerierGrpcErrorRate',
             annotations: {
-              message: 'Thanos Querier is returning Internal/Unavailable errors.',
+              message: 'Thanos Querier {{$labels.job}} is returning Internal/Unavailable errors.',
             },
             expr: |||
               sum(
@@ -24,7 +24,7 @@
           {
             alert: 'ThanosQuerierHighDNSFailures',
             annotations: {
-              message: 'Thanos Queriers have {{ $value }} of failing DNS queries.',
+              message: 'Thanos Queriers {{$labels.job}} have {{ $value }} of failing DNS queries.',
             },
             expr: |||
               sum(
@@ -41,7 +41,7 @@
           {
             alert: 'ThanosQuerierInstantLatencyHigh',
             annotations: {
-              message: 'Thanos Querier has a 99th percentile latency of {{ $value }} seconds for instant queries.',
+              message: 'Thanos Querier {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for instant queries.',
             },
             expr: |||
               histogram_quantile(0.99,
@@ -56,7 +56,7 @@
           {
             alert: 'ThanosQuerierRangeLatencyHigh',
             annotations: {
-              message: 'Thanos Querier has a 99th percentile latency of {{ $value }} seconds for instant queries.',
+              message: 'Thanos Querier {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for instant queries.',
             },
             expr: |||
               histogram_quantile(0.99,

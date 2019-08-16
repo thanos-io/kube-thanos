@@ -3,52 +3,52 @@ groups:
   rules:
   - expr: |
       sum(
-        rate(grpc_client_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job="thanos-querier", grpc_type="unary"}[5m])
+        rate(grpc_client_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job=~"thanos-querier.*", grpc_type="unary"}[5m])
         /
-        rate(grpc_client_started_total{job="thanos-querier", grpc_type="unary"}[5m])
+        rate(grpc_client_started_total{job=~"thanos-querier.*", grpc_type="unary"}[5m])
       )
     labels: {}
     record: :grpc_client_failures_per_unary:sum_rate
   - expr: |
       sum(
-        rate(grpc_client_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job="thanos-querier", grpc_type="server_stream"}[5m])
+        rate(grpc_client_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job=~"thanos-querier.*", grpc_type="server_stream"}[5m])
       /
-        rate(grpc_client_started_total{job="thanos-querier", grpc_type="server_stream"}[5m])
+        rate(grpc_client_started_total{job=~"thanos-querier.*", grpc_type="server_stream"}[5m])
       )
     labels: {}
     record: :grpc_client_failures_per_stream:sum_rate
   - expr: |
       sum(
-        rate(thanos_querier_store_apis_dns_failures_total{job="thanos-querier"}[5m])
+        rate(thanos_querier_store_apis_dns_failures_total{job=~"thanos-querier.*"}[5m])
       /
-        rate(thanos_querier_store_apis_dns_lookups_total{job="thanos-querier"}[5m])
+        rate(thanos_querier_store_apis_dns_lookups_total{job=~"thanos-querier.*"}[5m])
       )
     labels: {}
     record: :thanos_querier_store_apis_dns_failures_per_lookup:sum_rate
   - expr: |
       histogram_quantile(0.99,
-        sum(thanos_query_api_instant_query_duration_seconds_bucket{job="thanos-querier"}) by (le)
+        sum(thanos_query_api_instant_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (le)
       )
     labels:
       quantile: "0.99"
     record: :thanos_querier_api_instant_query_duration_seconds:p99:histogram_quantile
   - expr: |
       histogram_quantile(0.99,
-        sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{job="thanos-querier"}[5m])) by (le)
+        sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{job=~"thanos-querier.*"}[5m])) by (le)
       )
     labels:
       quantile: "0.99"
     record: :thanos_querier_api_instant_query_duration_seconds:histogram_quantile
   - expr: |
       histogram_quantile(0.99,
-        sum(thanos_query_api_range_query_duration_seconds_bucket{job="thanos-querier"}) by (le)
+        sum(thanos_query_api_range_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (le)
       )
     labels:
       quantile: "0.99"
     record: :thanos_querier_api_range_query_duration_seconds:histogram_quantile
   - expr: |
       histogram_quantile(0.99,
-        sum(rate(thanos_query_api_range_query_duration_seconds_bucket{job="thanos-querier"}[5m])) by (le)
+        sum(rate(thanos_query_api_range_query_duration_seconds_bucket{job=~"thanos-querier.*"}[5m])) by (le)
       )
     labels:
       quantile: "0.99"
@@ -57,55 +57,55 @@ groups:
   rules:
   - expr: |
       sum(
-        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job="thanos-querier", grpc_type="unary"}[5m])
+        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job=~"thanos-querier.*", grpc_type="unary"}[5m])
       /
-        rate(grpc_server_started_total{job="thanos-querier", grpc_type="unary"}[5m])
+        rate(grpc_server_started_total{job=~"thanos-querier.*", grpc_type="unary"}[5m])
       )
     labels: {}
     record: :grpc_server_failures_per_unary:sum_rate
   - expr: |
       sum(
-        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job="thanos-querier", grpc_type="server_stream"}[5m])
+        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job=~"thanos-querier.*", grpc_type="server_stream"}[5m])
       /
-        rate(grpc_server_started_total{job="thanos-querier", grpc_type="server_stream"}[5m])
+        rate(grpc_server_started_total{job=~"thanos-querier.*", grpc_type="server_stream"}[5m])
       )
     labels: {}
     record: :grpc_server_failures_per_stream:sum_rate
   - expr: |
       sum(
-        rate(thanos_http_requests_total{job="thanos-receive", code!~"2.."}[5m])
+        rate(thanos_http_requests_total{job=~"thanos-receive.*", code!~"2.."}[5m])
       /
-        rate(thanos_http_requests_total{job="thanos-receive"}[5m])
+        rate(thanos_http_requests_total{job=~"thanos-receive.*"}[5m])
       )
     labels: {}
     record: :thanos_http_failure_per_request:sum_rate
   - expr: |
       histogram_quantile(0.99,
-        sum(thanos_http_request_duration_seconds_bucket{job="thanos-receive"}) by (le)
+        sum(thanos_http_request_duration_seconds_bucket{job=~"thanos-receive.*"}) by (le)
       )
     labels:
       quantile: "0.99"
     record: :thanos_http_request_duration_seconds:histogram_quantile
   - expr: |
       histogram_quantile(0.99,
-        sum(rate(thanos_http_request_duration_seconds_bucket{job="thanos-receive"}[5m])) by (le)
+        sum(rate(thanos_http_request_duration_seconds_bucket{job=~"thanos-receive.*"}[5m])) by (le)
       )
     labels:
       quantile: "0.99"
     record: :thanos_http_request_duration_seconds:histogram_quantile
   - expr: |
       sum(
-        rate(thanos_receive_forward_requests_total{result="error", job="thanos-receive"}[5m])
+        rate(thanos_receive_forward_requests_total{result="error", job=~"thanos-receive.*"}[5m])
       /
-        rate(thanos_receive_forward_requests_total{job="thanos-receive"}[5m])
+        rate(thanos_receive_forward_requests_total{job=~"thanos-receive.*"}[5m])
       )
     labels: {}
     record: :thanos_receive_forward_failure_per_requests:sum_rate
   - expr: |
       sum(
-        rate(thanos_receive_hashrings_file_errors_total{job="thanos-receive"}[5m])
+        rate(thanos_receive_hashrings_file_errors_total{job=~"thanos-receive.*"}[5m])
       /
-        rate(thanos_receive_hashrings_file_refreshes_total{job="thanos-receive"}[5m])
+        rate(thanos_receive_hashrings_file_refreshes_total{job=~"thanos-receive.*"}[5m])
       )
     labels: {}
     record: :thanos_receive_hashring_file_failure_per_refresh:sum_rate
@@ -113,38 +113,38 @@ groups:
   rules:
   - expr: |
       sum(
-        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job="thanos-store", grpc_type="unary"}[5m])
+        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job=~"thanos-store.*", grpc_type="unary"}[5m])
       /
-        rate(grpc_server_started_total{job="thanos-store", grpc_type="unary"}[5m])
+        rate(grpc_server_started_total{job=~"thanos-store.*", grpc_type="unary"}[5m])
       )
     labels: {}
     record: :grpc_server_failures_per_unary:sum_rate
   - expr: |
       sum(
-        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job="thanos-store", grpc_type="server_stream"}[5m])
+        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", job=~"thanos-store.*", grpc_type="server_stream"}[5m])
       /
-        rate(grpc_server_started_total{job="thanos-store", grpc_type="server_stream"}[5m])
+        rate(grpc_server_started_total{job=~"thanos-store.*", grpc_type="server_stream"}[5m])
       )
     labels: {}
     record: :grpc_server_failures_per_stream:sum_rate
   - expr: |
       sum(
-        rate(thanos_objstore_bucket_operation_failures_total{job="thanos-store"}[5m])
+        rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-store.*"}[5m])
       /
-        rate(thanos_objstore_bucket_operations_total{job="thanos-store"}[5m])
+        rate(thanos_objstore_bucket_operations_total{job=~"thanos-store.*"}[5m])
       )
     labels: {}
     record: :thanos_objstore_bucket_failures_per_operation:sum_rate
   - expr: |
       histogram_quantile(0.99,
-        sum(thanos_objstore_bucket_operation_duration_seconds_bucket{job="thanos-store"}) by (le)
+        sum(thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"}) by (le)
       )
     labels:
       quantile: "0.99"
     record: :thanos_objstore_bucket_operation_duration_seconds:histogram_quantile
   - expr: |
       histogram_quantile(0.99,
-        sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{job="thanos-store"}[5m])) by (le)
+        sum(rate(thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"}[5m])) by (le)
       )
     labels:
       quantile: "0.99"

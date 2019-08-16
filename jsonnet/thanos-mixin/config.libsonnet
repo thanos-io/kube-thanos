@@ -1,18 +1,18 @@
 {
   _config+:: {
-    thanosQuerier: 'thanos-querier',
-    thanosStore: 'thanos-store',
-    thanosReceive: 'thanos-receive',
-    thanosRule: 'thanos-rule',
-    thanosCompact: 'thanos-compact',
-    thanosSidecar: 'thanos-sidecar',
+    thanosQuerierJobPrefix: 'thanos-querier',
+    thanosStoreJobPrefix: 'thanos-store',
+    thanosReceiveJobPrefix: 'thanos-receive',
+    thanosRuleJobPrefix: 'thanos-rule',
+    thanosCompactJobPrefix: 'thanos-compact',
+    thanosSidecarJobPrefix: 'thanos-sidecar',
 
-    thanosQuerierSelector: 'job="%s"' % self.thanosQuerier,
-    thanosStoreSelector: 'job="%s"' % self.thanosStore,
-    thanosReceiveSelector: 'job="%s"' % self.thanosReceive,
-    thanosRuleSelector: 'job="%s"' % self.thanosRule,
-    thanosCompactSelector: 'job="%s"' % self.thanosCompact,
-    thanosSidecarSelector: 'job="%s"' % self.thanosSidecar,
+    thanosQuerierSelector: 'job=~"%s.*"' % self.thanosQuerierJobPrefix,
+    thanosStoreSelector: 'job=~"%s.*"' % self.thanosStoreJobPrefix,
+    thanosReceiveSelector: 'job=~"%s.*"' % self.thanosReceiveJobPrefix,
+    thanosRuleSelector: 'job=~"%s.*"' % self.thanosRuleJobPrefix,
+    thanosCompactSelector: 'job=~"%s.*"' % self.thanosCompactJobPrefix,
+    thanosSidecarSelector: 'job=~"%s.*"' % self.thanosSidecarJobPrefix,
 
     // Config for the Grafana dashboards in the thanos-mixin
     grafanaThanos: {
