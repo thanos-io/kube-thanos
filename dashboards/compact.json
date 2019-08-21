@@ -91,8 +91,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -130,14 +129,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_compact_group_compactions_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) - sum(rate(thanos_compact_group_compactions_failures_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))) / sum(rate(thanos_compact_group_compactions_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -162,7 +153,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -266,8 +257,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -305,14 +295,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_compact_downsample_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) - sum(rate(thanos_compact_downsample_failed_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))) / sum(rate(thanos_compact_downsample_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -337,7 +319,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -441,8 +423,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -480,14 +461,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_compact_garbage_collection_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) - sum(rate(thanos_compact_garbage_collection_failures_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))) / sum(rate(thanos_compact_garbage_collection_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -512,7 +485,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -708,8 +681,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -747,14 +719,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_compact_sync_meta_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) - sum(rate(thanos_compact_sync_meta_failures_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))) / sum(rate(thanos_compact_sync_meta_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -779,7 +743,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -975,8 +939,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -1014,14 +977,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) - sum(rate(thanos_objstore_bucket_operation_failures_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))) / sum(rate(thanos_objstore_bucket_operations_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -1046,7 +1001,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },

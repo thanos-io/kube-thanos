@@ -98,7 +98,26 @@ local template = grafana.template;
   },
 
   qpsErrTotalPanel(selectorErr, selectorTotal):: {
-    local expr(selector) = 'sum(rate(' + selector + '[$interval]))', # {{job}}
+    local expr(selector) = 'sum(rate(' + selector + '[$interval]))',  // {{job}}
+
+    aliasColors: {
+      'error': '#E24D42',
+    },
+    targets: [
+      {
+        expr: '%s / %s' % [expr(selectorErr), expr(selectorTotal)],
+        format: 'time_series',
+        intervalFactor: 2,
+        legendFormat: 'error',
+        refId: 'A',
+        step: 10,
+      },
+    ],
+    yaxes: $.yaxes({ format: 'percentunit' }),
+  } + $.stack,
+
+  qpsSuccErrRatePanel(selectorErr, selectorTotal):: {
+    local expr(selector) = 'sum(rate(' + selector + '[$interval]))',  // {{job}}
 
     aliasColors: {
       success: '#7EB26D',

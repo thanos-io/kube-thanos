@@ -167,8 +167,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -206,14 +205,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=~\"$job\"}[$interval])) - sum(rate(thanos_alert_sender_errors_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))) / sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -238,7 +229,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -453,8 +444,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -492,14 +482,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"unary\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -524,7 +506,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -995,8 +977,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -1034,14 +1015,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"$job\",grpc_type=\"server_stream\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -1066,7 +1039,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
