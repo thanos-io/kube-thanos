@@ -62,7 +62,7 @@ groups:
       severity: warning
   - alert: ThanosReceiveHighForwardRequestFailures
     annotations:
-      message: Thanos Receive {{$labels.job}} failling to forward {{ $value | humanize
+      message: Thanos Receive {{$labels.job}} failing to forward {{ $value | humanize
         }}% of requests.
     expr: |
       sum(
@@ -75,7 +75,7 @@ groups:
       severity: warning
   - alert: ThanosReceiveHighHashringFileRefreshFailures
     annotations:
-      message: Thanos Receive {{$labels.job}} failling to refresh hashring file, {{
+      message: Thanos Receive {{$labels.job}} failing to refresh hashring file, {{
         $value | humanize }} of attempts failed.
     expr: |
       sum(
