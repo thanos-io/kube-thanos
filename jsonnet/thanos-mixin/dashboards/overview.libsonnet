@@ -25,7 +25,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
             1
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
-        )
+        ) +
+        { __dashboardFilename__:: 'querier.json' },
       )
       .addRow(
         g.row('Range Query')
@@ -48,7 +49,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
             1
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
-        )
+        ) +
+        { __dashboardFilename__:: 'querier.json' },
       )
       .addRow(
         g.row('Store')
@@ -71,7 +73,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
             1
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardStoreTitle)
-        )
+        ) +
+        { __dashboardFilename__:: 'store.json' },
       )
       .addRow(
         g.row('Sidecar')
@@ -95,6 +98,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardSidecarTitle)
         )
+        +
+        { __dashboardFilename__:: 'sidecar.json' },
       )
       .addRow(
         g.row('Receive')
@@ -118,6 +123,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardReceiveTitle)
         )
+        +
+        { __dashboardFilename__:: 'receive.json' },
       )
       .addRow(
         g.row('Rule')
@@ -148,7 +155,8 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardRuleTitle)
         ) +
-        g.collapse
+        g.collapse +
+        { __dashboardFilename__:: 'rule.json' },
       )
       .addRow(
         g.row('Compact')
@@ -169,8 +177,22 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           ) +
           g.addDashboardLink($._config.grafanaThanos.dashboardCompactTitle)
         ) +
-        g.collapse
+        g.collapse +
+        { __dashboardFilename__:: 'compact.json' },
       ) +
       g.template('namespace', 'kube_pod_info'),
+  },
+} +
+{
+  local grafanaDashboards = super.grafanaDashboards,
+  grafanaDashboards+:: {
+    local existingComponents = [f for f in std.objectFields(grafanaDashboards)],
+
+    'overview.json'+: {
+      rows: std.filter(
+        function(row) std.setMember(row.__dashboardFilename__, existingComponents),
+        super.rows
+      ),
+    },
   },
 }
