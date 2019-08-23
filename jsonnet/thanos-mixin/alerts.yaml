@@ -88,10 +88,10 @@ groups:
       severity: warning
   - alert: ThanosReceiveConfigReloadFailure
     annotations:
-      message: Thanos Receive {{$labels.pod}} has not been able to reload hashring
+      message: Thanos Receive {{$labels.job}} has not been able to reload hashring
         configurations.
-    expr: thanos_receive_config_last_reload_successful{job=~"thanos-receive.*"} ==
-      0
+    expr: avg(thanos_receive_config_last_reload_successful{job=~"thanos-receive.*"})
+      by (job) != 1
     for: 5m
     labels:
       severity: warning

@@ -56,9 +56,9 @@
           {
             alert: 'ThanosReceiveConfigReloadFailure',
             annotations: {
-              message: 'Thanos Receive {{$labels.pod}} has not been able to reload hashring configurations.',
+              message: 'Thanos Receive {{$labels.job}} has not been able to reload hashring configurations.',
             },
-            expr: 'thanos_receive_config_last_reload_successful{%(thanosReceiveSelector)s} == 0' % $._config,
+            expr: 'avg(thanos_receive_config_last_reload_successful{%(thanosReceiveSelector)s}) by (job) != 1' % $._config,
             'for': '5m',
             labels: {
               severity: 'warning',
