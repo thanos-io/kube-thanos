@@ -107,8 +107,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -154,14 +153,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(http_requests_total{namespace=\"$namespace\",job=~\"thanos-querier.*\",handler=\"query\"}[$interval])) - sum(rate(http_requests_total{namespace=\"$namespace\",job=~\"thanos-querier.*\",handler=\"query\",code!~\"2..\"}[$interval]))) / sum(rate(http_requests_total{namespace=\"$namespace\",job=~\"thanos-querier.*\",handler=\"query\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -186,7 +177,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -407,8 +398,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -454,14 +444,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(http_requests_total{namespace=\"$namespace\",job=~\"thanos-querier.*\",handler=\"query_range\"}[$interval])) - sum(rate(http_requests_total{namespace=\"$namespace\",job=~\"thanos-querier.*\",handler=\"query_range\",code!~\"2..\"}[$interval]))) / sum(rate(http_requests_total{namespace=\"$namespace\",job=~\"thanos-querier.*\",handler=\"query_range\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -486,7 +468,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -718,8 +700,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -765,14 +746,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"thanos-store.*\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"thanos-store.*\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"thanos-store.*\",grpc_type=\"unary\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -797,7 +770,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -1029,8 +1002,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -1076,14 +1048,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"thanos-sidecar.*\",grpc_type=\"unary\"}[$interval])) - sum(rate(grpc_server_handled_total{grpc_code!=\"OK\",namespace=\"$namespace\",job=~\"thanos-sidecar.*\",grpc_type=\"unary\"}[$interval]))) / sum(rate(grpc_server_started_total{namespace=\"$namespace\",job=~\"thanos-sidecar.*\",grpc_type=\"unary\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -1108,7 +1072,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -1329,8 +1293,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -1376,14 +1339,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"thanos-receive.*\"}[$interval])) - sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"thanos-receive.*\",code!~\"2..\"}[$interval]))) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"thanos-receive.*\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -1408,7 +1363,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -1621,8 +1576,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -1668,14 +1622,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=~\"thanos-rule.*\"}[$interval])) - sum(rate(thanos_alert_sender_errors_total{namespace=\"$namespace\",job=~\"thanos-rule.*\"}[$interval]))) / sum(rate(thanos_alert_sender_alerts_sent_total{namespace=\"$namespace\",job=~\"thanos-rule.*\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -1700,7 +1646,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },
@@ -1913,8 +1859,7 @@
             },
             {
                "aliasColors": {
-                  "error": "#E24D42",
-                  "success": "#7EB26D"
+                  "error": "#E24D42"
                },
                "bars": false,
                "dashLength": 10,
@@ -1960,14 +1905,6 @@
                      "legendFormat": "error",
                      "refId": "A",
                      "step": 10
-                  },
-                  {
-                     "expr": "(sum(rate(thanos_compact_group_compactions_total{namespace=\"$namespace\",job=~\"thanos-compact.*\"}[$interval])) - sum(rate(thanos_compact_group_compactions_failures_total{namespace=\"$namespace\",job=~\"thanos-compact.*\"}[$interval]))) / sum(rate(thanos_compact_group_compactions_total{namespace=\"$namespace\",job=~\"thanos-compact.*\"}[$interval]))",
-                     "format": "time_series",
-                     "intervalFactor": 2,
-                     "legendFormat": "success",
-                     "refId": "B",
-                     "step": 10
                   }
                ],
                "thresholds": [ ],
@@ -1992,7 +1929,7 @@
                      "format": "percentunit",
                      "label": null,
                      "logBase": 1,
-                     "max": 1,
+                     "max": null,
                      "min": 0,
                      "show": true
                   },

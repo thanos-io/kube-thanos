@@ -42,15 +42,10 @@
     ),
 
   httpErrDetailsPanel(metricName, selector)::
-    $.queryPanel(
-      |||
-        sum(rate(%s{%s,code!~"2.."}[$interval])) by (job, handler, code)
-        /
-        sum(rate(%s{%s}[$interval])) by (job, handler, code)
-      ||| % [metricName, selector, metricName, selector],
+    $.queryPanel('sum(rate(%s{%s,code!~"2.."}[$interval])) by (job, handler, code)' % [metricName, selector],
       '{{job}} {{handler}} {{code}}'
     ) +
-    { yaxes: $.yaxes({ format: 'percentunit', max: 1 }) } +
+    { yaxes: $.yaxes({ format: 'percentunit' }) } +
     $.stack,
 
   httpLatencyDetailsPanel(metricName, selector, multiplier='1'):: {

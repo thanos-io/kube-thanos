@@ -133,7 +133,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.resourceUtilizationRow()
       ) +
       g.template('namespace', 'kube_pod_info') +
-      g.template('job', 'up', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config, true, "%(thanosQuerierJobPrefix)s.*" % $._config) +
+      g.template('job', 'up', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config, true, '%(thanosQuerierJobPrefix)s.*' % $._config) +
       g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosQuerierJobPrefix)s.*"' % $._config, true, '.*'),
   },
 }
