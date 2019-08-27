@@ -8,30 +8,30 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.row('Incoming Request')
         .addPanel(
           g.panel('Rate') +
-          g.httpQpsPanel('thanos_http_requests_total', 'namespace="$namespace",job=~"$job"')
+          g.httpQpsPanel('http_requests_total', 'handler="receive",namespace="$namespace",job=~"$job"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.httpErrPanel('thanos_http_requests_total', 'namespace="$namespace",job=~"$job"')
+          g.httpErrPanel('http_requests_total', 'handler="receive",namespace="$namespace",job=~"$job"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.latencyPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",job=~"$job"')
+          g.latencyPanel('http_request_duration_seconds', 'handler="receive",namespace="$namespace",job=~"$job"')
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
           g.panel('Rate') +
-          g.httpQpsPanelDetailed('thanos_http_requests_total', 'namespace="$namespace",job=~"$job"')
+          g.httpQpsPanelDetailed('http_requests_total', 'handler="receive",namespace="$namespace",job=~"$job"')
         )
         .addPanel(
           g.panel('Errors') +
-          g.httpErrDetailsPanel('thanos_http_requests_total', 'namespace="$namespace",job=~"$job"')
+          g.httpErrDetailsPanel('http_requests_total', 'handler="receive",namespace="$namespace",job=~"$job"')
         )
         .addPanel(
           g.panel('Duration') +
-          g.httpLatencyDetailsPanel('thanos_http_request_duration_seconds', 'namespace="$namespace",job=~"$job"')
+          g.httpLatencyDetailsPanel('http_request_duration_seconds', 'handler="receive",namespace="$namespace",job=~"$job"')
         ) +
         g.collapse
       )

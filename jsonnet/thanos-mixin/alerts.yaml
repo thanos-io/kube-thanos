@@ -45,7 +45,7 @@ groups:
         $value }} seconds for instant queries.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_query_api_instant_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (job, le)
+        sum(http_request_duration_seconds_bucket{job=~"thanos-querier.*", handler="query"}) by (job, le)
       ) > 10
     for: 10m
     labels:
@@ -56,7 +56,7 @@ groups:
         $value }} seconds for instant queries.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_query_api_range_query_duration_seconds_bucket{job=~"thanos-querier.*"}) by (job, le)
+        sum(http_request_duration_seconds_bucket{job=~"thanos-querier.*", handler="query_range"}) by (job, le)
       ) > 10
     for: 10m
     labels:
@@ -69,7 +69,7 @@ groups:
         $value }} seconds for HTTP requests.
     expr: |
       histogram_quantile(0.99,
-        sum(thanos_http_request_duration_seconds_bucket{job=~"thanos-receive.*"}) by (job, le)
+        sum(http_request_duration_seconds_bucket{job=~"thanos-receive.*", handler="receive"}) by (job, le)
       ) > 10
     for: 10m
     labels:

@@ -11,7 +11,7 @@
             },
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_http_request_duration_seconds_bucket{%(thanosReceiveSelector)s}) by (job, le)
+                sum(http_request_duration_seconds_bucket{%(thanosReceiveSelector)s, handler="receive"}) by (job, le)
               ) > 10
             ||| % $._config,
             'for': '10m',

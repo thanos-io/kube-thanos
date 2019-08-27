@@ -62,7 +62,7 @@
             },
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_query_api_instant_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (job, le)
+                sum(http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query"}) by (job, le)
               ) > 10
             ||| % $._config,
             'for': '10m',
@@ -77,7 +77,7 @@
             },
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_query_api_range_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (job, le)
+                sum(http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query_range"}) by (job, le)
               ) > 10
             ||| % $._config,
             'for': '10m',
