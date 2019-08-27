@@ -22,7 +22,7 @@
           {
             alert: 'ThanosReceiveHighForwardRequestFailures',
             annotations: {
-              message: 'Thanos Receive {{$labels.job}} failling to forward {{ $value | humanize }}% of requests.',
+              message: 'Thanos Receive {{$labels.job}} failing to forward {{ $value | humanize }}% of requests.',
             },
             expr: |||
               sum(
@@ -39,7 +39,7 @@
           {
             alert: 'ThanosReceiveHighHashringFileRefreshFailures',
             annotations: {
-              message: 'Thanos Receive {{$labels.job}} failling to refresh hashring file, {{ $value | humanize }} of attempts failed.',
+              message: 'Thanos Receive {{$labels.job}} failing to refresh hashring file, {{ $value | humanize }} of attempts failed.',
             },
             expr: |||
               sum(
@@ -56,9 +56,9 @@
           {
             alert: 'ThanosReceiveConfigReloadFailure',
             annotations: {
-              message: 'Thanos Receive {{$labels.pod}} has not been able to reload hashring configurations.',
+              message: 'Thanos Receive {{$labels.job}} has not been able to reload hashring configurations.',
             },
-            expr: 'thanos_receive_config_last_reload_successful{%(thanosReceiveSelector)s} == 0' % $._config,
+            expr: 'avg(thanos_receive_config_last_reload_successful{%(thanosReceiveSelector)s}) by (job) != 1' % $._config,
             'for': '5m',
             labels: {
               severity: 'warning',
