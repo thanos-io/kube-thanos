@@ -16,30 +16,30 @@
             ||| % $._config,
             'for': '10m',
             labels: {
-              severity: 'warning',
+              severity: 'high',
             },
           },
           {
             alert: 'ThanosReceiveHighForwardRequestFailures',
             annotations: {
-              message: 'Thanos Receive {{$labels.job}} failing to forward {{ $value | humanize }}% of requests.',
+              message: 'Thanos Receive {{$labels.job}} is failing to forward {{ $value | humanize }}% of requests.',
             },
             expr: |||
               sum(
                 rate(thanos_receive_forward_requests_total{result="error", %(thanosReceiveSelector)s}[5m])
               /
                 rate(thanos_receive_forward_requests_total{%(thanosReceiveSelector)s}[5m])
-              ) by (job)  > 0.05
+              ) by (job) * 100 > 5
             ||| % $._config,
             'for': '15m',
             labels: {
-              severity: 'warning',
+              severity: 'high',
             },
           },
           {
             alert: 'ThanosReceiveHighHashringFileRefreshFailures',
             annotations: {
-              message: 'Thanos Receive {{$labels.job}} failing to refresh hashring file, {{ $value | humanize }} of attempts failed.',
+              message: 'Thanos Receive {{$labels.job}} is failing to refresh hashring file, {{ $value | humanize }} of attempts failed.',
             },
             expr: |||
               sum(
@@ -50,7 +50,7 @@
             ||| % $._config,
             'for': '15m',
             labels: {
-              severity: 'warning',
+              severity: 'medium',
             },
           },
           {
@@ -61,7 +61,7 @@
             expr: 'avg(thanos_receive_config_last_reload_successful{%(thanosReceiveSelector)s}) by (job) != 1' % $._config,
             'for': '5m',
             labels: {
-              severity: 'warning',
+              severity: 'medium',
             },
           },
         ],
