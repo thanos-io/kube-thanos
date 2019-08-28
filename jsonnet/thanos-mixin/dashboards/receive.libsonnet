@@ -136,5 +136,29 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.template('namespace', 'kube_pod_info') +
       g.template('job', 'up', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config, true, '%(thanosReceiveJobPrefix)s.*' % $._config) +
       g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosReceiveJobPrefix)s.*"' % $._config, true, '.*'),
+
+    __overviewRows__+:: [
+      g.row('Receive')
+      .addPanel(
+        g.panel('Incoming Requests Rate') +
+        g.httpQpsPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardReceiveTitle)
+      )
+      .addPanel(
+        g.panel('Incoming Requests  Errors') +
+        g.httpErrPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardReceiveTitle)
+      )
+      .addPanel(
+        g.sloLatency(
+          'Incoming Requests Latency 99th Percentile',
+          'thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+          0.99,
+          0.5,
+          1
+        ) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardReceiveTitle)
+      ),
+    ],
   },
 }

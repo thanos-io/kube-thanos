@@ -112,5 +112,27 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.template('namespace', 'kube_pod_info') +
       g.template('job', 'up', 'namespace="$namespace",%(thanosCompactSelector)s' % $._config, true, '%(thanosCompactJobPrefix)s.*' % $._config) +
       g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosCompactJobPrefix)s.*"' % $._config, true, '.*'),
+
+    __overviewRows__+:: [
+      g.row('Compact')
+      .addPanel(
+        g.panel('Compaction Rate') +
+        g.queryPanel(
+          'sum(rate(thanos_compact_group_compactions_total{namespace="$namespace",%(thanosCompactSelector)s}[$interval])) by (job)' % $._config,
+          'compaction {{job}}'
+        ) +
+        g.stack +
+        g.addDashboardLink($._config.grafanaThanos.dashboardCompactTitle)
+      )
+      .addPanel(
+        g.panel('Compaction Errors') +
+        g.qpsErrTotalPanel(
+          'thanos_compact_group_compactions_failures_total{namespace="$namespace",%(thanosCompactSelector)s}' % $._config,
+          'thanos_compact_group_compactions_total{namespace="$namespace",%(thanosCompactSelector)s}' % $._config,
+        ) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardCompactTitle)
+      ) +
+      g.collapse,
+    ],
   },
 }

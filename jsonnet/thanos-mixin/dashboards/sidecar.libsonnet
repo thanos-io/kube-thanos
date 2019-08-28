@@ -110,5 +110,29 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.template('namespace', 'kube_pod_info') +
       g.template('job', 'up', 'namespace="$namespace",%(thanosSidecarSelector)s' % $._config, true, '%(thanosSidecarJobPrefix)s.*' % $._config) +
       g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosSidecarJobPrefix)s.*"' % $._config, true, '.*'),
+
+    __overviewRows__+:: [
+      g.row('Sidecar')
+      .addPanel(
+        g.panel('gPRC (Unary) Rate') +
+        g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="unary"' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardSidecarTitle)
+      )
+      .addPanel(
+        g.panel('gPRC (Unary) Errors') +
+        g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="unary"' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardSidecarTitle)
+      )
+      .addPanel(
+        g.sloLatency(
+          'gPRC (Unary) Latency 99th Percentile',
+          'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace="$namespace",%(thanosSidecarSelector)s}' % $._config,
+          0.99,
+          0.5,
+          1
+        ) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardSidecarTitle)
+      ),
+    ],
   },
 }

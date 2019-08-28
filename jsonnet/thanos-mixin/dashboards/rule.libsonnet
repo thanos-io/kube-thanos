@@ -101,5 +101,37 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.template('namespace', 'kube_pod_info') +
       g.template('job', 'up', 'namespace="$namespace",%(thanosRuleSelector)s' % $._config, true, '%(thanosRuleJobPrefix)s.*' % $._config) +
       g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosRuleJobPrefix)s.*"' % $._config, true, '.*'),
+
+    __overviewRows__+:: [
+      g.row('Rule')
+      .addPanel(
+        g.panel('Alert Sent Rate') +
+        g.queryPanel(
+          'sum(rate(thanos_alert_sender_alerts_sent_total{namespace="$namespace",%(thanosRuleSelector)s}[$interval])) by (job, alertmanager)' % $._config,
+          '{{job}} {{alertmanager}}'
+        ) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardRuleTitle) +
+        g.stack
+      )
+      .addPanel(
+        g.panel('Alert Sent Errors') +
+        g.qpsErrTotalPanel(
+          'thanos_alert_sender_errors_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
+          'thanos_alert_sender_alerts_sent_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
+        ) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardRuleTitle)
+      )
+      .addPanel(
+        g.sloLatency(
+          'Sent Error Duration',
+          'thanos_alert_sender_latency_seconds_bucket{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
+          0.99,
+          0.5,
+          1
+        ) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardRuleTitle)
+      ) +
+      g.collapse,
+    ],
   },
 }
