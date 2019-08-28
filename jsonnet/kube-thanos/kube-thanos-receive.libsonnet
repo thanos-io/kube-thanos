@@ -52,6 +52,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             { name: 'http', containerPort: $.thanos.receive.service.spec.ports[1].port },
             { name: 'remote-write', containerPort: $.thanos.receive.service.spec.ports[2].port },
           ]) +
+          container.mixin.resources.withRequests({ cpu: '100m', memory: '512Mi' }) +
+          container.mixin.resources.withLimits({ cpu: '1', memory: '1Gi' }) +
           container.withVolumeMounts([
             containerVolumeMount.new('data', '/var/thanos/tsdb', false),
           ]);

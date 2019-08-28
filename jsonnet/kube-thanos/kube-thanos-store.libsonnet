@@ -53,6 +53,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             { name: 'grpc', containerPort: $.thanos.store.service.spec.ports[0].port },
             { name: 'http', containerPort: $.thanos.store.service.spec.ports[1].port },
           ]) +
+          container.mixin.resources.withRequests({ cpu: '500m', memory: '1Gi' }) +
+          container.mixin.resources.withLimits({ cpu: '2', memory: '8Gi' }) +
           container.withVolumeMounts([
             containerVolumeMount.new('data', '/var/thanos/store', false),
           ]);

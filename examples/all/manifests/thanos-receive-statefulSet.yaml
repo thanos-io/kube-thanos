@@ -45,6 +45,13 @@ spec:
           name: http
         - containerPort: 19291
           name: remote-write
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1Gi
+          requests:
+            cpu: 100m
+            memory: 512Mi
         volumeMounts:
         - mountPath: /var/thanos/tsdb
           name: data
