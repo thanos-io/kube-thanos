@@ -36,6 +36,13 @@ spec:
           name: grpc
         - containerPort: 10902
           name: http
+        resources:
+          limits:
+            cpu: "2"
+            memory: 8Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
         volumeMounts:
         - mountPath: /var/thanos/store
           name: data
