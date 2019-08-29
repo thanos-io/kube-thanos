@@ -18,7 +18,7 @@
             ||| % $._config,
             'for': '5m',
             labels: {
-              severity: 'medium',
+              severity: 'warning',
             },
           },
           {
@@ -35,7 +35,7 @@
             ||| % $._config,
             'for': '15m',
             labels: {
-              severity: 'medium',
+              severity: 'warning',
             },
           },
           {
@@ -50,7 +50,7 @@
             ||| % $._config,
             'for': '10m',
             labels: {
-              severity: 'high',
+              severity: 'critical',
             },
           },
           {
@@ -65,7 +65,7 @@
             ||| % $._config,
             'for': '10m',
             labels: {
-              severity: 'high',
+              severity: 'critical',
             },
           },
         ],

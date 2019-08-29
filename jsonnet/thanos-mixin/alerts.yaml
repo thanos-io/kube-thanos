@@ -13,7 +13,7 @@ groups:
       ) by (job) * 100 > 5
     for: 5m
     labels:
-      severity: medium
+      severity: warning
   - alert: ThanosQuerierHighDNSFailures
     annotations:
       message: Thanos Queriers {{$labels.job}} have {{ $value }} of failing DNS queries.
@@ -25,7 +25,7 @@ groups:
       ) by (job) > 1
     for: 15m
     labels:
-      severity: medium
+      severity: warning
   - alert: ThanosQuerierInstantLatencyHigh
     annotations:
       message: Thanos Querier {{$labels.job}} has a 99th percentile latency of {{
@@ -36,7 +36,7 @@ groups:
       ) > 10
     for: 10m
     labels:
-      severity: high
+      severity: critical
   - alert: ThanosQuerierRangeLatencyHigh
     annotations:
       message: Thanos Querier {{$labels.job}} has a 99th percentile latency of {{
@@ -47,7 +47,7 @@ groups:
       ) > 10
     for: 10m
     labels:
-      severity: high
+      severity: critical
 - name: thanos-receive.rules
   rules:
   - alert: ThanosReceiveHttpRequestLatencyHigh
@@ -60,7 +60,7 @@ groups:
       ) > 10
     for: 10m
     labels:
-      severity: high
+      severity: critical
   - alert: ThanosReceiveHighForwardRequestFailures
     annotations:
       message: Thanos Receive {{$labels.job}} is failing to forward {{ $value | humanize
@@ -73,7 +73,7 @@ groups:
       ) by (job) * 100 > 5
     for: 15m
     labels:
-      severity: high
+      severity: critical
   - alert: ThanosReceiveHighHashringFileRefreshFailures
     annotations:
       message: Thanos Receive {{$labels.job}} is failing to refresh hashring file,
@@ -86,7 +86,7 @@ groups:
       ) by (job) > 0
     for: 15m
     labels:
-      severity: medium
+      severity: warning
   - alert: ThanosReceiveConfigReloadFailure
     annotations:
       message: Thanos Receive {{$labels.job}} has not been able to reload hashring
@@ -95,7 +95,7 @@ groups:
       by (job) != 1
     for: 5m
     labels:
-      severity: medium
+      severity: warning
 - name: thanos-sidecar.rules
   rules:
   - alert: ThanosSidecarUnhealthy
@@ -105,7 +105,7 @@ groups:
     expr: |
       count(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{job=~"thanos-sidecar.*"}) by (job, pod) >= 300) > 0
     labels:
-      severity: high
+      severity: critical
 - name: thanos-store.rules
   rules:
   - alert: ThanosStoreGrpcErrorRate
@@ -120,7 +120,7 @@ groups:
       ) by (job) * 100 > 5
     for: 5m
     labels:
-      severity: medium
+      severity: warning
   - alert: ThanosStoreSeriesGateLatencyHigh
     annotations:
       message: Thanos Store {{$labels.job}} has a 99th percentile latency of {{ $value
@@ -131,7 +131,7 @@ groups:
       ) > 20
     for: 10m
     labels:
-      severity: medium
+      severity: warning
   - alert: ThanosStoreBucketHighOperationFailures
     annotations:
       message: Thanos Store {{$labels.job}} Bucket is failing to execute {{ $value
@@ -144,7 +144,7 @@ groups:
       ) by (job) * 100 > 5
     for: 15m
     labels:
-      severity: medium
+      severity: warning
   - alert: ThanosStoreObjstoreOperationLatencyHigh
     annotations:
       message: Thanos Store {{$labels.job}} Bucket has a 99th percentile latency of
@@ -155,4 +155,4 @@ groups:
       ) > 15
     for: 10m
     labels:
-      severity: medium
+      severity: warning

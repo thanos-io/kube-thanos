@@ -16,7 +16,7 @@
             ||| % $._config,
             'for': '10m',
             labels: {
-              severity: 'high',
+              severity: 'critical',
             },
           },
           {
@@ -33,7 +33,7 @@
             ||| % $._config,
             'for': '15m',
             labels: {
-              severity: 'high',
+              severity: 'critical',
             },
           },
           {
@@ -50,7 +50,7 @@
             ||| % $._config,
             'for': '15m',
             labels: {
-              severity: 'medium',
+              severity: 'warning',
             },
           },
           {
@@ -61,7 +61,7 @@
             expr: 'avg(thanos_receive_config_last_reload_successful{%(thanosReceiveSelector)s}) by (job) != 1' % $._config,
             'for': '5m',
             labels: {
-              severity: 'medium',
+              severity: 'warning',
             },
           },
         ],
