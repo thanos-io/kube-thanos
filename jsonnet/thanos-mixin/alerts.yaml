@@ -1,7 +1,7 @@
 groups:
 - name: thanos-querier.rules
   rules:
-  - alert: ThanosQuerierGrpcErrorRate
+  - alert: ThanosQuerierGrpcServerErrorRate
     annotations:
       message: Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize
         }}% of requests.
@@ -10,6 +10,19 @@ groups:
         rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-querier.*"}[5m])
         /
         rate(grpc_server_started_total{job=~"thanos-querier.*"}[5m])
+      ) by (job) * 100 > 5
+    for: 5m
+    labels:
+      severity: warning
+  - alert: ThanosQuerierGrpcClientErrorRate
+    annotations:
+      message: Thanos Querier {{$labels.job}} is failing to send {{ $value | humanize
+        }}% of requests.
+    expr: |
+      sum(
+        rate(grpc_client_handled_total{grpc_code!="OK", job=~"thanos-querier.*"}[5m])
+        /
+        rate(grpc_client_started_total{job=~"thanos-querier.*"}[5m])
       ) by (job) * 100 > 5
     for: 5m
     labels:
