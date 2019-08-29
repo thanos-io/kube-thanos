@@ -7,9 +7,9 @@ groups:
         }}% of requests.
     expr: |
       sum(
-        rate(grpc_client_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-querier.*"}[5m])
+        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-querier.*"}[5m])
         /
-        rate(grpc_client_started_total{job=~"thanos-querier.*"}[5m])
+        rate(grpc_server_started_total{job=~"thanos-querier.*"}[5m])
       ) by (job) * 100 > 5
     for: 5m
     labels:

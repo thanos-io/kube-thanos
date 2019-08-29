@@ -11,9 +11,9 @@
             },
             expr: |||
               sum(
-                rate(grpc_client_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m])
+                rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m])
                 /
-                rate(grpc_client_started_total{%(thanosQuerierSelector)s}[5m])
+                rate(grpc_server_started_total{%(thanosQuerierSelector)s}[5m])
               ) by (job) * 100 > 5
             ||| % $._config,
             'for': '5m',
