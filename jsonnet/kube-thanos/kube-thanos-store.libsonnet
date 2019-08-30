@@ -56,7 +56,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.resources.withRequests({ cpu: '500m', memory: '1Gi' }) +
           container.mixin.resources.withLimits({ cpu: '2', memory: '8Gi' }) +
           container.withVolumeMounts([
-            containerVolumeMount.new('data', '/var/thanos/store', false),
+            containerVolumeMount.new($.thanos.store.statefulSet.metadata.name + '-data', '/var/thanos/store', false),
           ]);
 
         sts.new('thanos-store', 3, c, [], $.thanos.store.statefulSet.metadata.labels) +
@@ -65,7 +65,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         sts.mixin.spec.withServiceName($.thanos.store.service.metadata.name) +
         sts.mixin.spec.selector.withMatchLabels($.thanos.store.statefulSet.metadata.labels) +
         sts.mixin.spec.template.spec.withVolumes([
-          volume.fromEmptyDir('data'),
+          volume.fromEmptyDir($.thanos.store.statefulSet.metadata.name + '-data'),
         ]) +
         {
           spec+: {
