@@ -6,7 +6,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       variables+:: {
         pvc+: {
           class: 'standard',
-          size: '10Gi',
+          size: '50Gi',
         },
       },
 
