@@ -141,7 +141,7 @@ groups:
     expr: |
       histogram_quantile(0.99,
         sum(thanos_bucket_store_series_gate_duration_seconds_bucket{job=~"thanos-store.*"}) by (job, le)
-      ) > 20
+      ) > 2
     for: 10m
     labels:
       severity: warning

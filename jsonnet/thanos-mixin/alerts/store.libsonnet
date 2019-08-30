@@ -29,7 +29,7 @@
             expr: |||
               histogram_quantile(0.99,
                 sum(thanos_bucket_store_series_gate_duration_seconds_bucket{%(thanosStoreSelector)s}) by (job, le)
-              ) > 20
+              ) > 2
             ||| % $._config,
             'for': '10m',
             labels: {
