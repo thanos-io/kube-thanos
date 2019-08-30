@@ -6,7 +6,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       variables+:: {
         pvc+: {
           class: 'standard',
-          size: '10Gi',
+          size: '50Gi',
         },
       },
 
@@ -24,7 +24,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             volumeClaimTemplates::: [
               {
                 metadata: {
-                  name: 'data',
+                  name: $.thanos.store.statefulSet.metadata.name + '-data',
                 },
                 spec: {
                   accessModes: [

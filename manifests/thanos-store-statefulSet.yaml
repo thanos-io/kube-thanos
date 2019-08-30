@@ -45,8 +45,8 @@ spec:
             memory: 1Gi
         volumeMounts:
         - mountPath: /var/thanos/store
-          name: data
+          name: thanos-store-data
           readOnly: false
       volumes:
       - emptyDir: {}
-        name: data
+        name: thanos-store-data

@@ -45,16 +45,16 @@ spec:
             memory: 1Gi
         volumeMounts:
         - mountPath: /var/thanos/store
-          name: data
+          name: thanos-store-data
           readOnly: false
       volumes: []
   volumeClaimTemplates:
   - metadata:
-      name: data
+      name: thanos-store-data
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 10Gi
+          storage: 50Gi
       storageClassName: standard
