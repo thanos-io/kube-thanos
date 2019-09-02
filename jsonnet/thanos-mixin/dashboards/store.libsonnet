@@ -241,5 +241,29 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.template('namespace', 'kube_pod_info') +
       g.template('job', 'up', 'namespace="$namespace",%(thanosStoreSelector)s' % $._config, true, '%(thanosStoreJobPrefix)s.*' % $._config) +
       g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosStoreJobPrefix)s.*"' % $._config, true, '.*'),
+
+    __overviewRows__+:: [
+      g.row('Store')
+      .addPanel(
+        g.panel('gPRC (Unary) Rate') +
+        g.grpcQpsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardStoreTitle)
+      )
+      .addPanel(
+        g.panel('gPRC (Unary) Errors') +
+        g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardStoreTitle)
+      )
+      .addPanel(
+        g.sloLatency(
+          'gRPC Latency 99th Percentile',
+          'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace="$namespace",%(thanosStoreSelector)s}' % $._config,
+          0.99,
+          0.5,
+          1
+        ) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardStoreTitle)
+      ),
+    ],
   },
 }

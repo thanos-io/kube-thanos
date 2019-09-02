@@ -135,5 +135,51 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.template('namespace', 'kube_pod_info') +
       g.template('job', 'up', 'namespace="$namespace",%(thanosQuerierSelector)s' % $._config, true, '%(thanosQuerierJobPrefix)s.*' % $._config) +
       g.template('pod', 'kube_pod_info', 'namespace="$namespace",created_by_name=~"%(thanosQuerierJobPrefix)s.*"' % $._config, true, '.*'),
+
+    __overviewRows__+:: [
+      g.row('Instant Query')
+      .addPanel(
+        g.panel('Requests Rate') +
+        g.httpQpsPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query"' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+      )
+      .addPanel(
+        g.panel('Requests Errors') +
+        g.httpErrPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query"' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+      )
+      .addPanel(
+        g.sloLatency(
+          'Latency 99th Percentile',
+          'http_request_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,handler="query"}' % $._config,
+          0.99,
+          0.5,
+          1
+        ) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+      ),
+
+      g.row('Range Query')
+      .addPanel(
+        g.panel('Requests Rate') +
+        g.httpQpsPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+      )
+      .addPanel(
+        g.panel('Requests Errors') +
+        g.httpErrPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"' % $._config) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+      )
+      .addPanel(
+        g.sloLatency(
+          'Latency 99th Percentile',
+          'http_request_duration_seconds_bucket{namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"}' % $._config,
+          0.99,
+          0.5,
+          1
+        ) +
+        g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
+      ),
+    ],
   },
 }

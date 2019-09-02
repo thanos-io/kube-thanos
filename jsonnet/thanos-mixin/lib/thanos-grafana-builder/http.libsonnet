@@ -42,7 +42,8 @@
     ),
 
   httpErrDetailsPanel(metricName, selector)::
-    $.queryPanel('sum(rate(%s{%s,code!~"2.."}[$interval])) by (job, handler, code)' % [metricName, selector],
+    $.queryPanel(
+      'sum(rate(%s{%s,code!~"2.."}[$interval])) by (job, handler, code)' % [metricName, selector],
       '{{job}} {{handler}} {{code}}'
     ) +
     { yaxes: $.yaxes({ format: 'percentunit' }) } +
