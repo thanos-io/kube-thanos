@@ -13,7 +13,7 @@
               count(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{%(thanosSidecarSelector)s}) by (job, pod) >= 300) > 0
             ||| % $._config,
             labels: {
-              severity: 'warning',
+              severity: 'critical',
             },
           },
         ],

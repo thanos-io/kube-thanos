@@ -1,15 +1,29 @@
 groups:
 - name: thanos-querier.rules
   rules:
-  - alert: ThanosQuerierGrpcErrorRate
+  - alert: ThanosQuerierGrpcServerErrorRate
     annotations:
-      message: Thanos Querier {{$labels.job}} is returning Internal/Unavailable errors.
+      message: Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize
+        }}% of requests.
     expr: |
       sum(
         rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-querier.*"}[5m])
         /
         rate(grpc_server_started_total{job=~"thanos-querier.*"}[5m])
-      ) by (job) > 0.05
+      ) by (job) * 100 > 5
+    for: 5m
+    labels:
+      severity: warning
+  - alert: ThanosQuerierGrpcClientErrorRate
+    annotations:
+      message: Thanos Querier {{$labels.job}} is failing to send {{ $value | humanize
+        }}% of requests.
+    expr: |
+      sum(
+        rate(grpc_client_handled_total{grpc_code!="OK", job=~"thanos-querier.*"}[5m])
+        /
+        rate(grpc_client_started_total{job=~"thanos-querier.*"}[5m])
+      ) by (job) * 100 > 5
     for: 5m
     labels:
       severity: warning
@@ -35,7 +49,7 @@ groups:
       ) > 10
     for: 10m
     labels:
-      severity: warning
+      severity: critical
   - alert: ThanosQuerierRangeLatencyHigh
     annotations:
       message: Thanos Querier {{$labels.job}} has a 99th percentile latency of {{
@@ -46,7 +60,7 @@ groups:
       ) > 10
     for: 10m
     labels:
-      severity: warning
+      severity: critical
 - name: thanos-receive.rules
   rules:
   - alert: ThanosReceiveHttpRequestLatencyHigh
@@ -59,24 +73,24 @@ groups:
       ) > 10
     for: 10m
     labels:
-      severity: warning
+      severity: critical
   - alert: ThanosReceiveHighForwardRequestFailures
     annotations:
-      message: Thanos Receive {{$labels.job}} failing to forward {{ $value | humanize
+      message: Thanos Receive {{$labels.job}} is failing to forward {{ $value | humanize
         }}% of requests.
     expr: |
       sum(
         rate(thanos_receive_forward_requests_total{result="error", job=~"thanos-receive.*"}[5m])
       /
         rate(thanos_receive_forward_requests_total{job=~"thanos-receive.*"}[5m])
-      ) by (job)  > 0.05
+      ) by (job) * 100 > 5
     for: 15m
     labels:
-      severity: warning
+      severity: critical
   - alert: ThanosReceiveHighHashringFileRefreshFailures
     annotations:
-      message: Thanos Receive {{$labels.job}} failing to refresh hashring file, {{
-        $value | humanize }} of attempts failed.
+      message: Thanos Receive {{$labels.job}} is failing to refresh hashring file,
+        {{ $value | humanize }} of attempts failed.
     expr: |
       sum(
         rate(thanos_receive_hashrings_file_errors_total{job=~"thanos-receive.*"}[5m])
@@ -104,18 +118,19 @@ groups:
     expr: |
       count(time() - max(thanos_sidecar_last_heartbeat_success_time_seconds{job=~"thanos-sidecar.*"}) by (job, pod) >= 300) > 0
     labels:
-      severity: warning
+      severity: critical
 - name: thanos-store.rules
   rules:
   - alert: ThanosStoreGrpcErrorRate
     annotations:
-      message: Thanos Store {{$labels.job}} is returning Internal/Unavailable errors.
+      message: Thanos Store {{$labels.job}} is failing to handle {{ $value | humanize
+        }}% of requests.
     expr: |
       sum(
         rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-store.*"}[5m])
         /
         rate(grpc_server_started_total{job=~"thanos-store.*"}[5m])
-      ) by (job) > 0.05
+      ) by (job) * 100 > 5
     for: 5m
     labels:
       severity: warning
@@ -132,13 +147,14 @@ groups:
       severity: warning
   - alert: ThanosStoreBucketHighOperationFailures
     annotations:
-      message: Thanos Store {{$labels.job}} Bucket has {{ $value }} of failing operations.
+      message: Thanos Store {{$labels.job}} Bucket is failing to execute {{ $value
+        | humanize }}% of operations.
     expr: |
       sum(
         rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-store.*"}[5m])
       /
         rate(thanos_objstore_bucket_operations_total{job=~"thanos-store.*"}[5m])
-      ) by (job) > 0.05
+      ) by (job) * 100 > 5
     for: 15m
     labels:
       severity: warning

@@ -5,16 +5,33 @@
         name: 'thanos-querier.rules',
         rules: [
           {
-            alert: 'ThanosQuerierGrpcErrorRate',
+            alert: 'ThanosQuerierGrpcServerErrorRate',
             annotations: {
-              message: 'Thanos Querier {{$labels.job}} is returning Internal/Unavailable errors.',
+              message: 'Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize }}% of requests.',
             },
             expr: |||
               sum(
                 rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m])
                 /
                 rate(grpc_server_started_total{%(thanosQuerierSelector)s}[5m])
-              ) by (job) > 0.05
+              ) by (job) * 100 > 5
+            ||| % $._config,
+            'for': '5m',
+            labels: {
+              severity: 'warning',
+            },
+          },
+          {
+            alert: 'ThanosQuerierGrpcClientErrorRate',
+            annotations: {
+              message: 'Thanos Querier {{$labels.job}} is failing to send {{ $value | humanize }}% of requests.',
+            },
+            expr: |||
+              sum(
+                rate(grpc_client_handled_total{grpc_code!="OK", %(thanosQuerierSelector)s}[5m])
+                /
+                rate(grpc_client_started_total{%(thanosQuerierSelector)s}[5m])
+              ) by (job) * 100 > 5
             ||| % $._config,
             'for': '5m',
             labels: {
@@ -50,7 +67,7 @@
             ||| % $._config,
             'for': '10m',
             labels: {
-              severity: 'warning',
+              severity: 'critical',
             },
           },
           {
@@ -65,7 +82,7 @@
             ||| % $._config,
             'for': '10m',
             labels: {
-              severity: 'warning',
+              severity: 'critical',
             },
           },
         ],
