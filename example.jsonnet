@@ -12,7 +12,7 @@ local kt =
   {
     thanos+:: {
       variables+:: {
-        image: 'improbable/thanos:v0.5.0',
+        image: 'improbable/thanos:v0.7.0',
         objectStorageConfig+: {
           name: 'thanos-objectstorage',
           key: 'thanos.yaml',
