@@ -1247,7 +1247,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"thanos-receive.*\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (job, status_code)",
+                     "expr": "sum(label_replace(rate(http_requests_total{handler=\"receive\",namespace=\"$namespace\",job=~\"thanos-receive.*\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (job, status_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{status_code}}",
@@ -1333,7 +1333,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"thanos-receive.*\",code!~\"2..\"}[$interval])) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"thanos-receive.*\"}[$interval]))",
+                     "expr": "sum(rate(http_requests_total{handler=\"receive\",namespace=\"$namespace\",job=~\"thanos-receive.*\",code!~\"2..\"}[$interval])) / sum(rate(http_requests_total{handler=\"receive\",namespace=\"$namespace\",job=~\"thanos-receive.*\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -1417,7 +1417,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=~\"thanos-receive.*\"}[$interval])) by (job, le))",
+                     "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{handler=\"receive\",namespace=\"$namespace\",job=~\"thanos-receive.*\"}[$interval])) by (job, le))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} P99",

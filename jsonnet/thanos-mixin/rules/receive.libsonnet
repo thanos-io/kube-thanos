@@ -29,22 +29,22 @@
             },
           },
           {
-            record: ':thanos_http_failure_per_request:sum_rate',
+            record: ':http_failure_per_request:sum_rate',
             expr: |||
               sum(
-                rate(thanos_http_requests_total{%(thanosReceiveSelector)s, code!~"2.."}[5m])
+                rate(http_requests_total{handler="receive", %(thanosReceiveSelector)s, code!~"2.."}[5m])
               /
-                rate(thanos_http_requests_total{%(thanosReceiveSelector)s}[5m])
+                rate(http_requests_total{handler="receive", %(thanosReceiveSelector)s}[5m])
               )
             ||| % $._config,
             labels: {
             },
           },
           {
-            record: ':thanos_http_request_duration_seconds:histogram_quantile',
+            record: ':http_request_duration_seconds:histogram_quantile',
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_http_request_duration_seconds_bucket{%(thanosReceiveSelector)s}) by (le)
+                sum(http_request_duration_seconds_bucket{handler="receive", %(thanosReceiveSelector)s}) by (le)
               )
             ||| % $._config,
             labels: {
@@ -52,10 +52,10 @@
             },
           },
           {
-            record: ':thanos_http_request_duration_seconds:histogram_quantile',
+            record: ':http_request_duration_seconds:histogram_quantile',
             expr: |||
               histogram_quantile(0.99,
-                sum(rate(thanos_http_request_duration_seconds_bucket{%(thanosReceiveSelector)s}[5m])) by (le)
+                sum(rate(http_request_duration_seconds_bucket{handler="receive", %(thanosReceiveSelector)s}[5m])) by (le)
               )
             ||| % $._config,
             labels: {

@@ -53,7 +53,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (job, status_code)",
+                     "expr": "sum(label_replace(rate(http_requests_total{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (job, status_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{status_code}}",
@@ -131,7 +131,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"$job\",code!~\"2..\"}[$interval])) / sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
+                     "expr": "sum(rate(http_requests_total{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\",code!~\"2..\"}[$interval])) / sum(rate(http_requests_total{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval]))",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "error",
@@ -207,7 +207,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{job}}",
@@ -215,7 +215,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_http_request_duration_seconds_sum{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job) * 1 / sum(rate(thanos_http_request_duration_seconds_count{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job)",
+                     "expr": "sum(rate(http_request_duration_seconds_sum{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job) * 1 / sum(rate(http_request_duration_seconds_count{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean {{job}}",
@@ -223,7 +223,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
+                     "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{job}}",
@@ -319,7 +319,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(label_replace(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"$job\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (job, handler, status_code)",
+                     "expr": "sum(label_replace(rate(http_requests_total{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval]),\"status_code\", \"${1}xx\", \"code\", \"([0-9])..\")) by (job, handler, status_code)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{handler}} {{status_code}}",
@@ -395,7 +395,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "sum(rate(thanos_http_requests_total{namespace=\"$namespace\",job=~\"$job\",code!~\"2..\"}[$interval])) by (job, handler, code)",
+                     "expr": "sum(rate(http_requests_total{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\",code!~\"2..\"}[$interval])) by (job, handler, code)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "{{job}} {{handler}} {{code}}",
@@ -471,7 +471,7 @@
                "steppedLine": false,
                "targets": [
                   {
-                     "expr": "histogram_quantile(0.99, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, handler, le)) * 1",
+                     "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, handler, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P99 {{job}} {{handler}}",
@@ -479,7 +479,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "sum(rate(thanos_http_request_duration_seconds_sum{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, handler) * 1 / sum(rate(thanos_http_request_duration_seconds_count{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, handler)",
+                     "expr": "sum(rate(http_request_duration_seconds_sum{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, handler) * 1 / sum(rate(http_request_duration_seconds_count{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, handler)",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "mean {{job}} {{handler}}",
@@ -487,7 +487,7 @@
                      "step": 10
                   },
                   {
-                     "expr": "histogram_quantile(0.50, sum(rate(thanos_http_request_duration_seconds_bucket{namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, handler, le)) * 1",
+                     "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{handler=\"receive\",namespace=\"$namespace\",job=~\"$job\"}[$interval])) by (job, handler, le)) * 1",
                      "format": "time_series",
                      "intervalFactor": 2,
                      "legendFormat": "P50 {{job}} {{handler}}",

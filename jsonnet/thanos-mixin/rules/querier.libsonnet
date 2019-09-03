@@ -41,10 +41,10 @@
             },
           },
           {
-            record: ':thanos_querier_api_instant_query_duration_seconds:p99:histogram_quantile',
+            record: ':query_duration_seconds:p99:histogram_quantile',
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_query_api_instant_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (le)
+                sum(http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query"}) by (le)
               )
             ||| % $._config,
             labels: {
@@ -52,10 +52,10 @@
             },
           },
           {
-            record: ':thanos_querier_api_instant_query_duration_seconds:histogram_quantile',
+            record: ':query_duration_seconds:histogram_quantile',
             expr: |||
               histogram_quantile(0.99,
-                sum(rate(thanos_query_api_instant_query_duration_seconds_bucket{%(thanosQuerierSelector)s}[5m])) by (le)
+                sum(rate(http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query"}[5m])) by (le)
               )
             ||| % $._config,
             labels: {
@@ -63,10 +63,10 @@
             },
           },
           {
-            record: ':thanos_querier_api_range_query_duration_seconds:histogram_quantile',
+            record: ':api_range_query_duration_seconds:histogram_quantile',
             expr: |||
               histogram_quantile(0.99,
-                sum(thanos_query_api_range_query_duration_seconds_bucket{%(thanosQuerierSelector)s}) by (le)
+                sum(http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query_range"}) by (le)
               )
             ||| % $._config,
             labels: {
@@ -74,10 +74,10 @@
             },
           },
           {
-            record: ':thanos_querier_api_range_query_duration_seconds:histogram_quantile',
+            record: ':api_range_query_duration_seconds:histogram_quantile',
             expr: |||
               histogram_quantile(0.99,
-                sum(rate(thanos_query_api_range_query_duration_seconds_bucket{%(thanosQuerierSelector)s}[5m])) by (le)
+                sum(rate(http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query_range"}[5m])) by (le)
               )
             ||| % $._config,
             labels: {
