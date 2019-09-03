@@ -141,18 +141,18 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       g.row('Receive')
       .addPanel(
         g.panel('Incoming Requests Rate') +
-        g.httpQpsPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config) +
+        g.httpQpsPanel('http_requests_total', 'handler="receive",namespace="$namespace",%(thanosReceiveSelector)s' % $._config) +
         g.addDashboardLink($._config.grafanaThanos.dashboardReceiveTitle)
       )
       .addPanel(
         g.panel('Incoming Requests  Errors') +
-        g.httpErrPanel('thanos_http_requests_total', 'namespace="$namespace",%(thanosReceiveSelector)s' % $._config) +
+        g.httpErrPanel('http_requests_total', 'handler="receive",namespace="$namespace",%(thanosReceiveSelector)s' % $._config) +
         g.addDashboardLink($._config.grafanaThanos.dashboardReceiveTitle)
       )
       .addPanel(
         g.sloLatency(
           'Incoming Requests Latency 99th Percentile',
-          'thanos_http_request_duration_seconds_bucket{namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
+          'http_request_duration_seconds_bucket{handler="receive",namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
           0.99,
           0.5,
           1
