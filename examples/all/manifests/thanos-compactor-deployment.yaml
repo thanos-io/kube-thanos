@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: thanos-compactor
+  name: thanos-compactor
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: thanos-compactor
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: thanos-compactor
+    spec:
+      containers:
+      - args:
+        - compact
+        - --wait
+        - --retention.resolution-raw=16d
+        - --retention.resolution-5m=42d
+        - --retention.resolution-1h=180d
+        - --objstore.config=$(OBJSTORE_CONFIG)
+        env:
+        - name: OBJSTORE_CONFIG
+          valueFrom:
+            secretKeyRef:
+              key: thanos.yaml
+              name: thanos-objectstorage
+        image: improbable/thanos:v0.7.0
+        name:
+          app.kubernetes.io/name: thanos-compactor
+        ports:
+        - containerPort: 10902
+          name: http
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2Gi
+          requests:
+            cpu: 100m
+            memory: 1Gi
