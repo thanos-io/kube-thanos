@@ -29,7 +29,7 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: improbable/thanos:v0.7.0
+        image: quay.io/thanos/thanos:v0.7.0
         name: thanos-store
         ports:
         - containerPort: 10901
