@@ -41,14 +41,16 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           ]) +
           container.withPorts([
             { name: 'http', containerPort: $.thanos.compactor.service.spec.ports[0].port },
-          ])+
+          ]) +
           container.mixin.resources.withRequests({ cpu: '100m', memory: '1Gi' }) +
           container.mixin.resources.withLimits({ cpu: '500m', memory: '2Gi' });
 
         deployment.new('thanos-compactor', 1, c, $.thanos.compactor.deployment.metadata.labels) +
         deployment.mixin.metadata.withNamespace('monitoring') +
         deployment.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.compactor.deployment.metadata.name }) +
-        deployment.mixin.spec.selector.withMatchLabels($.thanos.compactor.deployment.metadata.labels),
+        deployment.mixin.spec.selector.withMatchLabels($.thanos.compactor.deployment.metadata.labels) +
+        deployment.mixin.spec.strategy.rollingUpdate.withMaxSurge(0) +
+        deployment.mixin.spec.strategy.rollingUpdate.withMaxUnavailable(1),
     },
   },
 }

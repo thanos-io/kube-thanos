@@ -10,6 +10,10 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: thanos-compactor
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   template:
     metadata:
       labels:
