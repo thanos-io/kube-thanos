@@ -9,7 +9,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
         service.new(
           'thanos-compactor',
-          $.thanos.compactor.deployment.metadata.labels,
+          $.thanos.compactor.statefulSet.metadata.labels,
           [
             ports.newNamed('http', 10902, 'http'),
           ],
@@ -17,13 +17,13 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         service.mixin.metadata.withNamespace('monitoring') +
         service.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.compactor.service.metadata.name }),
 
-      deployment:
-        local deployment = k.apps.v1.deployment;
-        local container = deployment.mixin.spec.template.spec.containersType;
+      statefulSet:
+        local statefulSet = k.apps.v1.statefulSet;
+        local container = statefulSet.mixin.spec.template.spec.containersType;
         local containerEnv = container.envType;
 
         local c =
-          container.new($.thanos.compactor.deployment.metadata.labels, $.thanos.variables.image) +
+          container.new($.thanos.compactor.statefulSet.metadata.labels, $.thanos.variables.image) +
           container.withArgs([
             'compact',
             '--wait',
@@ -45,12 +45,10 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.resources.withRequests({ cpu: '100m', memory: '1Gi' }) +
           container.mixin.resources.withLimits({ cpu: '500m', memory: '2Gi' });
 
-        deployment.new('thanos-compactor', 1, c, $.thanos.compactor.deployment.metadata.labels) +
-        deployment.mixin.metadata.withNamespace('monitoring') +
-        deployment.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.compactor.deployment.metadata.name }) +
-        deployment.mixin.spec.selector.withMatchLabels($.thanos.compactor.deployment.metadata.labels) +
-        deployment.mixin.spec.strategy.rollingUpdate.withMaxSurge(0) +
-        deployment.mixin.spec.strategy.rollingUpdate.withMaxUnavailable(1),
+        statefulSet.new('thanos-compactor', 1, c,[], $.thanos.compactor.statefulSet.metadata.labels) +
+        statefulSet.mixin.metadata.withNamespace('monitoring') +
+        statefulSet.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.compactor.statefulSet.metadata.name }) +
+        statefulSet.mixin.spec.selector.withMatchLabels($.thanos.compactor.statefulSet.metadata.labels),
     },
   },
 }

@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   labels:
     app.kubernetes.io/name: thanos-compactor
@@ -10,10 +10,6 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: thanos-compactor
-  strategy:
-    rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -46,3 +42,4 @@ spec:
           requests:
             cpu: 100m
             memory: 1Gi
+  volumeClaimTemplates: []
