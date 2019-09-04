@@ -23,7 +23,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local containerEnv = container.envType;
 
         local c =
-          container.new($.thanos.compactor.statefulSet.metadata.labels, $.thanos.variables.image) +
+          container.new($.thanos.compactor.statefulSet.metadata.name, $.thanos.variables.image) +
           container.withArgs([
             'compact',
             '--wait',
@@ -45,9 +45,10 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.resources.withRequests({ cpu: '100m', memory: '1Gi' }) +
           container.mixin.resources.withLimits({ cpu: '500m', memory: '2Gi' });
 
-        statefulSet.new('thanos-compactor', 1, c,[], $.thanos.compactor.statefulSet.metadata.labels) +
+        statefulSet.new('thanos-compactor', 1, c, [], $.thanos.compactor.statefulSet.metadata.labels) +
         statefulSet.mixin.metadata.withNamespace('monitoring') +
         statefulSet.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.compactor.statefulSet.metadata.name }) +
+        statefulSet.mixin.spec.withServiceName($.thanos.compactor.service.metadata.name) +
         statefulSet.mixin.spec.selector.withMatchLabels($.thanos.compactor.statefulSet.metadata.labels),
     },
   },
