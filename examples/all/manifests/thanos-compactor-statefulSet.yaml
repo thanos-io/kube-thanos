@@ -24,6 +24,7 @@ spec:
         - --retention.resolution-5m=42d
         - --retention.resolution-1h=180d
         - --objstore.config=$(OBJSTORE_CONFIG)
+        - --data-dir=/var/thanos/compactor
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
@@ -42,4 +43,11 @@ spec:
           requests:
             cpu: 100m
             memory: 1Gi
+        volumeMounts:
+        - mountPath: /var/thanos/compactor
+          name: thanos-compactor-data
+          readOnly: false
+      volumes:
+      - emptyDir: {}
+        name: thanos-compactor-data
   volumeClaimTemplates: []
