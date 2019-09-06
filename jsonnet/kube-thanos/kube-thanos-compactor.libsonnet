@@ -19,8 +19,10 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
       statefulSet:
         local statefulSet = k.apps.v1.statefulSet;
+        local volume = statefulSet.mixin.spec.template.spec.volumesType;
         local container = statefulSet.mixin.spec.template.spec.containersType;
         local containerEnv = container.envType;
+        local containerVolumeMount = container.volumeMountsType;
 
         local c =
           container.new($.thanos.compactor.statefulSet.metadata.name, $.thanos.variables.image) +
@@ -31,6 +33,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             '--retention.resolution-5m=42d',
             '--retention.resolution-1h=180d',
             '--objstore.config=$(OBJSTORE_CONFIG)',
+            '--data-dir=/var/thanos/compactor',
           ]) +
           container.withEnv([
             containerEnv.fromSecretRef(
@@ -43,12 +46,18 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             { name: 'http', containerPort: $.thanos.compactor.service.spec.ports[0].port },
           ]) +
           container.mixin.resources.withRequests({ cpu: '100m', memory: '1Gi' }) +
-          container.mixin.resources.withLimits({ cpu: '500m', memory: '2Gi' });
+          container.mixin.resources.withLimits({ cpu: '500m', memory: '2Gi' }) +
+          container.withVolumeMounts([
+            containerVolumeMount.new('thanos-compactor-data', '/var/thanos/compactor', false),
+          ]);
 
         statefulSet.new('thanos-compactor', 1, c, [], $.thanos.compactor.statefulSet.metadata.labels) +
         statefulSet.mixin.metadata.withNamespace('monitoring') +
         statefulSet.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.compactor.statefulSet.metadata.name }) +
         statefulSet.mixin.spec.withServiceName($.thanos.compactor.service.metadata.name) +
+        statefulSet.mixin.spec.template.spec.withVolumes([
+          volume.fromEmptyDir('thanos-compactor-data'),
+        ]) +
         statefulSet.mixin.spec.selector.withMatchLabels($.thanos.compactor.statefulSet.metadata.labels),
     },
   },
