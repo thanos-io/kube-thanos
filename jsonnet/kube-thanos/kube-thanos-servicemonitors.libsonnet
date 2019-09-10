@@ -54,5 +54,23 @@
         },
       },
     },
+    compactor+: {
+      serviceMonitor+: {
+        apiVersion: 'monitoring.coreos.com/v1',
+        kind: 'ServiceMonitor',
+        metadata+: {
+          name: 'thanos-compactor',
+          namespace: 'monitoring',
+        },
+        spec: {
+          selector: {
+            matchLabels: $.thanos.compactor.service.metadata.labels,
+          },
+          endpoints: [
+            { port: 'http' },
+          ],
+        },
+      },
+    },
   },
 }
