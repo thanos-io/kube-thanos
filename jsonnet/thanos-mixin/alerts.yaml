@@ -23,7 +23,7 @@ groups:
     for: 5m
     labels:
       severity: warning
-  - alert: ThanosCompactHighCompactionsFailures
+  - alert: ThanosCompactHighCompactionFailures
     annotations:
       message: Thanos Compact {{$labels.job}} is failing to execute {{ $value | humanize
         }}% of compactions.
