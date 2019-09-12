@@ -18,7 +18,7 @@
           {
             alert: 'ThanosCompactIsNotRunning',
             annotations: {
-              message: 'Thanos Compaction is not running.',
+              message: 'Thanos Compaction is not running or just not scraped yet.',
             },
             expr: 'up{%(thanosCompactSelector)s} == 0 or absent({%(thanosCompactSelector)s})' % $._config,
             'for': '5m',
