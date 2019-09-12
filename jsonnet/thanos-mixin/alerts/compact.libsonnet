@@ -7,7 +7,7 @@
           {
             alert: 'ThanosCompactMultipleCompactsAreRunning',
             annotations: {
-              message: 'Multiple replicas of Thanos Compact should not be running.',
+              message: 'You should never run more than one Thanos Compact at once. You have {{ $value }}',
             },
             expr: 'sum(up{%(thanosCompactSelector)s}) > 1' % $._config,
             'for': '5m',
@@ -60,7 +60,7 @@
           {
             alert: 'ThanosCompactHasNotRun',
             annotations: {
-              message: 'Thanos Compact {{$labels.job}} has not run for 24 hours.',
+              message: 'Thanos Compact {{$labels.job}} has not uploaded anything for 24 hours.',
             },
             expr: '(time() - max(thanos_objstore_bucket_last_successful_upload_time{%(thanosCompactSelector)s})) / 60 / 60 > 24' % $._config,
             labels: {
