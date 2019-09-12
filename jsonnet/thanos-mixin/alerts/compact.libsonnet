@@ -31,7 +31,6 @@
             annotations: {
               message: 'Thanos Compact {{$labels.job}} has failed to run and now is halted.',
             },
-            // expr: 'avg(thanos_compactor_halted{%(thanosCompactSelector)s}) by (job) != 0' % $._config,
             expr: 'thanos_compactor_halted{%(thanosCompactSelector)s} = 1' % $._config,
             'for': '5m',
             labels: {
