@@ -11,7 +11,7 @@ groups:
       severity: warning
   - alert: ThanosCompactIsNotRunning
     annotations:
-      message: Thanos Compaction is not running.
+      message: Thanos Compaction is not running or just not scraped yet.
     expr: up{job=~"thanos-compact.*"} == 0 or absent({job=~"thanos-compact.*"})
     for: 5m
     labels:
