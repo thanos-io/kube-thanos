@@ -7,6 +7,9 @@ local template = grafana.template;
     collapse: true,
   },
 
+  panel(title, description=null)::
+    super.panel(title) { [if description != null then 'description']: description },
+
   addDashboardLink(name): {
     links+: [
       {
