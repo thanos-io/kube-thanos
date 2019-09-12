@@ -18,7 +18,7 @@ groups:
   - alert: ThanosCompactHalted
     annotations:
       message: Thanos Compact {{$labels.job}} has failed to run and now is halted.
-    expr: thanos_compactor_halted{job=~"thanos-compact.*"} = 1
+    expr: thanos_compactor_halted{job=~"thanos-compact.*"} == 1
     for: 5m
     labels:
       severity: warning
