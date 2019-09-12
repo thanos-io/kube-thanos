@@ -38,21 +38,35 @@
             },
           },
           {
-            alert: 'ThanosCompactCompactionsFailed',
+            alert: 'ThanosCompactHighCompactionFailures',
             annotations: {
-              message: 'Thanos Compact {{$labels.job}} has not been able to conduct compactions.',
+              message: 'Thanos Compact {{$labels.job}} is failing to execute {{ $value | humanize }}% of compactions.',
             },
-            expr: 'rate(prometheus_tsdb_compactions_failed_total{%(thanosCompactSelector)s}[5m]) > 0' % $._config,
+            expr: |||
+              sum(
+                rate(prometheus_tsdb_compactions_failed_total{%(thanosCompactSelector)s}[5m])
+              /
+                rate(prometheus_tsdb_compactions_total{%(thanosCompactSelector)s}[5m])
+              ) by (job) * 100 > 5
+            ||| % $._config,
+            'for': '15m',
             labels: {
               severity: 'warning',
             },
           },
           {
-            alert: 'ThanosCompactBucketOperationsFailed',
+            alert: 'ThanosCompactBucketHighOperationFailures',
             annotations: {
-              message: 'Thanos Compact {{$labels.job}} bucket operations are failing.',
+              message: 'Thanos Compact {{$labels.job}} Bucket is failing to execute {{ $value | humanize }}% of operations.',
             },
-            expr: 'rate(thanos_objstore_bucket_operation_failures_total{%(thanosCompactSelector)s}[5m]) > 0' % $._config,
+            expr: |||
+              sum(
+                rate(thanos_objstore_bucket_operation_failures_total{%(thanosCompactSelector)s}[5m])
+              /
+                rate(thanos_objstore_bucket_operations_total{%(thanosCompactSelector)s}[5m])
+              ) by (job) * 100 > 5
+            ||| % $._config,
+            'for': '15m',
             labels: {
               severity: 'warning',
             },

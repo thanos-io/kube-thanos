@@ -3,7 +3,8 @@ groups:
   rules:
   - alert: ThanosCompactMultipleCompactsAreRunning
     annotations:
-      message: Multiple replicas of Thanos Compact should not be running.
+      message: You should never run more than one Thanos Compact at once. You have
+        {{ $value }}
     expr: sum(up{job=~"thanos-compact.*"}) > 1
     for: 5m
     labels:
@@ -22,23 +23,35 @@ groups:
     for: 5m
     labels:
       severity: warning
-  - alert: ThanosCompactCompactionsFailed
+  - alert: ThanosCompactHighCompactionsFailures
     annotations:
-      message: Thanos Compact {{$labels.job}} has not been able to conduct compactions.
-    expr: rate(prometheus_tsdb_compactions_failed_total{job=~"thanos-compact.*"}[5m])
-      > 0
+      message: Thanos Compact {{$labels.job}} is failing to execute {{ $value | humanize
+        }}% of compactions.
+    expr: |
+      sum(
+        rate(prometheus_tsdb_compactions_failed_total{job=~"thanos-compact.*"}[5m])
+      /
+        rate(prometheus_tsdb_compactions_total{job=~"thanos-compact.*"}[5m])
+      ) by (job) * 100 > 5
+    for: 15m
     labels:
       severity: warning
-  - alert: ThanosCompactBucketOperationsFailed
+  - alert: ThanosCompactBucketHighOperationFailures
     annotations:
-      message: Thanos Compact {{$labels.job}} bucket operations are failing.
-    expr: rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-compact.*"}[5m])
-      > 0
+      message: Thanos Compact {{$labels.job}} Bucket is failing to execute {{ $value
+        | humanize }}% of operations.
+    expr: |
+      sum(
+        rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-compact.*"}[5m])
+      /
+        rate(thanos_objstore_bucket_operations_total{job=~"thanos-compact.*"}[5m])
+      ) by (job) * 100 > 5
+    for: 15m
     labels:
       severity: warning
   - alert: ThanosCompactHasNotRun
     annotations:
-      message: Thanos Compact {{$labels.job}} has not run for 24 hours.
+      message: Thanos Compact {{$labels.job}} has not uploaded anything for 24 hours.
     expr: (time() - max(thanos_objstore_bucket_last_successful_upload_time{job=~"thanos-compact.*"}))
       / 60 / 60 > 24
     labels:
