@@ -956,7 +956,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of executed operations against bucker.",
+               "description": "Shows ratio of errors compare to total number of executed operations against bucket.",
                "fill": 10,
                "id": 12,
                "legend": {

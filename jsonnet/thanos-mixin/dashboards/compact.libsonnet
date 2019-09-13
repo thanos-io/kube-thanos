@@ -110,7 +110,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of executed operations against bucker.') +
+          g.panel('Errors', 'Shows ratio of errors compare to total number of executed operations against bucket.') +
           g.qpsErrTotalPanel(
             'thanos_objstore_bucket_operation_failures_total{namespace="$namespace",job=~"$job"}',
             'thanos_objstore_bucket_operations_total{namespace="$namespace",job=~"$job"}',
