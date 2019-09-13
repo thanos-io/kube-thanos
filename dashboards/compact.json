@@ -19,7 +19,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of execution for compactions against blocks that stored in bucket by compaction group, for given interval.",
+               "description": "Shows rate of execution for compactions against blocks that stored in bucket by compaction group.",
                "fill": 10,
                "id": 1,
                "legend": {
@@ -98,7 +98,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors for executed compactions against blocks that stored in bucket, for given interval.",
+               "description": "Shows ratio of errors compare to total number of executed compactions against blocks that stored in bucket.",
                "fill": 10,
                "id": 2,
                "legend": {
@@ -187,7 +187,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of execution for downsampling against blocks that stored in bucket by compaction group, for given interval.",
+               "description": "Shows rate of execution for downsampling against blocks that stored in bucket by compaction group.",
                "fill": 10,
                "id": 3,
                "legend": {
@@ -266,7 +266,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors for executed downsampling against blocks that stored in bucket, for given interval.",
+               "description": "Shows ratio of errors compare to total number of executed downsampling against blocks that stored in bucket.",
                "fill": 10,
                "id": 4,
                "legend": {
@@ -355,7 +355,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of execution for removals of blocks if their data is available as part of a block with a higher compaction level, for given interval.",
+               "description": "Shows rate of execution for removals of blocks if their data is available as part of a block with a higher compaction level.",
                "fill": 10,
                "id": 5,
                "legend": {
@@ -434,7 +434,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors for executed garbage collections, for given interval.",
+               "description": "Shows ratio of errors compare to total number of executed garbage collections.",
                "fill": 10,
                "id": 6,
                "legend": {
@@ -616,7 +616,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of execution for all meta files from blocks in the bucket into the memory, for given interval.",
+               "description": "Shows rate of execution for all meta files from blocks in the bucket into the memory.",
                "fill": 10,
                "id": 8,
                "legend": {
@@ -695,7 +695,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors for executed meta file sync, for given interval.",
+               "description": "Shows ratio of errors compare to total number of executed meta file sync.",
                "fill": 10,
                "id": 9,
                "legend": {
@@ -877,7 +877,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of execution for operations against bucket, for given interval.",
+               "description": "Shows rate of execution for operations against bucket.",
                "fill": 10,
                "id": 11,
                "legend": {
@@ -956,7 +956,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors for executed operations against bucker, for given interval.",
+               "description": "Shows ratio of errors compare to total number of executed operations against bucker.",
                "fill": 10,
                "id": 12,
                "legend": {

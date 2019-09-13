@@ -152,6 +152,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addPanel(
         g.sloLatency(
           'Incoming Requests Latency 99th Percentile',
+          '',
           'http_request_duration_seconds_bucket{handler="receive",namespace="$namespace",%(thanosReceiveSelector)s}' % $._config,
           0.99,
           0.5,

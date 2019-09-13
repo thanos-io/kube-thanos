@@ -1,6 +1,6 @@
 {
-  sloLatency(title, selector, quantile, warning, critical)::
-    $.panel(title) +
+  sloLatency(title, description, selector, quantile, warning, critical)::
+    $.panel(title, description) +
     $.queryPanel(
       'histogram_quantile(%.2f, sum(rate(%s[$interval])) by (job, le))' % [quantile, selector],
       '{{job}} P' + quantile * 100

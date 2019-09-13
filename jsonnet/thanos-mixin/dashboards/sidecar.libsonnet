@@ -126,6 +126,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addPanel(
         g.sloLatency(
           'gPRC (Unary) Latency 99th Percentile',
+          '',
           'grpc_server_handling_seconds_bucket{grpc_type="unary",namespace="$namespace",%(thanosSidecarSelector)s}' % $._config,
           0.99,
           0.5,

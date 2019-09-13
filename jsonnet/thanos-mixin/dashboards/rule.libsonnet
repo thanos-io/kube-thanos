@@ -124,6 +124,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addPanel(
         g.sloLatency(
           'Sent Error Duration',
+          '',
           'thanos_alert_sender_latency_seconds_bucket{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
           0.99,
           0.5,
