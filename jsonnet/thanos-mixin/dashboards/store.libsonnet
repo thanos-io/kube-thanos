@@ -11,7 +11,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrorsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -26,7 +26,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrDetailsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -42,7 +42,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrorsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
@@ -57,7 +57,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrDetailsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
@@ -69,7 +69,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('Bucket Operations')
         .addPanel(
-          g.panel('Rate', 'Shows rate of execution for operations against bucket.') +
+          g.panel('Rate', 'Shows rate of execution for operations against the bucket.') +
           g.queryPanel(
             'sum(rate(thanos_objstore_bucket_operations_total{namespace="$namespace",job=~"$job"}[$interval])) by (job, operation)',
             '{{job}} {{operation}}'
@@ -77,21 +77,21 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of executed operations against bucket.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of executed operations against the bucket.') +
           g.qpsErrTotalPanel(
             'thanos_objstore_bucket_operation_failures_total{namespace="$namespace",job=~"$job"}',
             'thanos_objstore_bucket_operations_total{namespace="$namespace",job=~"$job"}',
           )
         )
         .addPanel(
-          g.panel('Duration', 'Shows how long has it taken to execute operations against bucket, in quantiles.') +
+          g.panel('Duration', 'Shows how long has it taken to execute operations against the bucket, in quantiles.') +
           g.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace="$namespace",job=~"$job"')
         )
       )
       .addRow(
         g.row('Block Operations')
         .addPanel(
-          g.panel('Block Load Rate', 'Shows rate of block loads from bucket.') +
+          g.panel('Block Load Rate', 'Shows rate of block loads from the bucket.') +
           g.queryPanel(
             'sum(rate(thanos_bucket_store_block_loads_total{namespace="$namespace",job=~"$job"}[$interval]))',
             'block loads'
@@ -99,7 +99,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Block Load Errors', 'Shows ratio of errors compare to total number of block loads from bucket.') +
+          g.panel('Block Load Errors', 'Shows ratio of errors compared to the total number of block loads from the bucket.') +
           g.qpsErrTotalPanel(
             'thanos_bucket_store_block_load_failures_total{namespace="$namespace",job=~"$job"}',
             'thanos_bucket_store_block_loads_total{namespace="$namespace",job=~"$job"}',
@@ -114,7 +114,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Block Drop Errors', 'Shows ratio of errors compare to total number of block drops.') +
+          g.panel('Block Drop Errors', 'Shows ratio of errors compared to the total number of block drops.') +
           g.qpsErrTotalPanel(
             'thanos_bucket_store_block_drop_failures_total{namespace="$namespace",job=~"$job"}',
             'thanos_bucket_store_block_drops_total{namespace="$namespace",job=~"$job"}',
@@ -132,7 +132,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Hits', 'Shows ratio of errors compare to total number of cache hits.') +
+          g.panel('Hits', 'Shows ratio of errors compared to the total number of cache hits.') +
           g.queryPanel(
             'sum(rate(thanos_store_index_cache_hits_total{namespace="$namespace",job=~"$job"}[$interval])) by (job, item_type)',
             '{{job}} {{item_type}}',
@@ -159,7 +159,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('Store Sent')
         .addPanel(
-          g.panel('Chunk Size', 'Shows size of chunks that has sent to bucket, in bytes.') +
+          g.panel('Chunk Size', 'Shows size of chunks that have sent to the bucket, in bytes.') +
           g.queryPanel(
             [
               'histogram_quantile(0.99, sum(rate(thanos_bucket_store_sent_chunk_size_bytes_bucket{namespace="$namespace",job=~"$job"}[$interval])) by (job, le))',
@@ -250,7 +250,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.addDashboardLink($._config.grafanaThanos.dashboardStoreTitle)
       )
       .addPanel(
-        g.panel('gPRC (Unary) Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+        g.panel('gPRC (Unary) Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
         g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosStoreSelector)s,grpc_type="unary"' % $._config) +
         g.addDashboardLink($._config.grafanaThanos.dashboardStoreTitle)
       )

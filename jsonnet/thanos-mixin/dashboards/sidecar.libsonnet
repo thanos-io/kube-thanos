@@ -11,7 +11,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrorsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -26,7 +26,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrDetailsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -57,7 +57,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrDetailsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
@@ -69,7 +69,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('Last Updated')
         .addPanel(
-          g.panel('Successful Upload', 'Shows relative time of last successful upload to object store bucket.') +
+          g.panel('Successful Upload', 'Shows the relative time of last successful upload to the object-store bucket.') +
           g.tablePanel(
             ['time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace="$namespace",job=~"$job"}) by (job, bucket)'],
             {
@@ -119,7 +119,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.addDashboardLink($._config.grafanaThanos.dashboardSidecarTitle)
       )
       .addPanel(
-        g.panel('gPRC (Unary) Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+        g.panel('gPRC (Unary) Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
         g.grpcErrorsPanel('server', 'namespace="$namespace",%(thanosSidecarSelector)s,grpc_type="unary"' % $._config) +
         g.addDashboardLink($._config.grafanaThanos.dashboardSidecarTitle)
       )

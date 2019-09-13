@@ -11,7 +11,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.httpQpsPanel('http_requests_total', 'handler="receive",namespace="$namespace",job=~"$job"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled incoming requests.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled incoming requests.') +
           g.httpErrPanel('http_requests_total', 'handler="receive",namespace="$namespace",job=~"$job"')
         )
         .addPanel(
@@ -26,7 +26,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.httpQpsPanelDetailed('http_requests_total', 'handler="receive",namespace="$namespace",job=~"$job"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled incoming requests.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled incoming requests.') +
           g.httpErrDetailsPanel('http_requests_total', 'handler="receive",namespace="$namespace",job=~"$job"')
         )
         .addPanel(
@@ -45,7 +45,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           )
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of forwareded requests to other receive nodes.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of forwareded requests to other receive nodes.') +
           g.qpsErrTotalPanel(
             'thanos_receive_forward_requests_total{namespace="$namespace",job=~"$job",result="error"}',
             'thanos_receive_forward_requests_total{namespace="$namespace",job=~"$job"}',
@@ -59,7 +59,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrorsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -74,7 +74,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrDetailsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -90,7 +90,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrorsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
@@ -105,7 +105,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests from queriers.') +
           g.grpcErrDetailsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
@@ -117,7 +117,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('Last Updated')
         .addPanel(
-          g.panel('Successful Upload', 'Shows relative time of last successful upload to object store bucket.') +
+          g.panel('Successful Upload', 'Shows the relative time of last successful upload to the object-store bucket.') +
           g.tablePanel(
             ['time() - max(thanos_objstore_bucket_last_successful_upload_time{namespace="$namespace",job=~"$job"}) by (job, bucket)'],
             {
@@ -145,7 +145,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.addDashboardLink($._config.grafanaThanos.dashboardReceiveTitle)
       )
       .addPanel(
-        g.panel('Incoming Requests Errors', 'Shows ratio of errors compare to total number of handled incoming requests.') +
+        g.panel('Incoming Requests Errors', 'Shows ratio of errors compared to the total number of handled incoming requests.') +
         g.httpErrPanel('http_requests_total', 'handler="receive",namespace="$namespace",%(thanosReceiveSelector)s' % $._config) +
         g.addDashboardLink($._config.grafanaThanos.dashboardReceiveTitle)
       )

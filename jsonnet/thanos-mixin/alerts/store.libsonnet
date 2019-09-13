@@ -56,7 +56,7 @@
           {
             alert: 'ThanosStoreObjstoreOperationLatencyHigh',
             annotations: {
-              message: 'Thanos Store {{$labels.job}} Bucket has a 99th percentile latency of {{ $value }} seconds for bucket operations.',
+              message: 'Thanos Store {{$labels.job}} Bucket has a 99th percentile latency of {{ $value }} seconds for the bucket operations.',
             },
             expr: |||
               histogram_quantile(0.99,

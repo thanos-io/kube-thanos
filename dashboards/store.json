@@ -117,7 +117,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests from queriers.",
+               "description": "Shows ratio of errors compared to the total number of handled requests from queriers.",
                "fill": 10,
                "id": 2,
                "legend": {
@@ -376,7 +376,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests from queriers.",
+               "description": "Shows ratio of errors compared to the total number of handled requests from queriers.",
                "fill": 10,
                "id": 5,
                "legend": {
@@ -656,7 +656,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests from queriers.",
+               "description": "Shows ratio of errors compared to the total number of handled requests from queriers.",
                "fill": 10,
                "id": 8,
                "legend": {
@@ -915,7 +915,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests from queriers.",
+               "description": "Shows ratio of errors compared to the total number of handled requests from queriers.",
                "fill": 10,
                "id": 11,
                "legend": {
@@ -1097,7 +1097,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of execution for operations against bucket.",
+               "description": "Shows rate of execution for operations against the bucket.",
                "fill": 10,
                "id": 13,
                "legend": {
@@ -1176,7 +1176,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of executed operations against bucket.",
+               "description": "Shows ratio of errors compared to the total number of executed operations against the bucket.",
                "fill": 10,
                "id": 14,
                "legend": {
@@ -1253,7 +1253,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows how long has it taken to execute operations against bucket, in quantiles.",
+               "description": "Shows how long has it taken to execute operations against the bucket, in quantiles.",
                "fill": 1,
                "id": 15,
                "legend": {
@@ -1358,7 +1358,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of block loads from bucket.",
+               "description": "Shows rate of block loads from the bucket.",
                "fill": 10,
                "id": 16,
                "legend": {
@@ -1437,7 +1437,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of block loads from bucket.",
+               "description": "Shows ratio of errors compared to the total number of block loads from the bucket.",
                "fill": 10,
                "id": 17,
                "legend": {
@@ -1593,7 +1593,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of block drops.",
+               "description": "Shows ratio of errors compared to the total number of block drops.",
                "fill": 10,
                "id": 19,
                "legend": {
@@ -1759,7 +1759,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of cache hits.",
+               "description": "Shows ratio of errors compared to the total number of cache hits.",
                "fill": 10,
                "id": 21,
                "legend": {
@@ -2002,7 +2002,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows size of chunks that has sent to bucket, in bytes.",
+               "description": "Shows size of chunks that have sent to the bucket, in bytes.",
                "fill": 1,
                "id": 24,
                "legend": {

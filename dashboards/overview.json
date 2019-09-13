@@ -27,7 +27,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of requests against /query for given time.",
+               "description": "Shows rate of requests against /query for the given time.",
                "fill": 10,
                "id": 1,
                "legend": {
@@ -114,7 +114,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests against /query.",
+               "description": "Shows ratio of errors compared to the the total number of handled requests against /query.",
                "fill": 10,
                "id": 2,
                "legend": {
@@ -321,7 +321,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of requests against /query_range for given time range.",
+               "description": "Shows rate of requests against /query_range for the given time range.",
                "fill": 10,
                "id": 4,
                "legend": {
@@ -408,7 +408,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests against /query_range.",
+               "description": "Shows ratio of errors compared to the the total number of handled requests against /query_range.",
                "fill": 10,
                "id": 5,
                "legend": {
@@ -713,7 +713,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests from queriers.",
+               "description": "Shows ratio of errors compared to the total number of handled requests from queriers.",
                "fill": 10,
                "id": 8,
                "legend": {
@@ -1018,7 +1018,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests from queriers.",
+               "description": "Shows ratio of errors compared to the total number of handled requests from queriers.",
                "fill": 10,
                "id": 11,
                "legend": {
@@ -1312,7 +1312,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled incoming requests.",
+               "description": "Shows ratio of errors compared to the total number of handled incoming requests.",
                "fill": 10,
                "id": 14,
                "legend": {
@@ -1598,7 +1598,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of sent alerts.",
+               "description": "Shows ratio of errors compared to the total number of sent alerts.",
                "fill": 10,
                "id": 17,
                "legend": {
@@ -1797,7 +1797,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of execution for compactions against blocks that stored in bucket by compaction group.",
+               "description": "Shows rate of execution for compactions against blocks that are stored in the bucket by compaction group.",
                "fill": 10,
                "id": 19,
                "legend": {
@@ -1884,7 +1884,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of executed compactions against blocks that stored in bucket.",
+               "description": "Shows ratio of errors compared to the total number of executed compactions against blocks that are stored in the bucket.",
                "fill": 10,
                "id": 20,
                "legend": {

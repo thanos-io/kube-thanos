@@ -175,7 +175,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of sent alerts.",
+               "description": "Shows ratio of errors compared to the total number of sent alerts.",
                "fill": 10,
                "id": 3,
                "legend": {
@@ -455,7 +455,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests.",
+               "description": "Shows ratio of errors compared to the total number of handled requests.",
                "fill": 10,
                "id": 6,
                "legend": {
@@ -714,7 +714,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests.",
+               "description": "Shows ratio of errors compared to the total number of handled requests.",
                "fill": 10,
                "id": 9,
                "legend": {
@@ -994,7 +994,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests.",
+               "description": "Shows ratio of errors compared to the total number of handled requests.",
                "fill": 10,
                "id": 12,
                "legend": {
@@ -1253,7 +1253,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests.",
+               "description": "Shows ratio of errors compared to the total number of handled requests.",
                "fill": 10,
                "id": 15,
                "legend": {

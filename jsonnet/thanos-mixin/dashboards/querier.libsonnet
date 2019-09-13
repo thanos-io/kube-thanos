@@ -7,11 +7,11 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('Instant Query API')
         .addPanel(
-          g.panel('Rate', 'Shows rate of requests against /query for given time.') +
+          g.panel('Rate', 'Shows rate of requests against /query for the given time.') +
           g.httpQpsPanel('http_requests_total', 'namespace="$namespace",job=~"$job",handler="query"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests against /query.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the the total number of handled requests against /query.') +
           g.httpErrPanel('http_requests_total', 'namespace="$namespace",job=~"$job",handler="query"')
         )
         .addPanel(
@@ -22,11 +22,11 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('Range Query API')
         .addPanel(
-          g.panel('Rate', 'Shows rate of requests against /query_range for given time range.') +
+          g.panel('Rate', 'Shows rate of requests against /query_range for the given time range.') +
           g.httpQpsPanel('http_requests_total', 'namespace="$namespace",job=~"$job",handler="query_range"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests against /query_range.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the the total number of handled requests against /query_range.') +
           g.httpErrPanel('http_requests_total', 'namespace="$namespace",job=~"$job",handler="query_range"')
         )
         .addPanel(
@@ -37,11 +37,11 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('Query Detailed')
         .addPanel(
-          g.panel('Rate', 'Shows rate of requests against /query for given time, with handlers and codes.') +
+          g.panel('Rate', 'Shows rate of requests against /query for the given time, with handlers and codes.') +
           g.httpQpsPanelDetailed('http_requests_total', 'namespace="$namespace",job=~"$job"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests, in more detail.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the the total number of handled requests, in more detail.') +
           g.httpErrDetailsPanel('http_requests_total', 'namespace="$namespace",job=~"$job"')
         )
         .addPanel(
@@ -57,7 +57,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from other queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the the total number of handled requests from other queriers.') +
           g.grpcErrorsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -72,7 +72,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from other queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the the total number of handled requests from other queriers.') +
           g.grpcErrDetailsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -88,7 +88,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from other queriers.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the the total number of handled requests from other queriers.') +
           g.grpcErrorsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
@@ -103,7 +103,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the the total number of handled requests.') +
           g.grpcErrDetailsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
@@ -122,7 +122,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           )
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of failures compare to total number of executed DNS lookups.') +
+          g.panel('Errors', 'Shows ratio of failures compared to the the total number of executed DNS lookups.') +
           g.qpsErrTotalPanel(
             'thanos_querier_store_apis_dns_failures_total{namespace="$namespace",job=~"$job"}',
             'thanos_querier_store_apis_dns_lookups_total{namespace="$namespace",job=~"$job"}',
@@ -139,12 +139,12 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
     __overviewRows__+:: [
       g.row('Instant Query')
       .addPanel(
-        g.panel('Requests Rate', 'Shows rate of requests against /query for given time.') +
+        g.panel('Requests Rate', 'Shows rate of requests against /query for the given time.') +
         g.httpQpsPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query"' % $._config) +
         g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
       )
       .addPanel(
-        g.panel('Requests Errors', 'Shows ratio of errors compare to total number of handled requests against /query.') +
+        g.panel('Requests Errors', 'Shows ratio of errors compared to the the total number of handled requests against /query.') +
         g.httpErrPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query"' % $._config) +
         g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
       )
@@ -162,12 +162,12 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
 
       g.row('Range Query')
       .addPanel(
-        g.panel('Requests Rate', 'Shows rate of requests against /query_range for given time range.') +
+        g.panel('Requests Rate', 'Shows rate of requests against /query_range for the given time range.') +
         g.httpQpsPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"' % $._config) +
         g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
       )
       .addPanel(
-        g.panel('Requests Errors', 'Shows ratio of errors compare to total number of handled requests against /query_range.') +
+        g.panel('Requests Errors', 'Shows ratio of errors compared to the the total number of handled requests against /query_range.') +
         g.httpErrPanel('http_requests_total', 'namespace="$namespace",%(thanosQuerierSelector)s,handler="query_range"' % $._config) +
         g.addDashboardLink($._config.grafanaThanos.dashboardQuerierTitle)
       )

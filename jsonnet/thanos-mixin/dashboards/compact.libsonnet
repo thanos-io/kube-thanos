@@ -9,7 +9,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel(
             'Rate',
-            'Shows rate of execution for compactions against blocks that stored in bucket by compaction group.'
+            'Shows rate of execution for compactions against blocks that are stored in the bucket by compaction group.'
           ) +
           g.queryPanel(
             'sum(rate(thanos_compact_group_compactions_total{namespace="$namespace",job=~"$job"}[$interval])) by (job, group)',
@@ -20,7 +20,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel(
             'Errors',
-            'Shows ratio of errors compare to total number of executed compactions against blocks that stored in bucket.'
+            'Shows ratio of errors compared to the total number of executed compactions against blocks that are stored in the bucket.'
           ) +
           g.qpsErrTotalPanel(
             'thanos_compact_group_compactions_failures_total{namespace="$namespace",job=~"$job"}',
@@ -33,7 +33,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         .addPanel(
           g.panel(
             'Rate',
-            'Shows rate of execution for downsampling against blocks that stored in bucket by compaction group.'
+            'Shows rate of execution for downsampling against blocks that are stored in the bucket by compaction group.'
           ) +
           g.queryPanel(
             'sum(rate(thanos_compact_downsample_total{namespace="$namespace",job=~"$job"}[$interval])) by (job, group)',
@@ -42,7 +42,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of executed downsampling against blocks that stored in bucket.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of executed downsampling against blocks that are stored in the bucket.') +
           g.qpsErrTotalPanel(
             'thanos_compact_downsample_failed_total{namespace="$namespace",job=~"$job"}',
             'thanos_compact_downsample_total{namespace="$namespace",job=~"$job"}',
@@ -63,7 +63,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of executed garbage collections.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of executed garbage collections.') +
           g.qpsErrTotalPanel(
             'thanos_compact_garbage_collection_failures_total{namespace="$namespace",job=~"$job"}',
             'thanos_compact_garbage_collection_total{namespace="$namespace",job=~"$job"}',
@@ -88,7 +88,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of executed meta file sync.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of executed meta file sync.') +
           g.qpsErrTotalPanel(
             'thanos_compact_sync_meta_failures_total{namespace="$namespace",job=~"$job"}',
             'thanos_compact_sync_meta_total{namespace="$namespace",job=~"$job"}',
@@ -102,7 +102,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('Object Store Operations')
         .addPanel(
-          g.panel('Rate', 'Shows rate of execution for operations against bucket.') +
+          g.panel('Rate', 'Shows rate of execution for operations against the bucket.') +
           g.queryPanel(
             'sum(rate(thanos_objstore_bucket_operations_total{namespace="$namespace",job=~"$job"}[$interval])) by (job, operation)',
             '{{job}} {{operation}}'
@@ -110,14 +110,14 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of executed operations against bucket.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of executed operations against the bucket.') +
           g.qpsErrTotalPanel(
             'thanos_objstore_bucket_operation_failures_total{namespace="$namespace",job=~"$job"}',
             'thanos_objstore_bucket_operations_total{namespace="$namespace",job=~"$job"}',
           )
         )
         .addPanel(
-          g.panel('Duration', 'Shows how long has it taken to execute operations against bucket, in quantiles.') +
+          g.panel('Duration', 'Shows how long has it taken to execute operations against the bucket, in quantiles.') +
           g.latencyPanel('thanos_objstore_bucket_operation_duration_seconds', 'namespace="$namespace",job=~"$job"')
         )
       )
@@ -133,7 +133,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addPanel(
         g.panel(
           'Compaction Rate',
-          'Shows rate of execution for compactions against blocks that stored in bucket by compaction group.'
+          'Shows rate of execution for compactions against blocks that are stored in the bucket by compaction group.'
         ) +
         g.queryPanel(
           'sum(rate(thanos_compact_group_compactions_total{namespace="$namespace",%(thanosCompactSelector)s}[$interval])) by (job)' % $._config,
@@ -145,7 +145,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addPanel(
         g.panel(
           'Compaction Errors',
-          'Shows ratio of errors compare to total number of executed compactions against blocks that stored in bucket.'
+          'Shows ratio of errors compared to the total number of executed compactions against blocks that are stored in the bucket.'
         ) +
         g.qpsErrTotalPanel(
           'thanos_compact_group_compactions_failures_total{namespace="$namespace",%(thanosCompactSelector)s}' % $._config,

@@ -22,7 +22,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.stack
         )
         .addPanel(
-          g.panel('Sent Errors', 'Shows ratio of errors compare to total number of sent alerts.') +
+          g.panel('Sent Errors', 'Shows ratio of errors compared to the total number of sent alerts.') +
           g.qpsErrTotalPanel(
             'thanos_alert_sender_errors_total{namespace="$namespace",job=~"$job"}',
             'thanos_alert_sender_alerts_sent_total{namespace="$namespace",job=~"$job"}',
@@ -40,7 +40,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests.') +
           g.grpcErrorsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -55,7 +55,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests.') +
           g.grpcErrDetailsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
@@ -71,7 +71,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests.') +
           g.grpcErrorsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
@@ -86,7 +86,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
           g.grpcQpsPanelDetailed('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests.') +
+          g.panel('Errors', 'Shows ratio of errors compared to the total number of handled requests.') +
           g.grpcErrDetailsPanel('server', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
@@ -114,7 +114,7 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
         g.stack
       )
       .addPanel(
-        g.panel('Alert Sent Errors', 'Shows ratio of errors compare to total number of sent alerts.') +
+        g.panel('Alert Sent Errors', 'Shows ratio of errors compared to the total number of sent alerts.') +
         g.qpsErrTotalPanel(
           'thanos_alert_sender_errors_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
           'thanos_alert_sender_alerts_sent_total{namespace="$namespace",%(thanosRuleSelector)s}' % $._config,
