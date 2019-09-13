@@ -1221,6 +1221,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
+               "description": "Shows rate of incoming requests.",
                "fill": 10,
                "id": 13,
                "legend": {
@@ -1307,6 +1308,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
+               "description": "Shows ratio of errors compare to total number of handled incoming requests.",
                "fill": 10,
                "id": 14,
                "legend": {
@@ -1352,7 +1354,7 @@
                "thresholds": [ ],
                "timeFrom": null,
                "timeShift": null,
-               "title": "Incoming Requests  Errors",
+               "title": "Incoming Requests Errors",
                "tooltip": {
                   "shared": false,
                   "sort": 0,
@@ -1391,7 +1393,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "",
+               "description": "Shows how long has it taken to handle incoming requests.",
                "fill": 1,
                "id": 15,
                "legend": {

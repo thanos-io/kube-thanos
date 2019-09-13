@@ -843,7 +843,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of handled Unary gRPC requests.",
+               "description": "Shows rate of handled Unary gRPC requests from other queriers.",
                "fill": 10,
                "id": 10,
                "legend": {
@@ -922,7 +922,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests.",
+               "description": "Shows ratio of errors compare to total number of handled requests from other queriers.",
                "fill": 10,
                "id": 11,
                "legend": {
@@ -999,7 +999,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows how long has it taken to handle requests in quantiles.",
+               "description": "Shows how long has it taken to handle requests from other queriers, in quantiles.",
                "fill": 1,
                "id": 12,
                "legend": {
@@ -1104,7 +1104,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of handled Unary gRPC requests, with grpc methods and codes.",
+               "description": "Shows rate of handled Unary gRPC requests, with grpc methods and codes from other queriers.",
                "fill": 10,
                "id": 13,
                "legend": {
@@ -1181,7 +1181,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests.",
+               "description": "Shows ratio of errors compare to total number of handled requests from other queriers.",
                "fill": 10,
                "id": 14,
                "legend": {
@@ -1258,7 +1258,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows how long has it taken to handle requests in quantiles.",
+               "description": "Shows how long has it taken to handle requests from other queriers, in quantiles.",
                "fill": 1,
                "id": 15,
                "legend": {
@@ -1382,7 +1382,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows rate of handled Streamed gRPC requests.",
+               "description": "Shows rate of handled Streamed gRPC requests from other queriers.",
                "fill": 10,
                "id": 16,
                "legend": {
@@ -1461,7 +1461,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows ratio of errors compare to total number of handled requests.",
+               "description": "Shows ratio of errors compare to total number of handled requests from other queriers.",
                "fill": 10,
                "id": 17,
                "legend": {
@@ -1538,7 +1538,7 @@
                "dashLength": 10,
                "dashes": false,
                "datasource": "$datasource",
-               "description": "Shows how long has it taken to handle requests in quantiles.",
+               "description": "Shows how long has it taken to handle requests from other queriers, in quantiles",
                "fill": 1,
                "id": 18,
                "legend": {

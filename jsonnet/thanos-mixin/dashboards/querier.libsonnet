@@ -53,30 +53,30 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('gRPC (Unary)')
         .addPanel(
-          g.panel('Rate', 'Shows rate of handled Unary gRPC requests.') +
+          g.panel('Rate', 'Shows rate of handled Unary gRPC requests from other queriers.') +
           g.grpcQpsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests.') +
+          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from other queriers.') +
           g.grpcErrorsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Duration', 'Shows how long has it taken to handle requests in quantiles.') +
+          g.panel('Duration', 'Shows how long has it taken to handle requests from other queriers, in quantiles.') +
           g.grpcLatencyPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
       )
       .addRow(
         g.row('Detailed')
         .addPanel(
-          g.panel('Rate', 'Shows rate of handled Unary gRPC requests, with grpc methods and codes.') +
+          g.panel('Rate', 'Shows rate of handled Unary gRPC requests, with grpc methods and codes from other queriers.') +
           g.grpcQpsPanelDetailed('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests.') +
+          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from other queriers.') +
           g.grpcErrDetailsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         )
         .addPanel(
-          g.panel('Duration', 'Shows how long has it taken to handle requests in quantiles.') +
+          g.panel('Duration', 'Shows how long has it taken to handle requests from other queriers, in quantiles.') +
           g.grpcLatencyPanelDetailed('client', 'namespace="$namespace",job=~"$job",grpc_type="unary"')
         ) +
         g.collapse
@@ -84,15 +84,15 @@ local g = import '../lib/thanos-grafana-builder/builder.libsonnet';
       .addRow(
         g.row('gRPC (Stream)')
         .addPanel(
-          g.panel('Rate', 'Shows rate of handled Streamed gRPC requests.') +
+          g.panel('Rate', 'Shows rate of handled Streamed gRPC requests from other queriers.') +
           g.grpcQpsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests.') +
+          g.panel('Errors', 'Shows ratio of errors compare to total number of handled requests from other queriers.') +
           g.grpcErrorsPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
         .addPanel(
-          g.panel('Duration', 'Shows how long has it taken to handle requests in quantiles.') +
+          g.panel('Duration', 'Shows how long has it taken to handle requests from other queriers, in quantiles') +
           g.grpcLatencyPanel('client', 'namespace="$namespace",job=~"$job",grpc_type="server_stream"')
         )
       )
