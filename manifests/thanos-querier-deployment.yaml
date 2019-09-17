@@ -23,12 +23,22 @@ spec:
         - --http-address=0.0.0.0:9090
         - --store=dnssrv+_grpc._tcp.thanos-store.monitoring.svc.cluster.local
         image: quay.io/thanos/thanos:v0.7.0
+        livenessProbe:
+          httpGet:
+            path: /-/healthy
+            port: 9090
+            scheme: HTTP
         name: thanos-querier
         ports:
         - containerPort: 10901
           name: grpc
         - containerPort: 9090
           name: http
+        readinessProbe:
+          httpGet:
+            path: /-/healthy
+            port: 9090
+            scheme: HTTP
         resources:
           limits:
             cpu: "1"
