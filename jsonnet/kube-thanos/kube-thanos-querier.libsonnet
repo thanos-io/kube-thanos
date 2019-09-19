@@ -37,7 +37,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             { name: 'http', containerPort: $.thanos.querier.service.spec.ports[1].port },
           ]) +
           container.mixin.livenessProbe.httpGet.withPort($.thanos.querier.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/healthy') +
-          container.mixin.readinessProbe.httpGet.withPort($.thanos.querier.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/healthy');
+          container.mixin.readinessProbe.httpGet.withPort($.thanos.querier.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/ready');
 
         deployment.new('thanos-querier', 1, c, $.thanos.querier.deployment.metadata.labels) +
         deployment.mixin.metadata.withNamespace('monitoring') +

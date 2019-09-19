@@ -38,7 +38,7 @@ spec:
           name: http
         readinessProbe:
           httpGet:
-            path: /-/healthy
+            path: /-/ready
             port: 9090
             scheme: HTTP
         resources:
