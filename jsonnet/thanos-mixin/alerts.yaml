@@ -218,7 +218,7 @@ groups:
   - alert: ThanosStoreObjstoreOperationLatencyHigh
     annotations:
       message: Thanos Store {{$labels.job}} Bucket has a 99th percentile latency of
-        {{ $value }} seconds for bucket operations.
+        {{ $value }} seconds for the bucket operations.
     expr: |
       histogram_quantile(0.99,
         sum(thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"}) by (job, le)
