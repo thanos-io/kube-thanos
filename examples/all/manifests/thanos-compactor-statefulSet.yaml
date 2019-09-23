@@ -35,7 +35,7 @@ spec:
         livenessProbe:
           httpGet:
             path: /-/healthy
-            port: 10901
+            port: 10902
             scheme: HTTP
         name: thanos-compactor
         ports:
@@ -44,7 +44,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /-/ready
-            port: 10901
+            port: 10902
             scheme: HTTP
         resources:
           limits:
