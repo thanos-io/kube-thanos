@@ -60,7 +60,12 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         statefulSet.mixin.spec.template.spec.withVolumes([
           volume.fromEmptyDir('thanos-compactor-data'),
         ]) +
-        statefulSet.mixin.spec.selector.withMatchLabels($.thanos.compactor.statefulSet.metadata.labels),
+        statefulSet.mixin.spec.selector.withMatchLabels($.thanos.compactor.statefulSet.metadata.labels) +
+        {
+          spec+: {
+            volumeClaimTemplates:: null,
+          },
+        },
     },
   },
 }
