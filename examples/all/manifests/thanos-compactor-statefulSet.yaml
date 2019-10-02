@@ -60,4 +60,3 @@ spec:
       volumes:
       - emptyDir: {}
         name: thanos-compactor-data
-  volumeClaimTemplates: []
