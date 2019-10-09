@@ -10,10 +10,12 @@
               message: 'Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize }}% of requests.',
             },
             expr: |||
-              sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m]))
-                /
-              sum by (job) (rate(grpc_server_started_total{%(thanosQuerierSelector)s}[5m]))
-                * 100 > 5
+              (
+                sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m]))
+              /
+                sum by (job) (rate(grpc_server_started_total{%(thanosQuerierSelector)s}[5m]))
+              * 100 > 5
+              )
             ||| % $._config,
             'for': '5m',
             labels: {
@@ -26,10 +28,12 @@
               message: 'Thanos Querier {{$labels.job}} is failing to send {{ $value | humanize }}% of requests.',
             },
             expr: |||
-              sum by (job) (rate(grpc_client_handled_total{grpc_code!="OK", %(thanosQuerierSelector)s}[5m]))
-                /
-              sum by (job) (rate(grpc_client_started_total{%(thanosQuerierSelector)s}[5m]))
-                * 100 > 5
+              (
+                sum by (job) (rate(grpc_client_handled_total{grpc_code!="OK", %(thanosQuerierSelector)s}[5m]))
+              /
+                sum by (job) (rate(grpc_client_started_total{%(thanosQuerierSelector)s}[5m]))
+              * 100 > 5
+              )
             ||| % $._config,
             'for': '5m',
             labels: {
@@ -42,10 +46,12 @@
               message: 'Thanos Queriers {{$labels.job}} have {{ $value }} of failing DNS queries.',
             },
             expr: |||
-              sum by (job) (rate(thanos_querier_store_apis_dns_failures_total{%(thanosQuerierSelector)s}[5m]))
-                /
-              sum by (job) (rate(thanos_querier_store_apis_dns_lookups_total{%(thanosQuerierSelector)s}[5m]))
-                > 1
+              (
+                sum by (job) (rate(thanos_querier_store_apis_dns_failures_total{%(thanosQuerierSelector)s}[5m]))
+              /
+                sum by (job) (rate(thanos_querier_store_apis_dns_lookups_total{%(thanosQuerierSelector)s}[5m]))
+              > 1
+              )
             ||| % $._config,
             'for': '15m',
             labels: {
