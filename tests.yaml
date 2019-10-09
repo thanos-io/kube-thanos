@@ -75,20 +75,20 @@ tests:
     alertname: ThanosSidecarUnhealthy
     exp_alerts:
     - exp_labels:
-        severity: warning
+        severity: critical
       exp_annotations:
-        message: 'Thanos Sidecar // is unhealthy for 2 seconds.'
+        message: 'Thanos Sidecar   is unhealthy for 2 seconds.'
   - eval_time: 6m
     alertname: ThanosSidecarUnhealthy
     exp_alerts:
     - exp_labels:
-        severity: warning
+        severity: critical
       exp_annotations:
-        message: 'Thanos Sidecar // is unhealthy for 2 seconds.'
+        message: 'Thanos Sidecar   is unhealthy for 2 seconds.'
   - eval_time: 12m
     alertname: ThanosSidecarUnhealthy
     exp_alerts:
     - exp_labels:
-        severity: warning
+        severity: critical
       exp_annotations:
-        message: 'Thanos Sidecar // is unhealthy for 2 seconds.'
+        message: 'Thanos Sidecar   is unhealthy for 2 seconds.'

@@ -28,11 +28,10 @@ groups:
       message: Thanos Compact {{$labels.job}} is failing to execute {{ $value | humanize
         }}% of compactions.
     expr: |
-      sum(
-        rate(prometheus_tsdb_compactions_failed_total{job=~"thanos-compact.*"}[5m])
-      /
-        rate(prometheus_tsdb_compactions_total{job=~"thanos-compact.*"}[5m])
-      ) by (job) * 100 > 5
+      sum by (job) (rate(prometheus_tsdb_compactions_failed_total{job=~"thanos-compact.*"}[5m]))
+        /
+      sum by (job) (rate(prometheus_tsdb_compactions_total{job=~"thanos-compact.*"}[5m]))
+        * 100 > 5
     for: 15m
     labels:
       severity: warning
@@ -41,11 +40,10 @@ groups:
       message: Thanos Compact {{$labels.job}} Bucket is failing to execute {{ $value
         | humanize }}% of operations.
     expr: |
-      sum(
-        rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-compact.*"}[5m])
-      /
-        rate(thanos_objstore_bucket_operations_total{job=~"thanos-compact.*"}[5m])
-      ) by (job) * 100 > 5
+      sum by (job) (rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-compact.*"}[5m]))
+        /
+      sum by (job) (rate(thanos_objstore_bucket_operations_total{job=~"thanos-compact.*"}[5m]))
+        * 100 > 5
     for: 15m
     labels:
       severity: warning
@@ -63,11 +61,10 @@ groups:
       message: Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize
         }}% of requests.
     expr: |
-      sum(
-        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-querier.*"}[5m])
+      sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-querier.*"}[5m]))
         /
-        rate(grpc_server_started_total{job=~"thanos-querier.*"}[5m])
-      ) by (job) * 100 > 5
+      sum by (job) (rate(grpc_server_started_total{job=~"thanos-querier.*"}[5m]))
+        * 100 > 5
     for: 5m
     labels:
       severity: warning
@@ -76,11 +73,10 @@ groups:
       message: Thanos Querier {{$labels.job}} is failing to send {{ $value | humanize
         }}% of requests.
     expr: |
-      sum(
-        rate(grpc_client_handled_total{grpc_code!="OK", job=~"thanos-querier.*"}[5m])
+      sum by (job) (rate(grpc_client_handled_total{grpc_code!="OK", job=~"thanos-querier.*"}[5m]))
         /
-        rate(grpc_client_started_total{job=~"thanos-querier.*"}[5m])
-      ) by (job) * 100 > 5
+      sum by (job) (rate(grpc_client_started_total{job=~"thanos-querier.*"}[5m]))
+        * 100 > 5
     for: 5m
     labels:
       severity: warning
@@ -88,11 +84,10 @@ groups:
     annotations:
       message: Thanos Queriers {{$labels.job}} have {{ $value }} of failing DNS queries.
     expr: |
-      sum(
-        rate(thanos_querier_store_apis_dns_failures_total{job=~"thanos-querier.*"}[5m])
-      /
-        rate(thanos_querier_store_apis_dns_lookups_total{job=~"thanos-querier.*"}[5m])
-      ) by (job) > 1
+      sum by (job) (rate(thanos_querier_store_apis_dns_failures_total{job=~"thanos-querier.*"}[5m]))
+        /
+      sum by (job) (rate(thanos_querier_store_apis_dns_lookups_total{job=~"thanos-querier.*"}[5m]))
+        > 1
     for: 15m
     labels:
       severity: warning
@@ -136,11 +131,10 @@ groups:
       message: Thanos Receive {{$labels.job}} is failing to forward {{ $value | humanize
         }}% of requests.
     expr: |
-      sum(
-        rate(thanos_receive_forward_requests_total{result="error", job=~"thanos-receive.*"}[5m])
-      /
-        rate(thanos_receive_forward_requests_total{job=~"thanos-receive.*"}[5m])
-      ) by (job) * 100 > 5
+      sum by (job) (rate(thanos_receive_forward_requests_total{result="error", job=~"thanos-receive.*"}[5m]))
+        /
+      sum by (job) (rate(thanos_receive_forward_requests_total{job=~"thanos-receive.*"}[5m]))
+        * 100 > 5
     for: 15m
     labels:
       severity: critical
@@ -149,11 +143,10 @@ groups:
       message: Thanos Receive {{$labels.job}} is failing to refresh hashring file,
         {{ $value | humanize }} of attempts failed.
     expr: |
-      sum(
-        rate(thanos_receive_hashrings_file_errors_total{job=~"thanos-receive.*"}[5m])
-      /
-        rate(thanos_receive_hashrings_file_refreshes_total{job=~"thanos-receive.*"}[5m])
-      ) by (job) > 0
+      sum by (job) (rate(thanos_receive_hashrings_file_errors_total{job=~"thanos-receive.*"}[5m]))
+        /
+      sum by (job) (rate(thanos_receive_hashrings_file_refreshes_total{job=~"thanos-receive.*"}[5m]))
+        > 0
     for: 15m
     labels:
       severity: warning
@@ -183,11 +176,10 @@ groups:
       message: Thanos Store {{$labels.job}} is failing to handle {{ $value | humanize
         }}% of requests.
     expr: |
-      sum(
-        rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-store.*"}[5m])
+      sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-store.*"}[5m]))
         /
-        rate(grpc_server_started_total{job=~"thanos-store.*"}[5m])
-      ) by (job) * 100 > 5
+      sum by (job) (rate(grpc_server_started_total{job=~"thanos-store.*"}[5m]))
+        * 100 > 5
     for: 5m
     labels:
       severity: warning
@@ -207,11 +199,10 @@ groups:
       message: Thanos Store {{$labels.job}} Bucket is failing to execute {{ $value
         | humanize }}% of operations.
     expr: |
-      sum(
-        rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-store.*"}[5m])
-      /
-        rate(thanos_objstore_bucket_operations_total{job=~"thanos-store.*"}[5m])
-      ) by (job) * 100 > 5
+      sum by (job) (rate(thanos_objstore_bucket_operation_failures_total{job=~"thanos-store.*"}[5m]))
+        /
+      sum by (job) (rate(thanos_objstore_bucket_operations_total{job=~"thanos-store.*"}[5m]))
+        * 100 > 5
     for: 15m
     labels:
       severity: warning

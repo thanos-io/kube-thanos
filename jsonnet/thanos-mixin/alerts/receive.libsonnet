@@ -25,11 +25,10 @@
               message: 'Thanos Receive {{$labels.job}} is failing to forward {{ $value | humanize }}% of requests.',
             },
             expr: |||
-              sum(
-                rate(thanos_receive_forward_requests_total{result="error", %(thanosReceiveSelector)s}[5m])
-              /
-                rate(thanos_receive_forward_requests_total{%(thanosReceiveSelector)s}[5m])
-              ) by (job) * 100 > 5
+              sum by (job) (rate(thanos_receive_forward_requests_total{result="error", %(thanosReceiveSelector)s}[5m]))
+                /
+              sum by (job) (rate(thanos_receive_forward_requests_total{%(thanosReceiveSelector)s}[5m]))
+                * 100 > 5
             ||| % $._config,
             'for': '15m',
             labels: {
@@ -42,11 +41,10 @@
               message: 'Thanos Receive {{$labels.job}} is failing to refresh hashring file, {{ $value | humanize }} of attempts failed.',
             },
             expr: |||
-              sum(
-                rate(thanos_receive_hashrings_file_errors_total{%(thanosReceiveSelector)s}[5m])
-              /
-                rate(thanos_receive_hashrings_file_refreshes_total{%(thanosReceiveSelector)s}[5m])
-              ) by (job) > 0
+              sum by (job) (rate(thanos_receive_hashrings_file_errors_total{%(thanosReceiveSelector)s}[5m]))
+                /
+              sum by (job) (rate(thanos_receive_hashrings_file_refreshes_total{%(thanosReceiveSelector)s}[5m]))
+                > 0
             ||| % $._config,
             'for': '15m',
             labels: {
