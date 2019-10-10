@@ -43,11 +43,12 @@
               message: 'Thanos Compact {{$labels.job}} is failing to execute {{ $value | humanize }}% of compactions.',
             },
             expr: |||
-              sum(
-                rate(prometheus_tsdb_compactions_failed_total{%(thanosCompactSelector)s}[5m])
+              (
+                sum by (job) (rate(prometheus_tsdb_compactions_failed_total{%(thanosCompactSelector)s}[5m]))
               /
-                rate(prometheus_tsdb_compactions_total{%(thanosCompactSelector)s}[5m])
-              ) by (job) * 100 > 5
+                sum by (job) (rate(prometheus_tsdb_compactions_total{%(thanosCompactSelector)s}[5m]))
+              * 100 > 5
+              )
             ||| % $._config,
             'for': '15m',
             labels: {
@@ -60,11 +61,12 @@
               message: 'Thanos Compact {{$labels.job}} Bucket is failing to execute {{ $value | humanize }}% of operations.',
             },
             expr: |||
-              sum(
-                rate(thanos_objstore_bucket_operation_failures_total{%(thanosCompactSelector)s}[5m])
+              (
+                sum by (job) (rate(thanos_objstore_bucket_operation_failures_total{%(thanosCompactSelector)s}[5m]))
               /
-                rate(thanos_objstore_bucket_operations_total{%(thanosCompactSelector)s}[5m])
-              ) by (job) * 100 > 5
+                sum by (job) (rate(thanos_objstore_bucket_operations_total{%(thanosCompactSelector)s}[5m]))
+              * 100 > 5
+              )
             ||| % $._config,
             'for': '15m',
             labels: {
