@@ -228,7 +228,7 @@ groups:
     for: 10m
     labels:
       severity: warning
-- name: component-absent
+- name: thanos-component-absent
   rules:
   - alert: ThanosCompactIsDown
     annotations:

@@ -2,7 +2,7 @@
   prometheusAlerts+:: {
     groups+: [
       {
-        name: 'component-absent',
+        name: 'thanos-component-absent',
         rules: [
           {
             alert: '%sIsDown' % name,
