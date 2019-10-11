@@ -12,7 +12,7 @@ local kt =
   {
     thanos+:: {
       variables+:: {
-        image: 'quay.io/thanos/thanos:master-2019-09-23-7a2f54e8',
+        image: 'quay.io/thanos/thanos:v0.8.0',
         objectStorageConfig+: {
           name: 'thanos-objectstorage',
           key: 'thanos.yaml',
