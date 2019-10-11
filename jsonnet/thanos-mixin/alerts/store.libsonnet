@@ -5,6 +5,17 @@
         name: 'thanos-store.rules',
         rules: [
           {
+            alert: 'ThanosStoreIsNotRunning',
+            annotations: {
+              message: 'Thanos Store is not running or just not scraped yet.',
+            },
+            expr: 'up{%(thanosStoreSelector)s} == 0 or absent({%(thanosStoreSelector)s})' % $._config,
+            'for': '5m',
+            labels: {
+              severity: 'critical',
+            },
+          },
+          {
             alert: 'ThanosStoreGrpcErrorRate',
             annotations: {
               message: 'Thanos Store {{$labels.job}} is failing to handle {{ $value | humanize }}% of requests.',

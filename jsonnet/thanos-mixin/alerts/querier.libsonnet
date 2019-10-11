@@ -5,6 +5,17 @@
         name: 'thanos-querier.rules',
         rules: [
           {
+            alert: 'ThanosQuerierIsNotRunning',
+            annotations: {
+              message: 'Thanos Querier is not running or just not scraped yet.',
+            },
+            expr: 'up{%(thanosQuerierSelector)s} == 0 or absent({%(thanosQuerierSelector)s})' % $._config,
+            'for': '5m',
+            labels: {
+              severity: 'critical',
+            },
+          },
+          {
             alert: 'ThanosQuerierGrpcServerErrorRate',
             annotations: {
               message: 'Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize }}% of requests.',

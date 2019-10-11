@@ -60,6 +60,13 @@ groups:
       severity: warning
 - name: thanos-querier.rules
   rules:
+  - alert: ThanosQuerierIsNotRunning
+    annotations:
+      message: Thanos Querier is not running or just not scraped yet.
+    expr: up{job=~"thanos-querier.*"} == 0 or absent({job=~"thanos-querier.*"})
+    for: 5m
+    labels:
+      severity: critical
   - alert: ThanosQuerierGrpcServerErrorRate
     annotations:
       message: Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize
@@ -125,6 +132,13 @@ groups:
       severity: critical
 - name: thanos-receive.rules
   rules:
+  - alert: ThanosReceiveIsNotRunning
+    annotations:
+      message: Thanos Receive is not running or just not scraped yet.
+    expr: up{job=~"thanos-receive.*"} == 0 or absent({job=~"thanos-receive.*"})
+    for: 5m
+    labels:
+      severity: critical
   - alert: ThanosReceiveHttpRequestLatencyHigh
     annotations:
       message: Thanos Receive {{$labels.job}} has a 99th percentile latency of {{
@@ -185,6 +199,13 @@ groups:
       severity: critical
 - name: thanos-store.rules
   rules:
+  - alert: ThanosStoreIsNotRunning
+    annotations:
+      message: Thanos Store is not running or just not scraped yet.
+    expr: up{job=~"thanos-store.*"} == 0 or absent({job=~"thanos-store.*"})
+    for: 5m
+    labels:
+      severity: critical
   - alert: ThanosStoreGrpcErrorRate
     annotations:
       message: Thanos Store {{$labels.job}} is failing to handle {{ $value | humanize
