@@ -9,13 +9,6 @@ groups:
     for: 5m
     labels:
       severity: warning
-  - alert: ThanosCompactIsNotRunning
-    annotations:
-      message: Thanos Compaction is not running or just not scraped yet.
-    expr: up{job=~"thanos-compact.*"} == 0 or absent({job=~"thanos-compact.*"})
-    for: 5m
-    labels:
-      severity: warning
   - alert: ThanosCompactHalted
     annotations:
       message: Thanos Compact {{$labels.job}} has failed to run and now is halted.
@@ -235,3 +228,53 @@ groups:
     for: 10m
     labels:
       severity: warning
+- name: thanos-component-absent
+  rules:
+  - alert: ThanosCompactIsDown
+    annotations:
+      message: ThanosCompact has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-compact.*"} == 1)
+    for: 10m
+    labels:
+      severity: critical
+  - alert: ThanosQuerierIsDown
+    annotations:
+      message: ThanosQuerier has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-querier.*"} == 1)
+    for: 10m
+    labels:
+      severity: critical
+  - alert: ThanosReceiveIsDown
+    annotations:
+      message: ThanosReceive has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-receive.*"} == 1)
+    for: 10m
+    labels:
+      severity: critical
+  - alert: ThanosRuleIsDown
+    annotations:
+      message: ThanosRule has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-rule.*"} == 1)
+    for: 10m
+    labels:
+      severity: critical
+  - alert: ThanosSidecarIsDown
+    annotations:
+      message: ThanosSidecar has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-sidecar.*"} == 1)
+    for: 10m
+    labels:
+      severity: critical
+  - alert: ThanosStoreIsDown
+    annotations:
+      message: ThanosStore has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-store.*"} == 1)
+    for: 10m
+    labels:
+      severity: critical

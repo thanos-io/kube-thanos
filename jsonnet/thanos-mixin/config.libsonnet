@@ -14,6 +14,16 @@
     thanosCompactSelector: 'job=~"%s.*"' % self.thanosCompactJobPrefix,
     thanosSidecarSelector: 'job=~"%s.*"' % self.thanosSidecarJobPrefix,
 
+    // We build alerts for the presence of all these jobs.
+    jobs: {
+      ThanosQuerier: $._config.thanosQuerierSelector,
+      ThanosStore: $._config.thanosStoreSelector,
+      ThanosReceive: $._config.thanosReceiveSelector,
+      ThanosRule: $._config.thanosRuleSelector,
+      ThanosCompact: $._config.thanosCompactSelector,
+      ThanosSidecar: $._config.thanosSidecarSelector,
+    },
+
     // Config for the Grafana dashboards in the thanos-mixin
     grafanaThanos: {
       dashboardNamePrefix: 'Thanos / ',
