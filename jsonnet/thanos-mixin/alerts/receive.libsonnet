@@ -5,17 +5,6 @@
         name: 'thanos-receive.rules',
         rules: [
           {
-            alert: 'ThanosReceiveIsNotRunning',
-            annotations: {
-              message: 'Thanos Receive is not running or just not scraped yet.',
-            },
-            expr: 'up{%(thanosReceiveSelector)s} == 0 or absent({%(thanosReceiveSelector)s})' % $._config,
-            'for': '5m',
-            labels: {
-              severity: 'critical',
-            },
-          },
-          {
             alert: 'ThanosReceiveHttpRequestLatencyHigh',
             annotations: {
               message: 'Thanos Receive {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for HTTP requests.',

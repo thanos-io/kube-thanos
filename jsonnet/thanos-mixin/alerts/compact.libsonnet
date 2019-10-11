@@ -16,17 +16,6 @@
             },
           },
           {
-            alert: 'ThanosCompactIsNotRunning',
-            annotations: {
-              message: 'Thanos Compaction is not running or just not scraped yet.',
-            },
-            expr: 'up{%(thanosCompactSelector)s} == 0 or absent({%(thanosCompactSelector)s})' % $._config,
-            'for': '5m',
-            labels: {
-              severity: 'warning',
-            },
-          },
-          {
             alert: 'ThanosCompactHalted',
             annotations: {
               message: 'Thanos Compact {{$labels.job}} has failed to run and now is halted.',

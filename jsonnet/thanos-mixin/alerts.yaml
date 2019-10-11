@@ -9,13 +9,6 @@ groups:
     for: 5m
     labels:
       severity: warning
-  - alert: ThanosCompactIsNotRunning
-    annotations:
-      message: Thanos Compaction is not running or just not scraped yet.
-    expr: up{job=~"thanos-compact.*"} == 0 or absent({job=~"thanos-compact.*"})
-    for: 5m
-    labels:
-      severity: warning
   - alert: ThanosCompactHalted
     annotations:
       message: Thanos Compact {{$labels.job}} has failed to run and now is halted.
@@ -60,13 +53,6 @@ groups:
       severity: warning
 - name: thanos-querier.rules
   rules:
-  - alert: ThanosQuerierIsNotRunning
-    annotations:
-      message: Thanos Querier is not running or just not scraped yet.
-    expr: up{job=~"thanos-querier.*"} == 0 or absent({job=~"thanos-querier.*"})
-    for: 5m
-    labels:
-      severity: critical
   - alert: ThanosQuerierGrpcServerErrorRate
     annotations:
       message: Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize
@@ -132,13 +118,6 @@ groups:
       severity: critical
 - name: thanos-receive.rules
   rules:
-  - alert: ThanosReceiveIsNotRunning
-    annotations:
-      message: Thanos Receive is not running or just not scraped yet.
-    expr: up{job=~"thanos-receive.*"} == 0 or absent({job=~"thanos-receive.*"})
-    for: 5m
-    labels:
-      severity: critical
   - alert: ThanosReceiveHttpRequestLatencyHigh
     annotations:
       message: Thanos Receive {{$labels.job}} has a 99th percentile latency of {{
@@ -199,13 +178,6 @@ groups:
       severity: critical
 - name: thanos-store.rules
   rules:
-  - alert: ThanosStoreIsNotRunning
-    annotations:
-      message: Thanos Store is not running or just not scraped yet.
-    expr: up{job=~"thanos-store.*"} == 0 or absent({job=~"thanos-store.*"})
-    for: 5m
-    labels:
-      severity: critical
   - alert: ThanosStoreGrpcErrorRate
     annotations:
       message: Thanos Store {{$labels.job}} is failing to handle {{ $value | humanize
@@ -256,3 +228,53 @@ groups:
     for: 10m
     labels:
       severity: warning
+- name: component-absent
+  rules:
+  - alert: ThanosCompactIsDown
+    annotations:
+      message: ThanosCompact has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-compact.*"} == 1)
+    for: 15m
+    labels:
+      severity: critical
+  - alert: ThanosQuerierIsDown
+    annotations:
+      message: ThanosQuerier has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-querier.*"} == 1)
+    for: 15m
+    labels:
+      severity: critical
+  - alert: ThanosReceiveIsDown
+    annotations:
+      message: ThanosReceive has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-receive.*"} == 1)
+    for: 15m
+    labels:
+      severity: critical
+  - alert: ThanosRuleIsDown
+    annotations:
+      message: ThanosRule has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-rule.*"} == 1)
+    for: 15m
+    labels:
+      severity: critical
+  - alert: ThanosSidecarIsDown
+    annotations:
+      message: ThanosSidecar has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-sidecar.*"} == 1)
+    for: 15m
+    labels:
+      severity: critical
+  - alert: ThanosStoreIsDown
+    annotations:
+      message: ThanosStore has disappeared from Prometheus target discovery.
+    expr: |
+      absent(up{job=~"thanos-store.*"} == 1)
+    for: 15m
+    labels:
+      severity: critical
