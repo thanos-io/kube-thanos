@@ -57,7 +57,9 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.resources.withLimits({ cpu: '2', memory: '8Gi' }) +
           container.withVolumeMounts([
             containerVolumeMount.new($.thanos.store.statefulSet.metadata.name + '-data', '/var/thanos/store', false),
-          ]);
+          ]) +
+          container.mixin.livenessProbe.httpGet.withPort($.thanos.store.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/healthy') +
+          container.mixin.readinessProbe.httpGet.withPort($.thanos.store.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/ready');
 
         sts.new('thanos-store', 3, c, [], $.thanos.store.statefulSet.metadata.labels) +
         sts.mixin.metadata.withNamespace('monitoring') +

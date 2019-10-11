@@ -56,7 +56,9 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.resources.withLimits({ cpu: '1', memory: '1Gi' }) +
           container.withVolumeMounts([
             containerVolumeMount.new('data', '/var/thanos/tsdb', false),
-          ]);
+          ]) +
+          container.mixin.livenessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/healthy') +
+          container.mixin.readinessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/ready');
 
         sts.new('thanos-receive', 3, c, [], $.thanos.receive.statefulSet.metadata.labels) +
         sts.mixin.metadata.withNamespace('monitoring') +
