@@ -235,7 +235,7 @@ groups:
       message: ThanosCompact has disappeared from Prometheus target discovery.
     expr: |
       absent(up{job=~"thanos-compact.*"} == 1)
-    for: 15m
+    for: 10m
     labels:
       severity: critical
   - alert: ThanosQuerierIsDown
@@ -243,7 +243,7 @@ groups:
       message: ThanosQuerier has disappeared from Prometheus target discovery.
     expr: |
       absent(up{job=~"thanos-querier.*"} == 1)
-    for: 15m
+    for: 10m
     labels:
       severity: critical
   - alert: ThanosReceiveIsDown
@@ -251,7 +251,7 @@ groups:
       message: ThanosReceive has disappeared from Prometheus target discovery.
     expr: |
       absent(up{job=~"thanos-receive.*"} == 1)
-    for: 15m
+    for: 10m
     labels:
       severity: critical
   - alert: ThanosRuleIsDown
@@ -259,7 +259,7 @@ groups:
       message: ThanosRule has disappeared from Prometheus target discovery.
     expr: |
       absent(up{job=~"thanos-rule.*"} == 1)
-    for: 15m
+    for: 10m
     labels:
       severity: critical
   - alert: ThanosSidecarIsDown
@@ -267,7 +267,7 @@ groups:
       message: ThanosSidecar has disappeared from Prometheus target discovery.
     expr: |
       absent(up{job=~"thanos-sidecar.*"} == 1)
-    for: 15m
+    for: 10m
     labels:
       severity: critical
   - alert: ThanosStoreIsDown
@@ -275,6 +275,6 @@ groups:
       message: ThanosStore has disappeared from Prometheus target discovery.
     expr: |
       absent(up{job=~"thanos-store.*"} == 1)
-    for: 15m
+    for: 10m
     labels:
       severity: critical
