@@ -44,9 +44,9 @@
             },
             expr: |||
               (
-                sum by (job) (rate(prometheus_tsdb_compactions_failed_total{%(thanosCompactSelector)s}[5m]))
+                sum by (job) (rate(thanos_compact_group_compactions_failures_total{%(thanosCompactSelector)s}[5m]))
               /
-                sum by (job) (rate(prometheus_tsdb_compactions_total{%(thanosCompactSelector)s}[5m]))
+                sum by (job) (rate(thanos_compact_group_compactions_total{%(thanosCompactSelector)s}[5m]))
               * 100 > 5
               )
             ||| % $._config,
