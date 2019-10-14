@@ -64,9 +64,11 @@
               message: 'Thanos Querier {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for instant queries.',
             },
             expr: |||
-              histogram_quantile(0.99,
-                sum(http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query"}) by (job, le)
-              ) > 10
+              (
+                histogram_quantile(0.99, sum by (job, le) (http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query"})) > 10
+              and
+                sum by (job) (rate(http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query"}[5m])) > 0
+              )
             ||| % $._config,
             'for': '10m',
             labels: {
@@ -79,9 +81,11 @@
               message: 'Thanos Querier {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for instant queries.',
             },
             expr: |||
-              histogram_quantile(0.99,
-                sum(http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query_range"}) by (job, le)
-              ) > 10
+              (
+                histogram_quantile(0.99, sum by (job, le) (http_request_duration_seconds_bucket{%(thanosQuerierSelector)s, handler="query_range"})) > 10
+              and
+                sum by (job) (rate(http_request_duration_seconds_count{%(thanosQuerierSelector)s, handler="query_range"}[5m])) > 0
+              )
             ||| % $._config,
             'for': '10m',
             labels: {

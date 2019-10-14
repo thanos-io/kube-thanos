@@ -99,9 +99,11 @@ groups:
       message: Thanos Querier {{$labels.job}} has a 99th percentile latency of {{
         $value }} seconds for instant queries.
     expr: |
-      histogram_quantile(0.99,
-        sum(http_request_duration_seconds_bucket{job=~"thanos-querier.*", handler="query"}) by (job, le)
-      ) > 10
+      (
+        histogram_quantile(0.99, sum by (job, le) (http_request_duration_seconds_bucket{job=~"thanos-querier.*", handler="query"})) > 10
+      and
+        sum by (job) (rate(http_request_duration_seconds_bucket{job=~"thanos-querier.*", handler="query"}[5m])) > 0
+      )
     for: 10m
     labels:
       severity: critical
@@ -110,9 +112,11 @@ groups:
       message: Thanos Querier {{$labels.job}} has a 99th percentile latency of {{
         $value }} seconds for instant queries.
     expr: |
-      histogram_quantile(0.99,
-        sum(http_request_duration_seconds_bucket{job=~"thanos-querier.*", handler="query_range"}) by (job, le)
-      ) > 10
+      (
+        histogram_quantile(0.99, sum by (job, le) (http_request_duration_seconds_bucket{job=~"thanos-querier.*", handler="query_range"})) > 10
+      and
+        sum by (job) (rate(http_request_duration_seconds_count{job=~"thanos-querier.*", handler="query_range"}[5m])) > 0
+      )
     for: 10m
     labels:
       severity: critical
@@ -123,9 +127,11 @@ groups:
       message: Thanos Receive {{$labels.job}} has a 99th percentile latency of {{
         $value }} seconds for HTTP requests.
     expr: |
-      histogram_quantile(0.99,
-        sum(http_request_duration_seconds_bucket{job=~"thanos-receive.*", handler="receive"}) by (job, le)
-      ) > 10
+      (
+        histogram_quantile(0.99, sum by (job, le) (http_request_duration_seconds_bucket{job=~"thanos-receive.*", handler="receive"})) > 10
+      and
+        sum by (job) (rate(http_request_duration_seconds_count{job=~"thanos-receive.*", handler="receive"}[5m])) > 0
+      )
     for: 10m
     labels:
       severity: critical
@@ -197,9 +203,11 @@ groups:
       message: Thanos Store {{$labels.job}} has a 99th percentile latency of {{ $value
         }} seconds for store series gate requests.
     expr: |
-      histogram_quantile(0.99,
-        sum(thanos_bucket_store_series_gate_duration_seconds_bucket{job=~"thanos-store.*"}) by (job, le)
-      ) > 2
+      (
+        histogram_quantile(0.99, sum by (job, le) (thanos_bucket_store_series_gate_duration_seconds_bucket{job=~"thanos-store.*"})) > 2
+      and
+        sum by (job) (rate(thanos_bucket_store_series_gate_duration_seconds_count{job=~"thanos-store.*"}[5m])) > 0
+      )
     for: 10m
     labels:
       severity: warning
@@ -222,9 +230,11 @@ groups:
       message: Thanos Store {{$labels.job}} Bucket has a 99th percentile latency of
         {{ $value }} seconds for the bucket operations.
     expr: |
-      histogram_quantile(0.99,
-        sum(thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"}) by (job, le)
-      ) > 15
+      (
+        histogram_quantile(0.99, sum by (job, le) (thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"})) > 15
+      and
+        sum by (job) (rate(thanos_objstore_bucket_operation_duration_seconds_count{job=~"thanos-store.*"}[5m]))) > 0
+      )
     for: 10m
     labels:
       severity: warning
