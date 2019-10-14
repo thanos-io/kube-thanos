@@ -3,12 +3,19 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 {
   thanos+:: {
     receive: {
+      local tr = self,
+      name:: 'thanos-receive',
+      namespace:: $.thanos.namespace,
+      image:: $.thanos.image,
+      replicas:: 3,
+      objectStorageConfig:: $.thanos.objectStorageConfig,
+
       service:
         local service = k.core.v1.service;
         local ports = service.mixin.spec.portsType;
 
         service.new(
-          'thanos-receive',
+          tr.name,
           $.thanos.receive.statefulSet.metadata.labels,
           [
             ports.newNamed('grpc', 10901, 10901),
@@ -16,7 +23,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             ports.newNamed('remote-write', 19291, 19291),
           ]
         ) +
-        service.mixin.metadata.withNamespace('monitoring') +
+        service.mixin.metadata.withNamespace(tr.namespace) +
         service.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.receive.service.metadata.name }) +
         service.mixin.spec.withClusterIp('None'),
 
@@ -28,7 +35,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local containerVolumeMount = container.volumeMountsType;
 
         local c =
-          container.new($.thanos.receive.statefulSet.metadata.name, $.thanos.variables.image) +
+          container.new($.thanos.receive.statefulSet.metadata.name, tr.image) +
           container.withArgs([
             'receive',
             '--grpc-address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[0].port,
@@ -43,8 +50,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             containerEnv.fromFieldPath('NAME', 'metadata.name'),
             containerEnv.fromSecretRef(
               'OBJSTORE_CONFIG',
-              $.thanos.variables.objectStorageConfig.name,
-              $.thanos.variables.objectStorageConfig.key,
+              tr.objectStorageConfig.name,
+              tr.objectStorageConfig.key,
             ),
           ]) +
           container.withPorts([
@@ -60,8 +67,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.livenessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/healthy') +
           container.mixin.readinessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/ready');
 
-        sts.new('thanos-receive', 3, c, [], $.thanos.receive.statefulSet.metadata.labels) +
-        sts.mixin.metadata.withNamespace('monitoring') +
+        sts.new(tr.name, tr.replicas, c, [], $.thanos.receive.statefulSet.metadata.labels) +
+        sts.mixin.metadata.withNamespace(tr.namespace) +
         sts.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.receive.statefulSet.metadata.name }) +
         sts.mixin.spec.withServiceName($.thanos.receive.service.metadata.name) +
         sts.mixin.spec.selector.withMatchLabels($.thanos.receive.statefulSet.metadata.labels) +
