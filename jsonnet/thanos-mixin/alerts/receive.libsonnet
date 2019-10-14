@@ -10,9 +10,11 @@
               message: 'Thanos Receive {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for HTTP requests.',
             },
             expr: |||
-              histogram_quantile(0.99,
-                sum(http_request_duration_seconds_bucket{%(thanosReceiveSelector)s, handler="receive"}) by (job, le)
-              ) > 10
+              (
+                histogram_quantile(0.99, sum by (job, le) (http_request_duration_seconds_bucket{%(thanosReceiveSelector)s, handler="receive"})) > 10
+              and
+                sum by (job) (rate(http_request_duration_seconds_count{%(thanosReceiveSelector)s, handler="receive"}[5m])) > 0
+              )
             ||| % $._config,
             'for': '10m',
             labels: {
