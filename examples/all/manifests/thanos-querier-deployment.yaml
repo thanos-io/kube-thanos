@@ -25,11 +25,6 @@ spec:
         - --store=dnssrv+_grpc._tcp.thanos-receive.monitoring.svc.cluster.local
         - --store=dnssrv+_grpc._tcp.prometheus-k8s.monitoring.svc.cluster.local
         image: quay.io/thanos/thanos:v0.8.0
-        livenessProbe:
-          httpGet:
-            path: /-/healthy
-            port: 9090
-            scheme: HTTP
         name: thanos-querier
         ports:
         - containerPort: 10901

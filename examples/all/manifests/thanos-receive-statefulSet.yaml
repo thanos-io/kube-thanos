@@ -37,11 +37,6 @@ spec:
               key: thanos.yaml
               name: thanos-objectstorage
         image: quay.io/thanos/thanos:v0.8.0
-        livenessProbe:
-          httpGet:
-            path: /-/healthy
-            port: 10902
-            scheme: HTTP
         name: thanos-receive
         ports:
         - containerPort: 10901
