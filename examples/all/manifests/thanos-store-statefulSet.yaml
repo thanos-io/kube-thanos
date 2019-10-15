@@ -6,7 +6,7 @@ metadata:
   name: thanos-store
   namespace: monitoring
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: thanos-store
@@ -57,7 +57,7 @@ spec:
         - mountPath: /var/thanos/store
           name: thanos-store-data
           readOnly: false
-      volumes: []
+      volumes: null
   volumeClaimTemplates:
   - metadata:
       name: thanos-store-data

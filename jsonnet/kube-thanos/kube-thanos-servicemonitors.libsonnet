@@ -5,8 +5,8 @@
         apiVersion: 'monitoring.coreos.com/v1',
         kind: 'ServiceMonitor',
         metadata+: {
-          name: 'thanos-querier',
-          namespace: 'monitoring',
+          name: $.thanos.querier.name,
+          namespace: $.thanos.querier.namespace,
         },
         spec: {
           selector: {
@@ -23,8 +23,8 @@
         apiVersion: 'monitoring.coreos.com/v1',
         kind: 'ServiceMonitor',
         metadata+: {
-          name: 'thanos-store',
-          namespace: 'monitoring',
+          name: $.thanos.store.name,
+          namespace: $.thanos.store.namespace,
         },
         spec: {
           selector: {
@@ -41,8 +41,8 @@
         apiVersion: 'monitoring.coreos.com/v1',
         kind: 'ServiceMonitor',
         metadata+: {
-          name: 'thanos-receive',
-          namespace: 'monitoring',
+          name: $.thanos.receive.name,
+          namespace: $.thanos.receive.namespace,
         },
         spec: {
           selector: {
@@ -59,8 +59,8 @@
         apiVersion: 'monitoring.coreos.com/v1',
         kind: 'ServiceMonitor',
         metadata+: {
-          name: 'thanos-compactor',
-          namespace: 'monitoring',
+          name: $.thanos.compactor.name,
+          namespace: $.thanos.compactor.namespace,
         },
         spec: {
           selector: {

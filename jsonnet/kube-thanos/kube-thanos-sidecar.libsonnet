@@ -6,6 +6,10 @@
 {
   thanos+:: {
     querier+: {
+      local tq = self,
+      sidecarName:: 'prometheus-k8s',
+      sidecarNamespace:: tq.namespace,
+
       deployment+: {
         spec+: {
           template+: {
@@ -14,8 +18,8 @@
                 super.containers[0]
                 { args+: [
                   '--store=dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [
-                    'prometheus-k8s',
-                    'monitoring',
+                    tq.sidecarName,
+                    tq.sidecarNamespace,
                   ],
                 ] },
               ],

@@ -12,21 +12,21 @@ local kt =
   (import 'kube-thanos/kube-thanos-servicemonitors.libsonnet') +
   {
     thanos+:: {
-      variables+:: {
-        image: 'quay.io/thanos/thanos:v0.8.0',
-        objectStorageConfig+: {
-          name: 'thanos-objectstorage',
-          key: 'thanos.yaml',
-        },
+      // This is just an example image, set what you need
+      image:: 'quay.io/thanos/thanos:v0.8.0',
+      objectStorageConfig+:: {
+        name: 'thanos-objectstorage',
+        key: 'thanos.yaml',
       },
 
       querier+: {
-        deployment+:
-          deployment.mixin.spec.withReplicas(3),
+        replicas:: 3,
       },
       store+: {
-        statefulSet+:
-          sts.mixin.spec.withReplicas(5),
+        replicas:: 1,
+        pvc+:: {
+          size: '50Gi',
+        },
       },
     },
   };

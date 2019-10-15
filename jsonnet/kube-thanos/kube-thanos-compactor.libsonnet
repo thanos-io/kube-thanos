@@ -3,18 +3,24 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 {
   thanos+:: {
     compactor+: {
+      local tc = self,
+      name:: 'thanos-compactor',
+      namespace:: $.thanos.namespace,
+      image:: $.thanos.image,
+      objectStorageConfig:: $.thanos.objectStorageConfig,
+
       service:
         local service = k.core.v1.service;
         local ports = service.mixin.spec.portsType;
 
         service.new(
-          'thanos-compactor',
+          tc.name,
           $.thanos.compactor.statefulSet.metadata.labels,
           [
             ports.newNamed('http', 10902, 'http'),
           ],
         ) +
-        service.mixin.metadata.withNamespace('monitoring') +
+        service.mixin.metadata.withNamespace(tc.namespace) +
         service.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.compactor.service.metadata.name }),
 
       statefulSet:
@@ -25,7 +31,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local containerVolumeMount = container.volumeMountsType;
 
         local c =
-          container.new($.thanos.compactor.statefulSet.metadata.name, $.thanos.variables.image) +
+          container.new($.thanos.compactor.statefulSet.metadata.name, tc.image) +
           container.withArgs([
             'compact',
             '--wait',
@@ -38,8 +44,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withEnv([
             containerEnv.fromSecretRef(
               'OBJSTORE_CONFIG',
-              $.thanos.store.variables.objectStorageConfig.name,
-              $.thanos.store.variables.objectStorageConfig.key,
+              tc.objectStorageConfig.name,
+              tc.objectStorageConfig.key,
             ),
           ]) +
           container.withPorts([
@@ -53,8 +59,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.livenessProbe.httpGet.withPort($.thanos.compactor.service.spec.ports[0].port).withScheme('HTTP').withPath('/-/healthy') +
           container.mixin.readinessProbe.httpGet.withPort($.thanos.compactor.service.spec.ports[0].port).withScheme('HTTP').withPath('/-/ready');
 
-        statefulSet.new('thanos-compactor', 1, c, [], $.thanos.compactor.statefulSet.metadata.labels) +
-        statefulSet.mixin.metadata.withNamespace('monitoring') +
+        statefulSet.new(tc.name, 1, c, [], $.thanos.compactor.statefulSet.metadata.labels) +
+        statefulSet.mixin.metadata.withNamespace(tc.namespace) +
         statefulSet.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.compactor.statefulSet.metadata.name }) +
         statefulSet.mixin.spec.withServiceName($.thanos.compactor.service.metadata.name) +
         statefulSet.mixin.spec.template.spec.withVolumes([

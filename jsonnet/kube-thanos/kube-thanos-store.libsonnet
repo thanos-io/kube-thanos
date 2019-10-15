@@ -2,27 +2,33 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
 {
   thanos+:: {
+    namespace:: 'monitoring',
+    objectStorageConfig+:: {
+      name: error 'must set an object storage secret name',
+      key: error 'must set an object storage secret key',
+    },
+
     store: {
-      variables+:: {
-        objectStorageConfig+: {
-          name: $.thanos.variables.objectStorageConfig.name,
-          key: $.thanos.variables.objectStorageConfig.key,
-        },
-      },
+      local ts = self,
+      name:: 'thanos-store',
+      namespace:: $.thanos.namespace,
+      image:: $.thanos.image,
+      replicas:: 1,
+      objectStorageConfig:: $.thanos.objectStorageConfig,
 
       service:
         local service = k.core.v1.service;
         local ports = service.mixin.spec.portsType;
 
         service.new(
-          'thanos-store',
+          ts.name,
           $.thanos.store.statefulSet.metadata.labels,
           [
             ports.newNamed('grpc', 10901, 10901),
             ports.newNamed('http', 10902, 10902),
           ]
         ) +
-        service.mixin.metadata.withNamespace('monitoring') +
+        service.mixin.metadata.withNamespace(ts.namespace) +
         service.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.store.service.metadata.name }) +
         service.mixin.spec.withClusterIp('None'),
 
@@ -34,7 +40,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         local containerVolumeMount = container.volumeMountsType;
 
         local c =
-          container.new($.thanos.store.statefulSet.metadata.name, $.thanos.variables.image) +
+          container.new(ts.name, ts.image) +
           container.withArgs([
             'store',
             '--data-dir=/var/thanos/store',
@@ -45,8 +51,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withEnv([
             containerEnv.fromSecretRef(
               'OBJSTORE_CONFIG',
-              $.thanos.store.variables.objectStorageConfig.name,
-              $.thanos.store.variables.objectStorageConfig.key,
+              ts.objectStorageConfig.name,
+              ts.objectStorageConfig.key,
             ),
           ]) +
           container.withPorts([
@@ -56,18 +62,18 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.resources.withRequests({ cpu: '500m', memory: '1Gi' }) +
           container.mixin.resources.withLimits({ cpu: '2', memory: '8Gi' }) +
           container.withVolumeMounts([
-            containerVolumeMount.new($.thanos.store.statefulSet.metadata.name + '-data', '/var/thanos/store', false),
+            containerVolumeMount.new(ts.name + '-data', '/var/thanos/store', false),
           ]) +
           container.mixin.livenessProbe.httpGet.withPort($.thanos.store.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/healthy') +
           container.mixin.readinessProbe.httpGet.withPort($.thanos.store.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/ready');
 
-        sts.new('thanos-store', 3, c, [], $.thanos.store.statefulSet.metadata.labels) +
-        sts.mixin.metadata.withNamespace('monitoring') +
-        sts.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.store.statefulSet.metadata.name }) +
+        sts.new(ts.name, ts.replicas, c, [], $.thanos.store.statefulSet.metadata.labels) +
+        sts.mixin.metadata.withNamespace(ts.namespace) +
+        sts.mixin.metadata.withLabels({ 'app.kubernetes.io/name': ts.name }) +
         sts.mixin.spec.withServiceName($.thanos.store.service.metadata.name) +
         sts.mixin.spec.selector.withMatchLabels($.thanos.store.statefulSet.metadata.labels) +
         sts.mixin.spec.template.spec.withVolumes([
-          volume.fromEmptyDir($.thanos.store.statefulSet.metadata.name + '-data'),
+          volume.fromEmptyDir(ts.name + '-data'),
         ]) +
         {
           spec+: {
