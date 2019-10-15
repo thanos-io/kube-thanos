@@ -56,7 +56,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withVolumeMounts([
             containerVolumeMount.new('thanos-compactor-data', '/var/thanos/compactor', false),
           ]) +
-          container.mixin.livenessProbe.httpGet.withPort($.thanos.compactor.service.spec.ports[0].port).withScheme('HTTP').withPath('/-/healthy') +
           container.mixin.readinessProbe.httpGet.withPort($.thanos.compactor.service.spec.ports[0].port).withScheme('HTTP').withPath('/-/ready');
 
         statefulSet.new(tc.name, 1, c, [], $.thanos.compactor.statefulSet.metadata.labels) +

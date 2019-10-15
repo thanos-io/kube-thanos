@@ -64,7 +64,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withVolumeMounts([
             containerVolumeMount.new('data', '/var/thanos/tsdb', false),
           ]) +
-          container.mixin.livenessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/healthy') +
           container.mixin.readinessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/ready');
 
         sts.new(tr.name, tr.replicas, c, [], $.thanos.receive.statefulSet.metadata.labels) +
