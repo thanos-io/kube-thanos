@@ -6,7 +6,7 @@ local kt =
   (import 'kube-thanos/kube-thanos-compactor.libsonnet') +
   (import 'kube-thanos/kube-thanos-querier.libsonnet') +
   (import 'kube-thanos/kube-thanos-store.libsonnet') +
-  (import 'kube-thanos/kube-thanos-pvc.libsonnet') +
+  (import 'kube-thanos/kube-thanos-store-pvc.libsonnet') +
   (import 'kube-thanos/kube-thanos-receive.libsonnet') +
   (import 'kube-thanos/kube-thanos-receive-pvc.libsonnet') +
   (import 'kube-thanos/kube-thanos-sidecar.libsonnet') +
