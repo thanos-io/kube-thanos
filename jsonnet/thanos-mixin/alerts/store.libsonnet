@@ -66,7 +66,7 @@
               (
                 histogram_quantile(0.99, sum by (job, le) (thanos_objstore_bucket_operation_duration_seconds_bucket{%(thanosStoreSelector)s})) > 15
               and
-                sum by (job) (rate(thanos_objstore_bucket_operation_duration_seconds_count{%(thanosStoreSelector)s}[5m]))) > 0
+                sum by (job) (rate(thanos_objstore_bucket_operation_duration_seconds_count{%(thanosStoreSelector)s}[5m])) > 0
               )
             ||| % $._config,
             'for': '10m',

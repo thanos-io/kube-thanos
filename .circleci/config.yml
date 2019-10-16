@@ -5,7 +5,7 @@ jobs:
       - image: quay.io/coreos/jsonnet-ci
     steps:
       - checkout
-      - run: make --always-make vendor generate
+      - run: make --always-make vendor generate lint
       - run: git diff --exit-code
 workflows:
   version: 2
