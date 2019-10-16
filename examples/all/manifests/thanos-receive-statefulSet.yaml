@@ -61,6 +61,14 @@ spec:
         - mountPath: /var/thanos/tsdb
           name: data
           readOnly: false
-      volumes:
-      - emptyDir: {}
-        name: data
+      volumes: null
+  volumeClaimTemplates:
+  - metadata:
+      name: thanos-receive-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 50Gi
+      storageClassName: standard

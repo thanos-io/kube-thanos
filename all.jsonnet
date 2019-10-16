@@ -8,6 +8,7 @@ local kt =
   (import 'kube-thanos/kube-thanos-store.libsonnet') +
   (import 'kube-thanos/kube-thanos-pvc.libsonnet') +
   (import 'kube-thanos/kube-thanos-receive.libsonnet') +
+  (import 'kube-thanos/kube-thanos-receive-pvc.libsonnet') +
   (import 'kube-thanos/kube-thanos-sidecar.libsonnet') +
   (import 'kube-thanos/kube-thanos-servicemonitors.libsonnet') +
   {
@@ -24,6 +25,12 @@ local kt =
       },
       store+: {
         replicas:: 1,
+        pvc+:: {
+          size: '50Gi',
+        },
+      },
+      receive+:{
+        replicas:: 3,
         pvc+:: {
           size: '50Gi',
         },
