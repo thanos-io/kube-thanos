@@ -3,7 +3,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 {
   thanos+:: {
     store+: {
-      local spvc = self,
+      local ts = self,
       pvc+:: {
         class: 'standard',
         size: error 'must set PVC size for Thanos store',
@@ -29,10 +29,10 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
                   accessModes: [
                     'ReadWriteOnce',
                   ],
-                  storageClassName: spvc.pvc.class,
+                  storageClassName: ts.pvc.class,
                   resources: {
                     requests: {
-                      storage: spvc.pvc.size,
+                      storage: ts.pvc.size,
                     },
                   },
                 },
