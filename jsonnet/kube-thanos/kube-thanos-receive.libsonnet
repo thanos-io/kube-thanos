@@ -42,7 +42,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             '--http-address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[1].port,
             '--remote-write.address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[2].port,
             '--objstore.config=$(OBJSTORE_CONFIG)',
-            '--tsdb.path=/var/thanos/tsdb',
+            '--tsdb.path=/var/thanos/receive',
             '--label=replica="$(NAME)"',
             '--label=receive="true"',
           ]) +
@@ -62,7 +62,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.resources.withRequests({ cpu: '100m', memory: '512Mi' }) +
           container.mixin.resources.withLimits({ cpu: '1', memory: '1Gi' }) +
           container.withVolumeMounts([
-            containerVolumeMount.new('data', '/var/thanos/tsdb', false),
+            containerVolumeMount.new(tr.name + '-data', '/var/thanos/receive', false),
           ]) +
           container.mixin.readinessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/ready');
 

@@ -29,7 +29,7 @@ local kt =
           size: '50Gi',
         },
       },
-      receive+:{
+      receive+: {
         replicas:: 3,
         pvc+:: {
           size: '50Gi',
