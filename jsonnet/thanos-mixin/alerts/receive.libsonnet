@@ -5,9 +5,26 @@
         name: 'thanos-receive.rules',
         rules: [
           {
+            alert: 'ThanosReceiveHttpRequestErrorRateHigh',
+            annotations: {
+              message: 'Thanos Receive {{$labels.job}} is failing to handle {{ $value | humanize }}% of requests.',
+            },
+            expr: |||
+              (
+                sum(rate(http_requests_total{code=~"5..", %(thanosReceiveSelector)s, handler="receive"}[5m]))
+              /
+                sum(rate(http_requests_total{%(thanosReceiveSelector)s, handler="receive"}[5m]))
+              ) * 100 > 5
+            ||| % $._config,
+            'for': '5m',
+            labels: {
+              severity: 'critical',
+            },
+          },
+          {
             alert: 'ThanosReceiveHttpRequestLatencyHigh',
             annotations: {
-              message: 'Thanos Receive {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for HTTP requests.',
+              message: 'Thanos Receive {{$labels.job}} has a 99th percentile latency of {{ $value }} seconds for requests.',
             },
             expr: |||
               (
