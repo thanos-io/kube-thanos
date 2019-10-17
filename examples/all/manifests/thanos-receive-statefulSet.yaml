@@ -23,7 +23,7 @@ spec:
         - --http-address=0.0.0.0:10902
         - --remote-write.address=0.0.0.0:19291
         - --objstore.config=$(OBJSTORE_CONFIG)
-        - --tsdb.path=/var/thanos/tsdb
+        - --tsdb.path=/var/thanos/receive
         - --label=replica="$(NAME)"
         - --label=receive="true"
         env:
@@ -58,8 +58,8 @@ spec:
             cpu: 100m
             memory: 512Mi
         volumeMounts:
-        - mountPath: /var/thanos/tsdb
-          name: data
+        - mountPath: /var/thanos/receive
+          name: thanos-receive-data
           readOnly: false
       volumes: null
   volumeClaimTemplates:
