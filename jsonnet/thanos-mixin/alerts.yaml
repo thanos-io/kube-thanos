@@ -204,7 +204,7 @@ groups:
         }} seconds for store series gate requests.
     expr: |
       (
-        histogram_quantile(0.99, sum by (job, le) (thanos_bucket_store_series_gate_duration_seconds_bucket{job=~"thanos-store.*"})) > 2
+        histogram_quantile(0.9, sum by (job, le) (thanos_bucket_store_series_gate_duration_seconds_bucket{job=~"thanos-store.*"})) > 2
       and
         sum by (job) (rate(thanos_bucket_store_series_gate_duration_seconds_count{job=~"thanos-store.*"}[5m])) > 0
       )
@@ -231,7 +231,7 @@ groups:
         {{ $value }} seconds for the bucket operations.
     expr: |
       (
-        histogram_quantile(0.99, sum by (job, le) (thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"})) > 15
+        histogram_quantile(0.9, sum by (job, le) (thanos_objstore_bucket_operation_duration_seconds_bucket{job=~"thanos-store.*"})) > 15
       and
         sum by (job) (rate(thanos_objstore_bucket_operation_duration_seconds_count{job=~"thanos-store.*"}[5m])) > 0
       )
