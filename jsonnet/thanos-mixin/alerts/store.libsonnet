@@ -29,7 +29,7 @@
             },
             expr: |||
               (
-                histogram_quantile(0.99, sum by (job, le) (thanos_bucket_store_series_gate_duration_seconds_bucket{%(thanosStoreSelector)s})) > 2
+                histogram_quantile(0.9, sum by (job, le) (thanos_bucket_store_series_gate_duration_seconds_bucket{%(thanosStoreSelector)s})) > 2
               and
                 sum by (job) (rate(thanos_bucket_store_series_gate_duration_seconds_count{%(thanosStoreSelector)s}[5m])) > 0
               )
@@ -64,7 +64,7 @@
             },
             expr: |||
               (
-                histogram_quantile(0.99, sum by (job, le) (thanos_objstore_bucket_operation_duration_seconds_bucket{%(thanosStoreSelector)s})) > 15
+                histogram_quantile(0.9, sum by (job, le) (thanos_objstore_bucket_operation_duration_seconds_bucket{%(thanosStoreSelector)s})) > 15
               and
                 sum by (job) (rate(thanos_objstore_bucket_operation_duration_seconds_count{%(thanosStoreSelector)s}[5m])) > 0
               )
