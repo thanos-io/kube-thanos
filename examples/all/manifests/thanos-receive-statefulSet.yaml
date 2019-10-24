@@ -61,7 +61,6 @@ spec:
         - mountPath: /var/thanos/receive
           name: thanos-receive-data
           readOnly: false
-      volumes: null
   volumeClaimTemplates:
   - metadata:
       name: thanos-receive-data

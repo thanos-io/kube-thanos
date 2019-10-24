@@ -52,7 +52,6 @@ spec:
         - mountPath: /var/thanos/store
           name: thanos-store-data
           readOnly: false
-      volumes: null
   volumeClaimTemplates:
   - metadata:
       name: thanos-store-data
