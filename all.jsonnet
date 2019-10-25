@@ -11,6 +11,7 @@ local kt =
   (import 'kube-thanos/kube-thanos-receive-pvc.libsonnet') +
   (import 'kube-thanos/kube-thanos-sidecar.libsonnet') +
   (import 'kube-thanos/kube-thanos-servicemonitors.libsonnet') +
+  (import 'kube-thanos/kube-thanos-bucket.libsonnet') +
   {
     thanos+:: {
       // This is just an example image, set what you need
@@ -41,4 +42,5 @@ local kt =
 { ['thanos-compactor-' + name]: kt.thanos.compactor[name] for name in std.objectFields(kt.thanos.compactor) } +
 { ['thanos-querier-' + name]: kt.thanos.querier[name] for name in std.objectFields(kt.thanos.querier) } +
 { ['thanos-receive-' + name]: kt.thanos.receive[name] for name in std.objectFields(kt.thanos.receive) } +
+{ ['thanos-bucket-' + name]: kt.thanos.bucket[name] for name in std.objectFields(kt.thanos.bucket) } +
 { ['thanos-store-' + name]: kt.thanos.store[name] for name in std.objectFields(kt.thanos.store) }
