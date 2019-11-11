@@ -17,7 +17,7 @@ generate-in-docker:
 	$(CONTAINER_CMD) make $(MFLAGS) generate
 
 .PHONY: generate
-generate: manifests jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml dashboards **.md
+generate: manifests jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml jsonnet/thanos-mixin/dashboards **.md
 
 **.md: $(shell find examples) build.sh example.jsonnet
 	embedmd -w `find . -name "*.md" | grep -v vendor`
