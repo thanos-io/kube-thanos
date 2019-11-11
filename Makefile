@@ -26,9 +26,9 @@ manifests: vendor example.jsonnet build.sh
 	rm -rf manifests
 	./build.sh
 
-dashboards: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/dashboards/*
-	@mkdir -p dashboards
-	jsonnet -J vendor -m dashboards jsonnet/thanos-mixin/dashboards.jsonnet
+jsonnet/thanos-mixin/dashboards: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/dashboards/*
+	rm -rf jsonnet/thanos-mixin/dashboards/*.json
+	jsonnet -J vendor -m jsonnet/thanos-mixin/dashboards jsonnet/thanos-mixin/dashboards.jsonnet
 
 jsonnet/thanos-mixin/alerts.yaml: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/alerts/*
 	jsonnet jsonnet/thanos-mixin/alerts.jsonnet | gojsontoyaml > $@
