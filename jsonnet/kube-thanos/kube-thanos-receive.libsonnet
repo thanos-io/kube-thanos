@@ -64,13 +64,25 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withVolumeMounts([
             containerVolumeMount.new(tr.name + '-data', '/var/thanos/receive', false),
           ]) +
-          container.mixin.readinessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port).withScheme('HTTP').withPath('/-/ready');
+          container.mixin.livenessProbe +
+          container.mixin.livenessProbe.withPeriodSeconds(30) +
+          container.mixin.livenessProbe.withFailureThreshold(4) +
+          container.mixin.livenessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port) +
+          container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
+          container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
+          container.mixin.readinessProbe +
+          container.mixin.readinessProbe.withInitialDelaySeconds(10) +
+          container.mixin.readinessProbe.withPeriodSeconds(30) +
+          container.mixin.readinessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port) +
+          container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
+          container.mixin.readinessProbe.httpGet.withPath('/-/ready');
 
         sts.new(tr.name, tr.replicas, c, [], $.thanos.receive.statefulSet.metadata.labels) +
         sts.mixin.metadata.withNamespace(tr.namespace) +
         sts.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.receive.statefulSet.metadata.name }) +
         sts.mixin.spec.withServiceName($.thanos.receive.service.metadata.name) +
         sts.mixin.spec.selector.withMatchLabels($.thanos.receive.statefulSet.metadata.labels) +
+        sts.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
         sts.mixin.spec.template.spec.withVolumes([
           volume.fromEmptyDir('data'),
         ]) +
