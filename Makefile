@@ -17,7 +17,7 @@ generate-in-docker:
 	$(CONTAINER_CMD) make $(MFLAGS) generate
 
 .PHONY: generate
-generate: manifests jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml jsonnet/thanos-mixin/dashboards **.md
+generate: manifests **.md
 
 **.md: $(shell find examples) build.sh example.jsonnet
 	embedmd -w `find . -name "*.md" | grep -v vendor`
@@ -25,16 +25,6 @@ generate: manifests jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.
 manifests: vendor example.jsonnet build.sh
 	rm -rf manifests
 	./build.sh
-
-jsonnet/thanos-mixin/dashboards: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/dashboards/*
-	rm -rf jsonnet/thanos-mixin/dashboards/*.json
-	jsonnet -J vendor -m jsonnet/thanos-mixin/dashboards jsonnet/thanos-mixin/dashboards.jsonnet
-
-jsonnet/thanos-mixin/alerts.yaml: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/alerts/*
-	jsonnet jsonnet/thanos-mixin/alerts.jsonnet | gojsontoyaml > $@
-
-jsonnet/thanos-mixin/rules.yaml: jsonnet/thanos-mixin/mixin.libsonnet jsonnet/thanos-mixin/config.libsonnet jsonnet/thanos-mixin/rules/*
-	jsonnet jsonnet/thanos-mixin/rules.jsonnet | gojsontoyaml > $@
 
 vendor: jsonnetfile.json jsonnetfile.lock.json
 	rm -rf vendor
@@ -45,16 +35,6 @@ fmt:
 	find . -name 'vendor' -prune -o -name '*.libsonnet' -print -o -name '*.jsonnet' -print | \
 		xargs -n 1 -- $(JSONNET_FMT) -i
 
-.PHONY: lint
-lint: fmt jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml
-	promtool check rules jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml
-
-.PHONY: test
-test: jsonnet/thanos-mixin/alerts.yaml jsonnet/thanos-mixin/rules.yaml
-	promtool test rules tests.yaml
-
 .PHONY: clean
 clean:
 	rm -rf manifests/
-	rm -rf jsonnet/thanos-mixin/alerts.yaml
-	rm -rf dashboards/
