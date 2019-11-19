@@ -5,13 +5,47 @@
         name: 'thanos-querier.rules',
         rules: [
           {
+            alert: 'ThanosQuerierHttpRequestQueryErrorRateHigh',
+            annotations: {
+              message: 'Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize }}% of "query" requests.',
+            },
+            expr: |||
+              (
+                sum(rate(http_requests_total{code=~"5..", %(thanosQuerierSelector)s, handler="query"}[5m]))
+              /
+                sum(rate(http_requests_total{%(thanosQuerierSelector)s, handler="query"}[5m]))
+              ) * 100 > 5
+            ||| % $._config,
+            'for': '5m',
+            labels: {
+              severity: 'critical',
+            },
+          },
+          {
+            alert: 'ThanosQuerierHttpRequestQueryRangeErrorRateHigh',
+            annotations: {
+              message: 'Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize }}% of "query_range" requests.',
+            },
+            expr: |||
+              (
+                sum(rate(http_requests_total{code=~"5..", %(thanosQuerierSelector)s, handler="query_range"}[5m]))
+              /
+                sum(rate(http_requests_total{%(thanosQuerierSelector)s, handler="query_range"}[5m]))
+              ) * 100 > 5
+            ||| % $._config,
+            'for': '5m',
+            labels: {
+              severity: 'critical',
+            },
+          },
+          {
             alert: 'ThanosQuerierGrpcServerErrorRate',
             annotations: {
               message: 'Thanos Querier {{$labels.job}} is failing to handle {{ $value | humanize }}% of requests.',
             },
             expr: |||
               (
-                sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m]))
+                sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded", %(thanosQuerierSelector)s}[5m]))
               /
                 sum by (job) (rate(grpc_server_started_total{%(thanosQuerierSelector)s}[5m]))
               * 100 > 5
