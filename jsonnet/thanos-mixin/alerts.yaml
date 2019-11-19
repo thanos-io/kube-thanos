@@ -185,7 +185,7 @@ groups:
         sum by (job) (rate(thanos_receive_forward_requests_total{job=~"thanos-receive.*"}[5m]))
       * 100 > 5
       )
-    for: 15m
+    for: 5m
     labels:
       severity: critical
   - alert: ThanosReceiveHighHashringFileRefreshFailures

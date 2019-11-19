@@ -51,7 +51,7 @@
               * 100 > 5
               )
             ||| % $._config,
-            'for': '15m',
+            'for': '5m',
             labels: {
               severity: 'critical',
             },
