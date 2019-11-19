@@ -1,43 +1,46 @@
 {
-    "dependencies": [
-        {
-            "name": "kube-thanos",
-            "source": {
-                "local": {
-                    "directory": "jsonnet/kube-thanos"
-                }
-            },
-            "version": ""
-        },
-        {
-            "name": "ksonnet",
-            "source": {
-                "git": {
-                    "remote": "https://github.com/ksonnet/ksonnet-lib",
-                    "subdir": ""
-                }
-            },
-            "version": "0d2f82676817bbf9e4acf6495b2090205f323b9f"
-        },
-        {
-            "name": "grafonnet",
-            "source": {
-                "git": {
-                    "remote": "https://github.com/grafana/grafonnet-lib",
-                    "subdir": "grafonnet"
-                }
-            },
-            "version": "69bc267211790a1c3f4ea6e6211f3e8ffe22f987"
-        },
-        {
-            "name": "grafana-builder",
-            "source": {
-                "git": {
-                    "remote": "https://github.com/grafana/jsonnet-libs",
-                    "subdir": "grafana-builder"
-                }
-            },
-            "version": "f4c59f64f80442f871a06c91edf74d014b82acaf"
+  "dependencies": [
+    {
+      "name": "grafana-builder",
+      "source": {
+        "git": {
+          "remote": "https://github.com/grafana/jsonnet-libs",
+          "subdir": "grafana-builder"
         }
-    ]
+      },
+      "version": "f4c59f64f80442f871a06c91edf74d014b82acaf",
+      "sum": "ELsYwK+kGdzX1mee2Yy+/b2mdO4Y503BOCDkFzwmGbE="
+    },
+    {
+      "name": "grafonnet",
+      "source": {
+        "git": {
+          "remote": "https://github.com/grafana/grafonnet-lib",
+          "subdir": "grafonnet"
+        }
+      },
+      "version": "69bc267211790a1c3f4ea6e6211f3e8ffe22f987",
+      "sum": "BjHfWzqSAgtAKEVD6ipoYOkb8XT5wSBIboY4ZLwhlOU="
+    },
+    {
+      "name": "ksonnet",
+      "source": {
+        "git": {
+          "remote": "https://github.com/ksonnet/ksonnet-lib",
+          "subdir": ""
+        }
+      },
+      "version": "0d2f82676817bbf9e4acf6495b2090205f323b9f",
+      "sum": "h28BXZ7+vczxYJ2sCt8JuR9+yznRtU/iA6DCpQUrtEg="
+    },
+    {
+      "name": "kube-thanos",
+      "source": {
+        "local": {
+          "directory": "jsonnet/kube-thanos"
+        }
+      },
+      "version": ""
+    }
+  ]
 }
