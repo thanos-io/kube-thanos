@@ -45,7 +45,7 @@
             },
             expr: |||
               (
-                sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", %(thanosQuerierSelector)s}[5m]))
+                sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded", %(thanosQuerierSelector)s}[5m]))
               /
                 sum by (job) (rate(grpc_server_started_total{%(thanosQuerierSelector)s}[5m]))
               * 100 > 5

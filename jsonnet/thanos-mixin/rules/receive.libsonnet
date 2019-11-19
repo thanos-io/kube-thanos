@@ -8,7 +8,7 @@
             record: ':grpc_server_failures_per_unary:sum_rate',
             expr: |||
               sum(
-                rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", %(thanosQuerierSelector)s, grpc_type="unary"}[5m])
+                rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded", %(thanosQuerierSelector)s, grpc_type="unary"}[5m])
               /
                 rate(grpc_server_started_total{%(thanosQuerierSelector)s, grpc_type="unary"}[5m])
               )
@@ -20,7 +20,7 @@
             record: ':grpc_server_failures_per_stream:sum_rate',
             expr: |||
               sum(
-                rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss", %(thanosQuerierSelector)s, grpc_type="server_stream"}[5m])
+                rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded", %(thanosQuerierSelector)s, grpc_type="server_stream"}[5m])
               /
                 rate(grpc_server_started_total{%(thanosQuerierSelector)s, grpc_type="server_stream"}[5m])
               )

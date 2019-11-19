@@ -85,7 +85,7 @@ groups:
         }}% of requests.
     expr: |
       (
-        sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-querier.*"}[5m]))
+        sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded", job=~"thanos-querier.*"}[5m]))
       /
         sum by (job) (rate(grpc_server_started_total{job=~"thanos-querier.*"}[5m]))
       * 100 > 5
@@ -229,7 +229,7 @@ groups:
         }}% of requests.
     expr: |
       (
-        sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable", job=~"thanos-store.*"}[5m]))
+        sum by (job) (rate(grpc_server_handled_total{grpc_code=~"Unknown|ResourceExhausted|Internal|Unavailable|DataLoss|DeadlineExceeded", job=~"thanos-store.*"}[5m]))
       /
         sum by (job) (rate(grpc_server_started_total{job=~"thanos-store.*"}[5m]))
       * 100 > 5
