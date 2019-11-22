@@ -5,7 +5,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     bucket+: {
       local tb = self,
       name:: 'thanos-bucket',
-      namespace:: 'monitoring',
+      namespace:: $.thanos.namespace,
       image:: $.thanos.image,
       labels+:: {
         'app.kubernetes.io/name': tb.name,
