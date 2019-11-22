@@ -72,5 +72,23 @@
         },
       },
     },
+    rule+: {
+      serviceMonitor+: {
+        apiVersion: 'monitoring.coreos.com/v1',
+        kind: 'ServiceMonitor',
+        metadata+: {
+          name: $.thanos.rule.name,
+          namespace: $.thanos.rule.namespace,
+        },
+        spec: {
+          selector: {
+            matchLabels: $.thanos.rule.service.metadata.labels,
+          },
+          endpoints: [
+            { port: 'http' },
+          ],
+        },
+      },
+    },
   },
 }
