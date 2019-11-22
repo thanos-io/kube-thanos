@@ -21,7 +21,7 @@ spec:
         - --grpc-address=0.0.0.0:10901
         - --http-address=0.0.0.0:10902
         - --objstore.config=$(OBJSTORE_CONFIG)
-        - --data-dir=/var/thanos/rule/data
+        - --data-dir=/var/thanos/rule
         - --label=replica="$(NAME)"
         - --alert.label-drop="replica"
         - --query=dnssrv+_grpc._tcp.thanos-querier.monitoring.svc.cluster.local
