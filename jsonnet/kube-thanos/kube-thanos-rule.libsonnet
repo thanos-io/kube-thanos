@@ -52,7 +52,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
               '--grpc-address=0.0.0.0:%d' % tr.ports.grpc,
               '--http-address=0.0.0.0:%d' % tr.ports.http,
               '--objstore.config=$(OBJSTORE_CONFIG)',
-              '--data-dir=/var/thanos/rule/data',
+              '--data-dir=/var/thanos/rule',
               '--label=replica="$(NAME)"',
               '--alert.label-drop="replica"',
               '--query=dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [
