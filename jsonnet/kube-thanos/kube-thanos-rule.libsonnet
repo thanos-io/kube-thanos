@@ -48,13 +48,13 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.new(tr.name, tr.image) +
           container.withArgs(
             [
-              'ruler',
+              'rule',
               '--grpc-address=0.0.0.0:%d' % tr.ports.grpc,
               '--http-address=0.0.0.0:%d' % tr.ports.http,
               '--objstore.config=$(OBJSTORE_CONFIG)',
               '--data-dir=/var/thanos/rule',
-              '--label=replica="$(NAME)"',
-              '--alert.label-drop="replica"',
+              '--label=rule_replica="$(NAME)"',
+              '--alert.label-drop="rule_replica"',
               '--query=dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [
                 $.thanos.querier.service.metadata.name,
                 $.thanos.querier.service.metadata.namespace,
