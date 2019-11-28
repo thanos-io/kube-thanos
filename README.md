@@ -2,7 +2,7 @@
 
 > Note that everything is experimental and may change significantly at any time.
 
-This repository collects Kubernetes manifests, [Grafana](http://grafana.com/) dashboards, and [Prometheus rules](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/) combined with documentation and scripts to provide easy to deploy experience for Thanos on Kubernetes.
+This repository collects Kubernetes manifests combined with documentation and scripts to provide easy to deploy experience for Thanos on Kubernetes.
 
 The content of this project is written in [jsonnet](http://jsonnet.org/). This project could both be described as a package as well as a library.
 
