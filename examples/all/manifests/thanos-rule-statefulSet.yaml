@@ -10,6 +10,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: thanos-rule
+  serviceName: thanos-rule
   template:
     metadata:
       labels:

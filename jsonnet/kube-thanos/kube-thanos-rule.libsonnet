@@ -96,6 +96,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         statefulSet.new(tr.name, tr.replicas, c, [], $.thanos.rule.statefulSet.metadata.labels) +
         statefulSet.mixin.metadata.withNamespace(tr.namespace) +
         statefulSet.mixin.metadata.withLabels({ 'app.kubernetes.io/name': tr.name }) +
+        statefulSet.mixin.spec.withServiceName($.thanos.rule.service.metadata.name) +
         statefulSet.mixin.spec.selector.withMatchLabels(tr.labels) +
         statefulSet.mixin.spec.template.spec.withVolumes([
           volume.fromEmptyDir('thanos-rule-data'),
