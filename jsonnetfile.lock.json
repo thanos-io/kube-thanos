@@ -8,7 +8,7 @@
           "subdir": "grafana-builder"
         }
       },
-      "version": "f4c59f64f80442f871a06c91edf74d014b82acaf",
+      "version": "8813f9108550cd510b17ce5a8bac9261dd140e13",
       "sum": "ELsYwK+kGdzX1mee2Yy+/b2mdO4Y503BOCDkFzwmGbE="
     },
     {
@@ -19,8 +19,8 @@
           "subdir": "grafonnet"
         }
       },
-      "version": "69bc267211790a1c3f4ea6e6211f3e8ffe22f987",
-      "sum": "BjHfWzqSAgtAKEVD6ipoYOkb8XT5wSBIboY4ZLwhlOU="
+      "version": "cb9e43f59558ff6338a76ae1806a0fb4b70b1b16",
+      "sum": "YIo2bziNlqzZtlnpLtoi9qa1aztcAX7j1UuKRjjEzVY="
     },
     {
       "name": "ksonnet",
@@ -38,6 +38,15 @@
       "source": {
         "local": {
           "directory": "jsonnet/kube-thanos"
+        }
+      },
+      "version": ""
+    },
+    {
+      "name": "thanos-mixin",
+      "source": {
+        "local": {
+          "directory": "jsonnet/thanos-mixin"
         }
       },
       "version": ""
