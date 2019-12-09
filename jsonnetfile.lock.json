@@ -36,11 +36,13 @@
     {
       "name": "kube-thanos",
       "source": {
-        "local": {
-          "directory": "jsonnet/kube-thanos"
+        "git": {
+          "remote": "https://github.com/thanos-io/kube-thanos",
+          "subdir": "jsonnet/kube-thanos"
         }
       },
-      "version": ""
+      "version": "4c3ab85bc3cebe5c227e6037948f9ffa4c50715d",
+      "sum": "TC4tRXCijYCnqVfBtHBzspKNNnVJjfckebV5gL+WalY="
     },
     {
       "name": "thanos-mixin",
