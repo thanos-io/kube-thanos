@@ -16,7 +16,7 @@ local kt =
   {
     thanos+:: {
       // This is just an example image, set what you need
-      image:: 'quay.io/thanos/thanos:v0.8.0',
+      image:: 'quay.io/thanos/thanos:v0.9.0',
       objectStorageConfig+:: {
         name: 'thanos-objectstorage',
         key: 'thanos.yaml',

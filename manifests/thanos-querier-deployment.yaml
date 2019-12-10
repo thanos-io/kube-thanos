@@ -22,7 +22,7 @@ spec:
         - --grpc-address=0.0.0.0:10901
         - --http-address=0.0.0.0:9090
         - --store=dnssrv+_grpc._tcp.thanos-store.monitoring.svc.cluster.local
-        image: quay.io/thanos/thanos:v0.8.0
+        image: quay.io/thanos/thanos:v0.9.0
         name: thanos-querier
         ports:
         - containerPort: 10901
