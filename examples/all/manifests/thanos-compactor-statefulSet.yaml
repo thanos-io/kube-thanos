@@ -32,6 +32,13 @@ spec:
               key: thanos.yaml
               name: thanos-objectstorage
         image: quay.io/thanos/thanos:v0.9.0
+        livenessProbe:
+          failureThreshold: 4
+          httpGet:
+            path: /-/healthy
+            port: 10902
+            scheme: HTTP
+          periodSeconds: 30
         name: thanos-compactor
         ports:
         - containerPort: 10902
@@ -41,6 +48,8 @@ spec:
             path: /-/ready
             port: 10902
             scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 30
         resources:
           limits:
             cpu: 500m
@@ -52,6 +61,7 @@ spec:
         - mountPath: /var/thanos/compactor
           name: thanos-compactor-data
           readOnly: false
+      terminationGracePeriodSeconds: 120
       volumes:
       - emptyDir: {}
         name: thanos-compactor-data

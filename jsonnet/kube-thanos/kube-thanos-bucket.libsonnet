@@ -50,12 +50,25 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.resources.withLimits({ cpu: '250m', memory: '512Mi' }) +
           container.withPorts([
             { name: 'http', containerPort: tb.ports.http },
-          ]);
+          ]) +
+          container.mixin.livenessProbe +
+          container.mixin.livenessProbe.withPeriodSeconds(30) +
+          container.mixin.livenessProbe.withFailureThreshold(4) +
+          container.mixin.livenessProbe.httpGet.withPort($.thanos.bucket.service.spec.ports[0].port) +
+          container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
+          container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
+          container.mixin.readinessProbe +
+          container.mixin.readinessProbe.withInitialDelaySeconds(10) +
+          container.mixin.readinessProbe.withPeriodSeconds(30) +
+          container.mixin.readinessProbe.httpGet.withPort($.thanos.bucket.service.spec.ports[0].port) +
+          container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
+          container.mixin.readinessProbe.httpGet.withPath('/-/ready');
 
         deployment.new(tb.name, 1, c, $.thanos.bucket.deployment.metadata.labels) +
         deployment.mixin.metadata.withNamespace(tb.namespace) +
         deployment.mixin.metadata.withLabels({ 'app.kubernetes.io/name': tb.name }) +
-        deployment.mixin.spec.selector.withMatchLabels(tb.labels),
+        deployment.mixin.spec.selector.withMatchLabels(tb.labels) +
+        deployment.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120),
     },
   },
 }
