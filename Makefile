@@ -3,8 +3,8 @@ JSONNET_FMT := jsonnetfmt -n 2 --max-blank-lines 2 --string-style s --comment-st
 CONTAINER_CMD:=docker run --rm \
 		-u="$(shell id -u):$(shell id -g)" \
 		-v "$(shell go env GOCACHE):/.cache/go-build" \
-		-v "$(PWD):/go/src/github.com/metalmatze/kube-thanos:Z" \
-		-w "/go/src/github.com/metalmatze/kube-thanos" \
+		-v "$(PWD):/go/src/github.com/thanos-io/kube-thanos:Z" \
+		-w "/go/src/github.com/thanos-io/kube-thanos" \
 		-e USER=deadbeef \
 		-e GO111MODULE=on \
 		quay.io/coreos/jsonnet-ci
