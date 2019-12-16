@@ -17,7 +17,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           spec+: {
             template+: {
               spec+: {
-                volumes:: null,
+                volumes: null,
               },
             },
             volumeClaimTemplates::: [

@@ -71,6 +71,7 @@ spec:
           name: thanos-receive-data
           readOnly: false
       terminationGracePeriodSeconds: 120
+      volumes: null
   volumeClaimTemplates:
   - metadata:
       name: thanos-receive-data
