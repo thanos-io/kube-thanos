@@ -62,6 +62,7 @@ spec:
           name: thanos-store-data
           readOnly: false
       terminationGracePeriodSeconds: 120
+      volumes: null
   volumeClaimTemplates:
   - metadata:
       name: thanos-store-data
