@@ -1,11 +1,11 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: thanos-rule
+  name: thanos-ruler
   namespace: monitoring
 spec:
   endpoints:
   - port: http
   selector:
     matchLabels:
-      app.kubernetes.io/name: thanos-rule
+      app.kubernetes.io/name: thanos-ruler
