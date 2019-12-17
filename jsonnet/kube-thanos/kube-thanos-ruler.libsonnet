@@ -35,7 +35,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           ],
         ) +
         service.mixin.metadata.withNamespace(tr.namespace) +
-        service.mixin.metadata.withLabels(tr.labels),
+        service.mixin.metadata.withLabels(tr.labels) +
+        service.mixin.spec.withClusterIp('None'),
 
       statefulSet:
         local statefulSet = k.apps.v1.statefulSet;
