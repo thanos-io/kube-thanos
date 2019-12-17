@@ -12,7 +12,7 @@ local kt =
   (import 'kube-thanos/kube-thanos-sidecar.libsonnet') +
   (import 'kube-thanos/kube-thanos-servicemonitors.libsonnet') +
   (import 'kube-thanos/kube-thanos-bucket.libsonnet') +
-  (import 'kube-thanos/kube-thanos-rule.libsonnet') +
+  (import 'kube-thanos/kube-thanos-ruler.libsonnet') +
   {
     thanos+:: {
       // This is just an example image, set what you need
@@ -45,4 +45,4 @@ local kt =
 { ['thanos-receive-' + name]: kt.thanos.receive[name] for name in std.objectFields(kt.thanos.receive) } +
 { ['thanos-bucket-' + name]: kt.thanos.bucket[name] for name in std.objectFields(kt.thanos.bucket) } +
 { ['thanos-store-' + name]: kt.thanos.store[name] for name in std.objectFields(kt.thanos.store) }
-{ ['thanos-rule-' + name]: kt.thanos.rule[name] for name in std.objectFields(kt.thanos.rule) }
+{ ['thanos-ruler-' + name]: kt.thanos.ruler[name] for name in std.objectFields(kt.thanos.ruler) }

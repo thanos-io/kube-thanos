@@ -5,9 +5,9 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     namespace:: 'monitoring',
     image:: error 'must set thanos image',
 
-    rule+: {
+    ruler+: {
       local tr = self,
-      name:: 'thanos-rule',
+      name:: 'thanos-ruler',
       namespace:: $.thanos.namespace,
       image:: $.thanos.image,
       replicas:: 1,
@@ -52,9 +52,9 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
               '--grpc-address=0.0.0.0:%d' % tr.ports.grpc,
               '--http-address=0.0.0.0:%d' % tr.ports.http,
               '--objstore.config=$(OBJSTORE_CONFIG)',
-              '--data-dir=/var/thanos/rule',
-              '--label=rule_replica="$(NAME)"',
-              '--alert.label-drop="rule_replica"',
+              '--data-dir=/var/thanos/ruler',
+              '--label=ruler_replica="$(NAME)"',
+              '--alert.label-drop="ruler_replica"',
               '--query=dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [
                 $.thanos.querier.service.metadata.name,
                 $.thanos.querier.service.metadata.namespace,
@@ -74,7 +74,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.resources.withRequests({ cpu: '100m', memory: '256Mi' }) +
           container.mixin.resources.withLimits({ cpu: '1', memory: '1Gi' }) +
           container.withVolumeMounts([
-            containerVolumeMount.new('thanos-rule-data', '/var/thanos/rule', false),
+            containerVolumeMount.new('thanos-ruler-data', '/var/thanos/ruler', false),
           ]) +
           container.withPorts([
             { name: 'grpc', containerPort: tr.ports.grpc },
@@ -93,13 +93,13 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
           container.mixin.readinessProbe.httpGet.withPath('/-/ready');
 
-        statefulSet.new(tr.name, tr.replicas, c, [], $.thanos.rule.statefulSet.metadata.labels) +
+        statefulSet.new(tr.name, tr.replicas, c, [], $.thanos.ruler.statefulSet.metadata.labels) +
         statefulSet.mixin.metadata.withNamespace(tr.namespace) +
         statefulSet.mixin.metadata.withLabels({ 'app.kubernetes.io/name': tr.name }) +
-        statefulSet.mixin.spec.withServiceName($.thanos.rule.service.metadata.name) +
+        statefulSet.mixin.spec.withServiceName($.thanos.ruler.service.metadata.name) +
         statefulSet.mixin.spec.selector.withMatchLabels(tr.labels) +
         statefulSet.mixin.spec.template.spec.withVolumes([
-          volume.fromEmptyDir('thanos-rule-data'),
+          volume.fromEmptyDir('thanos-ruler-data'),
         ]) + {
           spec+: {
             volumeClaimTemplates:: null,
@@ -116,8 +116,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
                 super.containers[0]
                 { args+: [
                   '--store=dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [
-                    $.thanos.rule.service.metadata.name,
-                    $.thanos.rule.service.metadata.namespace,
+                    $.thanos.ruler.service.metadata.name,
+                    $.thanos.ruler.service.metadata.namespace,
                   ],
                 ] },
               ],

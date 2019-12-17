@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/name: thanos-rule
-  name: thanos-rule
+    app.kubernetes.io/name: thanos-ruler
+  name: thanos-ruler
   namespace: monitoring
 spec:
   ports:
@@ -14,4 +14,4 @@ spec:
     port: 10902
     targetPort: http
   selector:
-    app.kubernetes.io/name: thanos-rule
+    app.kubernetes.io/name: thanos-ruler

@@ -72,17 +72,17 @@
         },
       },
     },
-    rule+: {
+    ruler+: {
       serviceMonitor+: {
         apiVersion: 'monitoring.coreos.com/v1',
         kind: 'ServiceMonitor',
         metadata+: {
-          name: $.thanos.rule.name,
-          namespace: $.thanos.rule.namespace,
+          name: $.thanos.ruler.name,
+          namespace: $.thanos.ruler.namespace,
         },
         spec: {
           selector: {
-            matchLabels: $.thanos.rule.service.metadata.labels,
+            matchLabels: $.thanos.ruler.service.metadata.labels,
           },
           endpoints: [
             { port: 'http' },
