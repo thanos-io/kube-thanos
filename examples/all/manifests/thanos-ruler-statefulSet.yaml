@@ -25,7 +25,7 @@ spec:
         - --data-dir=/var/thanos/ruler
         - --label=ruler_replica="$(NAME)"
         - --alert.label-drop="ruler_replica"
-        - --query=dnssrv+_grpc._tcp.thanos-querier.monitoring.svc.cluster.local
+        - --query=dnssrv+_http._tcp.thanos-querier.monitoring.svc.cluster.local
         env:
         - name: NAME
           valueFrom:
