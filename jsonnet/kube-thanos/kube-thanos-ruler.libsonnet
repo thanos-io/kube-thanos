@@ -56,7 +56,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
               '--data-dir=/var/thanos/ruler',
               '--label=ruler_replica="$(NAME)"',
               '--alert.label-drop="ruler_replica"',
-              '--query=dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [
+              '--query=dnssrv+_http._tcp.%s.%s.svc.cluster.local' % [
                 $.thanos.querier.service.metadata.name,
                 $.thanos.querier.service.metadata.namespace,
               ],
