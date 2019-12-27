@@ -44,5 +44,5 @@ local kt =
 { ['thanos-querier-' + name]: kt.thanos.querier[name] for name in std.objectFields(kt.thanos.querier) } +
 { ['thanos-receive-' + name]: kt.thanos.receive[name] for name in std.objectFields(kt.thanos.receive) } +
 { ['thanos-bucket-' + name]: kt.thanos.bucket[name] for name in std.objectFields(kt.thanos.bucket) } +
-{ ['thanos-store-' + name]: kt.thanos.store[name] for name in std.objectFields(kt.thanos.store) }
+{ ['thanos-store-' + name]: kt.thanos.store[name] for name in std.objectFields(kt.thanos.store) } +
 { ['thanos-ruler-' + name]: kt.thanos.ruler[name] for name in std.objectFields(kt.thanos.ruler) }
