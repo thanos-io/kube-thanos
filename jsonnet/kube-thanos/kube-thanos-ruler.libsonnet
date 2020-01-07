@@ -116,6 +116,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
               containers: [
                 super.containers[0]
                 { args+: [
+                  '--query.replica-label=ruler_replica',
                   '--store=dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [
                     $.thanos.ruler.service.metadata.name,
                     $.thanos.ruler.service.metadata.namespace,
