@@ -31,6 +31,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       deployment:
         local deployment = k.apps.v1.deployment;
         local container = deployment.mixin.spec.template.spec.containersType;
+        local affinity = deployment.mixin.spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecutionType;
+        local matchExpression = affinity.mixin.podAffinityTerm.labelSelector.matchExpressionsType;
 
         local c =
           container.new($.thanos.querier.deployment.metadata.name, tq.image) +
@@ -63,7 +65,19 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         deployment.mixin.metadata.withNamespace(tq.namespace) +
         deployment.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.querier.deployment.metadata.name }) +
         deployment.mixin.spec.selector.withMatchLabels($.thanos.querier.deployment.metadata.labels) +
-        deployment.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120),
+        deployment.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
+        deployment.mixin.spec.template.spec.affinity.podAntiAffinity.withPreferredDuringSchedulingIgnoredDuringExecution([
+          affinity.new() +
+          affinity.withWeight(100) +
+          affinity.mixin.podAffinityTerm.withNamespaces(tq.namespace) +
+          affinity.mixin.podAffinityTerm.withTopologyKey('kubernetes.io/hostname') +
+          affinity.mixin.podAffinityTerm.labelSelector.withMatchExpressions([
+            matchExpression.new() +
+            matchExpression.withKey('app.kubernetes.io/name') +
+            matchExpression.withOperator('In') +
+            matchExpression.withValues([$.thanos.querier.deployment.metadata.labels['app.kubernetes.io/name']]),
+          ]),
+        ]),
     },
   },
 }

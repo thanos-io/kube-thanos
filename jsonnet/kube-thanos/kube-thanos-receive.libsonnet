@@ -29,6 +29,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
       statefulSet:
         local sts = k.apps.v1.statefulSet;
+        local affinity = sts.mixin.spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecutionType;
+        local matchExpression = affinity.mixin.podAffinityTerm.labelSelector.matchExpressionsType;
         local volume = sts.mixin.spec.template.spec.volumesType;
         local container = sts.mixin.spec.template.spec.containersType;
         local containerEnv = container.envType;
@@ -83,6 +85,18 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         sts.mixin.spec.withServiceName($.thanos.receive.service.metadata.name) +
         sts.mixin.spec.selector.withMatchLabels($.thanos.receive.statefulSet.metadata.labels) +
         sts.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
+        sts.mixin.spec.template.spec.affinity.podAntiAffinity.withPreferredDuringSchedulingIgnoredDuringExecution([
+          affinity.new() +
+          affinity.withWeight(100) +
+          affinity.mixin.podAffinityTerm.withNamespaces(tr.namespace) +
+          affinity.mixin.podAffinityTerm.withTopologyKey('kubernetes.io/hostname') +
+          affinity.mixin.podAffinityTerm.labelSelector.withMatchExpressions([
+            matchExpression.new() +
+            matchExpression.withKey('app.kubernetes.io/name') +
+            matchExpression.withOperator('In') +
+            matchExpression.withValues([$.thanos.receive.statefulSet.metadata.labels['app.kubernetes.io/name']]),
+          ]),
+        ]) +
         sts.mixin.spec.template.spec.withVolumes([
           volume.fromEmptyDir('data'),
         ]) +
@@ -91,7 +105,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             volumeClaimTemplates:: null,
           },
         },
-
     },
 
     querier+: {
