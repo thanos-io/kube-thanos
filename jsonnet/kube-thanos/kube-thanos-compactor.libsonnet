@@ -57,14 +57,15 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             containerVolumeMount.new('thanos-compactor-data', '/var/thanos/compactor', false),
           ]) +
           container.mixin.livenessProbe +
-          container.mixin.livenessProbe.withPeriodSeconds(30) +
-          container.mixin.livenessProbe.withFailureThreshold(4) +
+          container.mixin.livenessProbe.withPeriodSeconds(5) +
+          container.mixin.livenessProbe.withFailureThreshold(24) +
           container.mixin.livenessProbe.httpGet.withPort($.thanos.compactor.service.spec.ports[0].port) +
           container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
           container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
           container.mixin.readinessProbe +
           container.mixin.readinessProbe.withInitialDelaySeconds(10) +
-          container.mixin.readinessProbe.withPeriodSeconds(30) +
+          container.mixin.readinessProbe.withPeriodSeconds(5) +
+          container.mixin.readinessProbe.withFailureThreshold(18) +
           container.mixin.readinessProbe.httpGet.withPort($.thanos.compactor.service.spec.ports[0].port) +
           container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
           container.mixin.readinessProbe.httpGet.withPath('/-/ready');
