@@ -55,8 +55,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
           container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
           container.mixin.readinessProbe +
-          container.mixin.readinessProbe.withInitialDelaySeconds(10) +
-          container.mixin.readinessProbe.withPeriodSeconds(30) +
+          container.mixin.readinessProbe.withPeriodSeconds(5) +
+          container.mixin.readinessProbe.withFailureThreshold(20) +
           container.mixin.readinessProbe.httpGet.withPort($.thanos.querier.service.spec.ports[1].port) +
           container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
           container.mixin.readinessProbe.httpGet.withPath('/-/ready');

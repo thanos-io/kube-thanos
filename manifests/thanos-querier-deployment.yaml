@@ -51,12 +51,12 @@ spec:
         - containerPort: 9090
           name: http
         readinessProbe:
+          failureThreshold: 20
           httpGet:
             path: /-/ready
             port: 9090
             scheme: HTTP
-          initialDelaySeconds: 10
-          periodSeconds: 30
+          periodSeconds: 5
         resources:
           limits:
             cpu: "1"
