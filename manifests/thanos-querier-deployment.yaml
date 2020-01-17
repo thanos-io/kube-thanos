@@ -24,12 +24,12 @@ spec:
         - --store=dnssrv+_grpc._tcp.thanos-store.monitoring.svc.cluster.local
         image: quay.io/thanos/thanos:v0.9.0
         livenessProbe:
-          failureThreshold: 4
+          failureThreshold: 24
           httpGet:
             path: /-/healthy
             port: 9090
             scheme: HTTP
-          periodSeconds: 30
+          periodSeconds: 5
         name: thanos-querier
         ports:
         - containerPort: 10901
@@ -37,12 +37,13 @@ spec:
         - containerPort: 9090
           name: http
         readinessProbe:
+          failureThreshold: 18
           httpGet:
             path: /-/ready
             port: 9090
             scheme: HTTP
           initialDelaySeconds: 10
-          periodSeconds: 30
+          periodSeconds: 5
         resources:
           limits:
             cpu: "1"
