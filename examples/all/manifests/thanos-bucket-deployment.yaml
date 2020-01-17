@@ -28,23 +28,22 @@ spec:
               name: thanos-objectstorage
         image: quay.io/thanos/thanos:v0.9.0
         livenessProbe:
-          failureThreshold: 24
+          failureThreshold: 4
           httpGet:
             path: /-/healthy
             port: 8080
             scheme: HTTP
-          periodSeconds: 5
+          periodSeconds: 30
         name: thanos-bucket
         ports:
         - containerPort: 8080
           name: http
         readinessProbe:
-          failureThreshold: 18
+          failureThreshold: 20
           httpGet:
             path: /-/ready
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 10
           periodSeconds: 5
         resources:
           limits:

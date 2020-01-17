@@ -38,12 +38,12 @@ spec:
               name: thanos-objectstorage
         image: quay.io/thanos/thanos:v0.9.0
         livenessProbe:
-          failureThreshold: 24
+          failureThreshold: 8
           httpGet:
             path: /-/healthy
             port: 10902
             scheme: HTTP
-          periodSeconds: 5
+          periodSeconds: 30
         name: thanos-receive
         ports:
         - containerPort: 10901
@@ -53,12 +53,11 @@ spec:
         - containerPort: 19291
           name: remote-write
         readinessProbe:
-          failureThreshold: 18
+          failureThreshold: 20
           httpGet:
             path: /-/ready
             port: 10902
             scheme: HTTP
-          initialDelaySeconds: 10
           periodSeconds: 5
         resources:
           limits:
