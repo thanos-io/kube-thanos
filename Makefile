@@ -26,9 +26,13 @@ manifests: vendor example.jsonnet build.sh
 	rm -rf manifests
 	./build.sh
 
-vendor: jsonnetfile.json jsonnetfile.lock.json
+jb:
+	curl -L -o jb "https://github.com/jsonnet-bundler/jsonnet-bundler/releases/download/v0.2.0/jb-$(shell go env GOOS)-$(shell go env GOARCH)"
+	chmod +x jb
+
+vendor: jb jsonnetfile.json jsonnetfile.lock.json
 	rm -rf vendor
-	jb install
+	./jb install
 
 .PHONY: fmt
 fmt:

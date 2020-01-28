@@ -72,8 +72,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
               tr.objectStorageConfig.key,
             ),
           ]) +
-          container.mixin.resources.withRequests({ cpu: '100m', memory: '256Mi' }) +
-          container.mixin.resources.withLimits({ cpu: '1', memory: '1Gi' }) +
           container.withVolumeMounts([
             containerVolumeMount.new('thanos-ruler-data', '/var/thanos/ruler', false),
           ]) +

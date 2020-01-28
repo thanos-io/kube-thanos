@@ -42,8 +42,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             '--grpc-address=0.0.0.0:%d' % $.thanos.querier.service.spec.ports[0].port,
             '--http-address=0.0.0.0:%d' % $.thanos.querier.service.spec.ports[1].port,
           ]) +
-          container.mixin.resources.withRequests({ cpu: '100m', memory: '256Mi' }) +
-          container.mixin.resources.withLimits({ cpu: '1', memory: '1Gi' }) +
           container.withPorts([
             { name: 'grpc', containerPort: $.thanos.querier.service.spec.ports[0].port },
             { name: 'http', containerPort: $.thanos.querier.service.spec.ports[1].port },

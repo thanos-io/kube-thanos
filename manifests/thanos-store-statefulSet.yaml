@@ -50,13 +50,6 @@ spec:
             port: 10902
             scheme: HTTP
           periodSeconds: 5
-        resources:
-          limits:
-            cpu: "2"
-            memory: 8Gi
-          requests:
-            cpu: 500m
-            memory: 1Gi
         volumeMounts:
         - mountPath: /var/thanos/store
           name: thanos-store-data

@@ -45,11 +45,4 @@ spec:
             port: 8080
             scheme: HTTP
           periodSeconds: 5
-        resources:
-          limits:
-            cpu: 250m
-            memory: 512Mi
-          requests:
-            cpu: 100m
-            memory: 256Mi
       terminationGracePeriodSeconds: 120
