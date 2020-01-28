@@ -51,8 +51,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           container.withPorts([
             { name: 'http', containerPort: $.thanos.compactor.service.spec.ports[0].port },
           ]) +
-          container.mixin.resources.withRequests({ cpu: '100m', memory: '1Gi' }) +
-          container.mixin.resources.withLimits({ cpu: '500m', memory: '2Gi' }) +
           container.withVolumeMounts([
             containerVolumeMount.new('thanos-compactor-data', '/var/thanos/compactor', false),
           ]) +

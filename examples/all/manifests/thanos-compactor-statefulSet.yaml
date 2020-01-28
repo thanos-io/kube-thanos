@@ -50,13 +50,6 @@ spec:
             port: 10902
             scheme: HTTP
           periodSeconds: 5
-        resources:
-          limits:
-            cpu: 500m
-            memory: 2Gi
-          requests:
-            cpu: 100m
-            memory: 1Gi
         volumeMounts:
         - mountPath: /var/thanos/compactor
           name: thanos-compactor-data

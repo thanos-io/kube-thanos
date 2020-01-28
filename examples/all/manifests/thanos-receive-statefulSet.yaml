@@ -73,13 +73,6 @@ spec:
             port: 10902
             scheme: HTTP
           periodSeconds: 5
-        resources:
-          limits:
-            cpu: "1"
-            memory: 1Gi
-          requests:
-            cpu: 100m
-            memory: 512Mi
         volumeMounts:
         - mountPath: /var/thanos/receive
           name: thanos-receive-data

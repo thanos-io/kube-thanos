@@ -46,8 +46,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
               tb.objectStorageConfig.key,
             ),
           ]) +
-          container.mixin.resources.withRequests({ cpu: '100m', memory: '256Mi' }) +
-          container.mixin.resources.withLimits({ cpu: '250m', memory: '512Mi' }) +
           container.withPorts([
             { name: 'http', containerPort: tb.ports.http },
           ]) +
