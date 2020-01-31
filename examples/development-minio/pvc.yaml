@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: minio
-  namespace: monitoring
+  namespace: thanos
   labels:
     app.kubernetes.io/name: minio
 spec:

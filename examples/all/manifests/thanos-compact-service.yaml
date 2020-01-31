@@ -2,18 +2,18 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/component: thanos-bucket
-    app.kubernetes.io/instance: thanos-bucket
+    app.kubernetes.io/component: thanos-compact
+    app.kubernetes.io/instance: thanos-compact
     app.kubernetes.io/name: thanos
     app.kubernetes.io/version: v0.10.1
-  name: thanos-bucket
+  name: thanos-compact
   namespace: thanos
 spec:
   ports:
   - name: http
-    port: 8080
+    port: 10902
     targetPort: http
   selector:
-    app.kubernetes.io/component: thanos-bucket
-    app.kubernetes.io/instance: thanos-bucket
+    app.kubernetes.io/component: thanos-compact
+    app.kubernetes.io/instance: thanos-compact
     app.kubernetes.io/name: thanos

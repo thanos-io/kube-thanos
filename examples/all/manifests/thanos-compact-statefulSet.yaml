@@ -1,33 +1,36 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   labels:
-    app.kubernetes.io/component: thanos-bucket
-    app.kubernetes.io/instance: thanos-bucket
+    app.kubernetes.io/component: thanos-compact
+    app.kubernetes.io/instance: thanos-compact
     app.kubernetes.io/name: thanos
     app.kubernetes.io/version: v0.10.1
-  name: thanos-bucket
+  name: thanos-compact
   namespace: thanos
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: thanos-bucket
-      app.kubernetes.io/instance: thanos-bucket
+      app.kubernetes.io/component: thanos-compact
+      app.kubernetes.io/instance: thanos-compact
       app.kubernetes.io/name: thanos
+  serviceName: thanos-compact
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: thanos-bucket
-        app.kubernetes.io/instance: thanos-bucket
+        app.kubernetes.io/component: thanos-compact
+        app.kubernetes.io/instance: thanos-compact
         app.kubernetes.io/name: thanos
         app.kubernetes.io/version: v0.10.1
     spec:
       containers:
       - args:
-        - bucket
-        - web
+        - compact
+        - --wait
         - --objstore.config=$(OBJSTORE_CONFIG)
+        - --data-dir=/var/thanos/compact
+        - --debug.accept-malformed-index
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
@@ -39,18 +42,32 @@ spec:
           failureThreshold: 4
           httpGet:
             path: /-/healthy
-            port: 8080
+            port: 10902
             scheme: HTTP
           periodSeconds: 30
-        name: thanos-bucket
+        name: thanos-compact
         ports:
-        - containerPort: 8080
+        - containerPort: 10902
           name: http
         readinessProbe:
           failureThreshold: 20
           httpGet:
             path: /-/ready
-            port: 8080
+            port: 10902
             scheme: HTTP
           periodSeconds: 5
+        volumeMounts:
+        - mountPath: /var/thanos/compact
+          name: data
+          readOnly: false
       terminationGracePeriodSeconds: 120
+      volumes: null
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi

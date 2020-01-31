@@ -1,125 +1,258 @@
 local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
 {
-  thanos+:: {
-    receive: {
-      local tr = self,
-      name:: 'thanos-receive',
-      namespace:: $.thanos.namespace,
-      image:: $.thanos.image,
-      replicas:: 3,
-      objectStorageConfig:: $.thanos.objectStorageConfig,
+  local tr = self,
 
-      service:
-        local service = k.core.v1.service;
-        local ports = service.mixin.spec.portsType;
+  config:: {
+    name: error 'must provide name',
+    namespace: error 'must provide namespace',
+    version: error 'must provide version',
+    image: error 'must provide image',
+    replicas: error 'must provide replicas',
+    replicationFactor: error 'must provide replication factor',
+    objectStorageConfig: error 'must provide objectStorageConfig',
 
-        service.new(
-          tr.name,
-          $.thanos.receive.statefulSet.metadata.labels,
-          [
-            ports.newNamed('grpc', 10901, 10901),
-            ports.newNamed('http', 10902, 10902),
-            ports.newNamed('remote-write', 19291, 19291),
-          ]
-        ) +
-        service.mixin.metadata.withNamespace(tr.namespace) +
-        service.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.receive.service.metadata.name }) +
-        service.mixin.spec.withClusterIp('None'),
-
-      statefulSet:
-        local sts = k.apps.v1.statefulSet;
-        local affinity = sts.mixin.spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecutionType;
-        local matchExpression = affinity.mixin.podAffinityTerm.labelSelector.matchExpressionsType;
-        local volume = sts.mixin.spec.template.spec.volumesType;
-        local container = sts.mixin.spec.template.spec.containersType;
-        local containerEnv = container.envType;
-        local containerVolumeMount = container.volumeMountsType;
-
-        local c =
-          container.new($.thanos.receive.statefulSet.metadata.name, tr.image) +
-          container.withArgs([
-            'receive',
-            '--grpc-address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[0].port,
-            '--http-address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[1].port,
-            '--remote-write.address=0.0.0.0:%d' % $.thanos.receive.service.spec.ports[2].port,
-            '--objstore.config=$(OBJSTORE_CONFIG)',
-            '--tsdb.path=/var/thanos/receive',
-            '--label=replica="$(NAME)"',
-            '--label=receive="true"',
-          ]) +
-          container.withEnv([
-            containerEnv.fromFieldPath('NAME', 'metadata.name'),
-            containerEnv.fromSecretRef(
-              'OBJSTORE_CONFIG',
-              tr.objectStorageConfig.name,
-              tr.objectStorageConfig.key,
-            ),
-          ]) +
-          container.withPorts([
-            { name: 'grpc', containerPort: $.thanos.receive.service.spec.ports[0].port },
-            { name: 'http', containerPort: $.thanos.receive.service.spec.ports[1].port },
-            { name: 'remote-write', containerPort: $.thanos.receive.service.spec.ports[2].port },
-          ]) +
-          container.withVolumeMounts([
-            containerVolumeMount.new(tr.name + '-data', '/var/thanos/receive', false),
-          ]) +
-          container.mixin.livenessProbe +
-          container.mixin.livenessProbe.withPeriodSeconds(30) +
-          container.mixin.livenessProbe.withFailureThreshold(8) +
-          container.mixin.livenessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port) +
-          container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
-          container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
-          container.mixin.readinessProbe +
-          container.mixin.readinessProbe.withPeriodSeconds(5) +
-          container.mixin.readinessProbe.withFailureThreshold(20) +
-          container.mixin.readinessProbe.httpGet.withPort($.thanos.receive.service.spec.ports[1].port) +
-          container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
-          container.mixin.readinessProbe.httpGet.withPath('/-/ready');
-
-        sts.new(tr.name, tr.replicas, c, [], $.thanos.receive.statefulSet.metadata.labels) +
-        sts.mixin.metadata.withNamespace(tr.namespace) +
-        sts.mixin.metadata.withLabels({ 'app.kubernetes.io/name': $.thanos.receive.statefulSet.metadata.name }) +
-        sts.mixin.spec.withServiceName($.thanos.receive.service.metadata.name) +
-        sts.mixin.spec.selector.withMatchLabels($.thanos.receive.statefulSet.metadata.labels) +
-        sts.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
-        sts.mixin.spec.template.spec.affinity.podAntiAffinity.withPreferredDuringSchedulingIgnoredDuringExecution([
-          affinity.new() +
-          affinity.withWeight(100) +
-          affinity.mixin.podAffinityTerm.withNamespaces(tr.namespace) +
-          affinity.mixin.podAffinityTerm.withTopologyKey('kubernetes.io/hostname') +
-          affinity.mixin.podAffinityTerm.labelSelector.withMatchExpressions([
-            matchExpression.new() +
-            matchExpression.withKey('app.kubernetes.io/name') +
-            matchExpression.withOperator('In') +
-            matchExpression.withValues([$.thanos.receive.statefulSet.metadata.labels['app.kubernetes.io/name']]),
-          ]),
-        ]) +
-        sts.mixin.spec.template.spec.withVolumes([
-          volume.fromEmptyDir('data'),
-        ]) +
-        {
-          spec+: {
-            volumeClaimTemplates:: null,
-          },
-        },
+    commonLabels:: {
+      'app.kubernetes.io/name': 'thanos',
+      'app.kubernetes.io/instance': tr.config.name,
+      'app.kubernetes.io/version': tr.config.version,
+      'app.kubernetes.io/component': 'thanos-receive',
     },
 
-    querier+: {
-      deployment+: {
-        spec+: {
-          template+: {
-            spec+: {
-              containers: [
-                super.containers[0]
-                { args+: [
-                  '--store=dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [
-                    $.thanos.receive.service.metadata.name,
-                    $.thanos.receive.service.metadata.namespace,
-                  ],
-                ] },
-              ],
-            },
+    podLabelSelector:: {
+      [labelName]: tr.config.commonLabels[labelName]
+      for labelName in std.objectFields(tr.config.commonLabels)
+      if !std.setMember(labelName, ['app.kubernetes.io/version'])
+    },
+  },
+
+  service:
+    local service = k.core.v1.service;
+    local ports = service.mixin.spec.portsType;
+
+    service.new(
+      tr.config.name,
+      tr.config.podLabelSelector,
+      [
+        ports.newNamed('grpc', 10901, 10901),
+        ports.newNamed('http', 10902, 10902),
+        ports.newNamed('remote-write', 19291, 19291),
+      ]
+    ) +
+    service.mixin.metadata.withNamespace(tr.config.namespace) +
+    service.mixin.metadata.withLabels(tr.config.commonLabels) +
+    service.mixin.spec.withClusterIp('None'),
+
+  statefulSet:
+    local sts = k.apps.v1.statefulSet;
+    local affinity = sts.mixin.spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecutionType;
+    local matchExpression = affinity.mixin.podAffinityTerm.labelSelector.matchExpressionsType;
+    local volume = sts.mixin.spec.template.spec.volumesType;
+    local container = sts.mixin.spec.template.spec.containersType;
+    local containerEnv = container.envType;
+    local containerVolumeMount = container.volumeMountsType;
+
+    local replicationFactor = tr.config.replicationFactor;
+    local localEndpointFlag = '--receive.local-endpoint=http://$(NAME).%s.$(NAMESPACE).svc.cluster.local:%d/api/v1/receive' % [tr.config.name, tr.service.spec.ports[2].port];
+
+    local c =
+      container.new('thanos-receive', tr.config.image) +
+      container.withArgs([
+        'receive',
+        '--grpc-address=0.0.0.0:%d' % tr.service.spec.ports[0].port,
+        '--http-address=0.0.0.0:%d' % tr.service.spec.ports[1].port,
+        '--remote-write.address=0.0.0.0:%d' % tr.service.spec.ports[2].port,
+        '--receive.replication-factor=%d' % replicationFactor,
+        '--objstore.config=$(OBJSTORE_CONFIG)',
+        '--tsdb.path=/var/thanos/receive',
+        '--label=replica="$(NAME)"',
+        '--label=receive="true"',
+        localEndpointFlag,
+      ]) +
+      container.withEnv([
+        containerEnv.fromFieldPath('NAME', 'metadata.name'),
+        containerEnv.fromFieldPath('NAMESPACE', 'metadata.namespace'),
+        containerEnv.fromSecretRef(
+          'OBJSTORE_CONFIG',
+          tr.config.objectStorageConfig.name,
+          tr.config.objectStorageConfig.key,
+        ),
+      ]) +
+      container.withPorts([
+        { name: 'grpc', containerPort: tr.service.spec.ports[0].port },
+        { name: 'http', containerPort: tr.service.spec.ports[1].port },
+        { name: 'remote-write', containerPort: tr.service.spec.ports[2].port },
+      ]) +
+      container.withVolumeMounts([
+        containerVolumeMount.new('data', '/var/thanos/receive', false),
+      ]) +
+      container.mixin.livenessProbe +
+      container.mixin.livenessProbe.withPeriodSeconds(30) +
+      container.mixin.livenessProbe.withFailureThreshold(8) +
+      container.mixin.livenessProbe.httpGet.withPort(tr.service.spec.ports[1].port) +
+      container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
+      container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
+      container.mixin.readinessProbe +
+      container.mixin.readinessProbe.withPeriodSeconds(5) +
+      container.mixin.readinessProbe.withFailureThreshold(20) +
+      container.mixin.readinessProbe.httpGet.withPort(tr.service.spec.ports[1].port) +
+      container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
+      container.mixin.readinessProbe.httpGet.withPath('/-/ready');
+
+    sts.new(tr.config.name, tr.config.replicas, c, [], tr.config.commonLabels) +
+    sts.mixin.metadata.withNamespace(tr.config.namespace) +
+    sts.mixin.metadata.withLabels(tr.config.commonLabels) +
+    sts.mixin.spec.withServiceName(tr.service.metadata.name) +
+    sts.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
+    sts.mixin.spec.template.spec.withVolumes([
+      volume.fromEmptyDir('data'),
+    ]) +
+    sts.mixin.spec.template.spec.affinity.podAntiAffinity.withPreferredDuringSchedulingIgnoredDuringExecution([
+      affinity.new() +
+      affinity.withWeight(100) +
+      affinity.mixin.podAffinityTerm.withNamespaces(tr.config.namespace) +
+      affinity.mixin.podAffinityTerm.withTopologyKey('kubernetes.io/hostname') +
+      affinity.mixin.podAffinityTerm.labelSelector.withMatchExpressions([
+        matchExpression.new() +
+        matchExpression.withKey('app.kubernetes.io/instance') +
+        matchExpression.withOperator('In') +
+        matchExpression.withValues([tr.statefulSet.metadata.labels['app.kubernetes.io/instance']]),
+      ]),
+    ]) +
+    sts.mixin.spec.selector.withMatchLabels(tr.config.podLabelSelector) +
+    {
+      spec+: {
+        volumeClaimTemplates: null,
+      },
+    },
+
+  withServiceMonitor:: {
+    local tr = self,
+    serviceMonitor: {
+      apiVersion: 'monitoring.coreos.com/v1',
+      kind: 'ServiceMonitor',
+      metadata+: {
+        name: tr.config.name,
+        namespace: tr.config.namespace,
+        labels: tr.config.commonLabels,
+      },
+      spec: {
+        selector: {
+          matchLabels: tr.config.podLabelSelector,
+        },
+        endpoints: [
+          { port: 'http' },
+        ],
+      },
+    },
+  },
+
+  withPodDisruptionBudget:: {
+    local tr = self,
+    podDisruptionBudget:
+      local pdb = k.policy.v1beta1.podDisruptionBudget;
+      pdb.new() +
+      pdb.mixin.spec.withMinAvailable(tr.config.replicas - (std.floor(tr.config.replicationFactor / 2))) +
+      pdb.mixin.spec.selector.withMatchLabels(tr.config.podLabelSelector) +
+      pdb.mixin.metadata.withName(tr.config.name) +
+      pdb.mixin.metadata.withNamespace(tr.config.namespace),
+  },
+
+  withVolumeClaimTemplate:: {
+    local tr = self,
+    config+:: {
+      volumeClaimTemplate: error 'must provide volumeClaimTemplate',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            volumes: null,
+          },
+        },
+        volumeClaimTemplates: [tr.config.volumeClaimTemplate {
+          metadata+: {
+            name: 'data',
+          },
+        }],
+      },
+    },
+  },
+
+  withRetention:: {
+    local tr = self,
+    config+:: {
+      retention: error 'must provide retention',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-receive' then c {
+                args+: [
+                  '--tsdb.retention=' + tr.config.retention,
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
+  withHashringConfigMap:: {
+    local tr = self,
+    config+:: {
+      hashringConfigMapName: error 'must provide hashringConfigMapName',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-receive' then c {
+                args+: [
+                  '--receive.hashrings-file=/var/lib/thanos-receive/hashrings.json',
+                ],
+                volumeMounts+: [
+                  { name: 'hashring-config', mountPath: '/var/lib/thanos-receive' },
+                ],
+              } else c
+              for c in super.containers
+            ],
+
+            local volume = k.apps.v1.statefulSet.mixin.spec.template.spec.volumesType,
+            volumes: [
+              volume.withName('hashring-config') +
+              volume.mixin.configMap.withName(tr.config.hashringConfigMapName),
+            ],
+          },
+        },
+      },
+    },
+  },
+
+  withResources:: {
+    local tr = self,
+    config+:: {
+      resources: error 'must provide resources',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-receive' then c {
+                resources: tr.config.resources,
+              } else c
+              for c in super.containers
+            ],
           },
         },
       },
