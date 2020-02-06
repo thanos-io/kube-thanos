@@ -2,18 +2,26 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    app.kubernetes.io/component: object-store-bucket-debugging
+    app.kubernetes.io/instance: thanos-bucket
     app.kubernetes.io/name: thanos-bucket
+    app.kubernetes.io/version: v0.10.1
   name: thanos-bucket
-  namespace: monitoring
+  namespace: thanos
 spec:
   replicas: 1
   selector:
     matchLabels:
+      app.kubernetes.io/component: object-store-bucket-debugging
+      app.kubernetes.io/instance: thanos-bucket
       app.kubernetes.io/name: thanos-bucket
   template:
     metadata:
       labels:
+        app.kubernetes.io/component: object-store-bucket-debugging
+        app.kubernetes.io/instance: thanos-bucket
         app.kubernetes.io/name: thanos-bucket
+        app.kubernetes.io/version: v0.10.1
     spec:
       containers:
       - args:
@@ -26,7 +34,7 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:v0.9.0
+        image: quay.io/thanos/thanos:v0.10.1
         livenessProbe:
           failureThreshold: 4
           httpGet:

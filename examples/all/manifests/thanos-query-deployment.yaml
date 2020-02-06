@@ -2,18 +2,26 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/name: thanos-querier
-  name: thanos-querier
-  namespace: monitoring
+    app.kubernetes.io/component: query-layer
+    app.kubernetes.io/instance: thanos-query
+    app.kubernetes.io/name: thanos-query
+    app.kubernetes.io/version: v0.10.1
+  name: thanos-query
+  namespace: thanos
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: thanos-querier
+      app.kubernetes.io/component: query-layer
+      app.kubernetes.io/instance: thanos-query
+      app.kubernetes.io/name: thanos-query
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: thanos-querier
+        app.kubernetes.io/component: query-layer
+        app.kubernetes.io/instance: thanos-query
+        app.kubernetes.io/name: thanos-query
+        app.kubernetes.io/version: v0.10.1
     spec:
       affinity:
         podAntiAffinity:
@@ -24,19 +32,22 @@ spec:
                 - key: app.kubernetes.io/name
                   operator: In
                   values:
-                  - thanos-querier
+                  - thanos-query
               namespaces:
-              - monitoring
+              - thanos
               topologyKey: kubernetes.io/hostname
             weight: 100
       containers:
       - args:
         - query
-        - --query.replica-label=prometheus_replica
         - --grpc-address=0.0.0.0:10901
         - --http-address=0.0.0.0:9090
-        - --store=dnssrv+_grpc._tcp.thanos-store.monitoring.svc.cluster.local
-        image: quay.io/thanos/thanos:v0.9.0
+        - --query.replica-label=prometheus_replica
+        - --query.replica-label=rule_replica
+        - --store=dnssrv+_grpc._tcp.thanos-receive.thanos.svc.cluster.local
+        - --store=dnssrv+_grpc._tcp.thanos-rule.thanos.svc.cluster.local
+        - --store=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local
+        image: quay.io/thanos/thanos:v0.10.1
         livenessProbe:
           failureThreshold: 4
           httpGet:
@@ -44,7 +55,7 @@ spec:
             port: 9090
             scheme: HTTP
           periodSeconds: 30
-        name: thanos-querier
+        name: thanos-query
         ports:
         - containerPort: 10901
           name: grpc

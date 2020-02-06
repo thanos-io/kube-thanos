@@ -2,19 +2,27 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
+    app.kubernetes.io/component: object-store-gateway
+    app.kubernetes.io/instance: thanos-store
     app.kubernetes.io/name: thanos-store
+    app.kubernetes.io/version: v0.10.1
   name: thanos-store
-  namespace: monitoring
+  namespace: thanos
 spec:
   replicas: 1
   selector:
     matchLabels:
+      app.kubernetes.io/component: object-store-gateway
+      app.kubernetes.io/instance: thanos-store
       app.kubernetes.io/name: thanos-store
   serviceName: thanos-store
   template:
     metadata:
       labels:
+        app.kubernetes.io/component: object-store-gateway
+        app.kubernetes.io/instance: thanos-store
         app.kubernetes.io/name: thanos-store
+        app.kubernetes.io/version: v0.10.1
     spec:
       containers:
       - args:
@@ -29,7 +37,7 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:v0.9.0
+        image: quay.io/thanos/thanos:v0.10.1
         livenessProbe:
           failureThreshold: 8
           httpGet:
@@ -52,17 +60,16 @@ spec:
           periodSeconds: 5
         volumeMounts:
         - mountPath: /var/thanos/store
-          name: thanos-store-data
+          name: data
           readOnly: false
       terminationGracePeriodSeconds: 120
       volumes: null
   volumeClaimTemplates:
   - metadata:
-      name: thanos-store-data
+      name: data
     spec:
       accessModes:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 50Gi
-      storageClassName: standard
+          storage: 10Gi

@@ -2,8 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio
-  namespace: monitoring
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: minio
   strategy:
     type: Recreate
   template:
@@ -14,9 +16,10 @@ spec:
       containers:
       - name: minio
         image: minio/minio
-        args:
-        - server
-        - /storage
+        command:
+        - /bin/sh
+        - -c
+        - "mkdir -p /storage/thanos && /usr/bin/minio server /storage"
         env:
         - name: MINIO_ACCESS_KEY
           value: "minio"

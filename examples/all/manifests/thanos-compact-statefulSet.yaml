@@ -2,35 +2,35 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app.kubernetes.io/component: object-store-gateway
-    app.kubernetes.io/instance: thanos-store
-    app.kubernetes.io/name: thanos-store
+    app.kubernetes.io/component: database-compactor
+    app.kubernetes.io/instance: thanos-compact
+    app.kubernetes.io/name: thanos-compact
     app.kubernetes.io/version: v0.10.1
-  name: thanos-store
+  name: thanos-compact
   namespace: thanos
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: object-store-gateway
-      app.kubernetes.io/instance: thanos-store
-      app.kubernetes.io/name: thanos-store
-  serviceName: thanos-store
+      app.kubernetes.io/component: database-compactor
+      app.kubernetes.io/instance: thanos-compact
+      app.kubernetes.io/name: thanos-compact
+  serviceName: thanos-compact
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: object-store-gateway
-        app.kubernetes.io/instance: thanos-store
-        app.kubernetes.io/name: thanos-store
+        app.kubernetes.io/component: database-compactor
+        app.kubernetes.io/instance: thanos-compact
+        app.kubernetes.io/name: thanos-compact
         app.kubernetes.io/version: v0.10.1
     spec:
       containers:
       - args:
-        - store
-        - --data-dir=/var/thanos/store
-        - --grpc-address=0.0.0.0:10901
-        - --http-address=0.0.0.0:10902
+        - compact
+        - --wait
         - --objstore.config=$(OBJSTORE_CONFIG)
+        - --data-dir=/var/thanos/compact
+        - --debug.accept-malformed-index
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
@@ -39,16 +39,14 @@ spec:
               name: thanos-objectstorage
         image: quay.io/thanos/thanos:v0.10.1
         livenessProbe:
-          failureThreshold: 8
+          failureThreshold: 4
           httpGet:
             path: /-/healthy
             port: 10902
             scheme: HTTP
           periodSeconds: 30
-        name: thanos-store
+        name: thanos-compact
         ports:
-        - containerPort: 10901
-          name: grpc
         - containerPort: 10902
           name: http
         readinessProbe:
@@ -59,7 +57,7 @@ spec:
             scheme: HTTP
           periodSeconds: 5
         volumeMounts:
-        - mountPath: /var/thanos/store
+        - mountPath: /var/thanos/compact
           name: data
           readOnly: false
       terminationGracePeriodSeconds: 120
