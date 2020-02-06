@@ -2,9 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app.kubernetes.io/component: thanos-rule
+    app.kubernetes.io/component: rule-evaluation-engine
     app.kubernetes.io/instance: thanos-rule
-    app.kubernetes.io/name: thanos
+    app.kubernetes.io/name: thanos-rule
     app.kubernetes.io/version: v0.10.1
   name: thanos-rule
   namespace: thanos
@@ -12,16 +12,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: thanos-rule
+      app.kubernetes.io/component: rule-evaluation-engine
       app.kubernetes.io/instance: thanos-rule
-      app.kubernetes.io/name: thanos
+      app.kubernetes.io/name: thanos-rule
   serviceName: thanos-rule
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: thanos-rule
+        app.kubernetes.io/component: rule-evaluation-engine
         app.kubernetes.io/instance: thanos-rule
-        app.kubernetes.io/name: thanos
+        app.kubernetes.io/name: thanos-rule
         app.kubernetes.io/version: v0.10.1
     spec:
       containers:

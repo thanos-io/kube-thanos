@@ -2,9 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/component: thanos-query
+    app.kubernetes.io/component: query-layer
     app.kubernetes.io/instance: thanos-query
-    app.kubernetes.io/name: thanos
+    app.kubernetes.io/name: thanos-query
     app.kubernetes.io/version: v0.10.1
   name: thanos-query
   namespace: thanos
@@ -12,15 +12,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: thanos-query
+      app.kubernetes.io/component: query-layer
       app.kubernetes.io/instance: thanos-query
-      app.kubernetes.io/name: thanos
+      app.kubernetes.io/name: thanos-query
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: thanos-query
+        app.kubernetes.io/component: query-layer
         app.kubernetes.io/instance: thanos-query
-        app.kubernetes.io/name: thanos
+        app.kubernetes.io/name: thanos-query
         app.kubernetes.io/version: v0.10.1
     spec:
       affinity:
@@ -32,7 +32,7 @@ spec:
                 - key: app.kubernetes.io/name
                   operator: In
                   values:
-                  - thanos
+                  - thanos-query
               namespaces:
               - thanos
               topologyKey: kubernetes.io/hostname

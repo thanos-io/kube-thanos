@@ -2,9 +2,9 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/component: thanos-rule
+    app.kubernetes.io/component: rule-evaluation-engine
     app.kubernetes.io/instance: thanos-rule
-    app.kubernetes.io/name: thanos
+    app.kubernetes.io/name: thanos-rule
     app.kubernetes.io/version: v0.10.1
   name: thanos-rule
   namespace: thanos
@@ -18,6 +18,6 @@ spec:
     port: 10902
     targetPort: http
   selector:
-    app.kubernetes.io/component: thanos-rule
+    app.kubernetes.io/component: rule-evaluation-engine
     app.kubernetes.io/instance: thanos-rule
-    app.kubernetes.io/name: thanos
+    app.kubernetes.io/name: thanos-rule

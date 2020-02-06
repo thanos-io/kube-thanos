@@ -2,9 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app.kubernetes.io/component: thanos-receive
+    app.kubernetes.io/component: database-write-hashring
     app.kubernetes.io/instance: thanos-receive
-    app.kubernetes.io/name: thanos
+    app.kubernetes.io/name: thanos-receive
     app.kubernetes.io/version: v0.10.1
   name: thanos-receive
   namespace: thanos
@@ -12,16 +12,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: thanos-receive
+      app.kubernetes.io/component: database-write-hashring
       app.kubernetes.io/instance: thanos-receive
-      app.kubernetes.io/name: thanos
+      app.kubernetes.io/name: thanos-receive
   serviceName: thanos-receive
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: thanos-receive
+        app.kubernetes.io/component: database-write-hashring
         app.kubernetes.io/instance: thanos-receive
-        app.kubernetes.io/name: thanos
+        app.kubernetes.io/name: thanos-receive
         app.kubernetes.io/version: v0.10.1
     spec:
       affinity:

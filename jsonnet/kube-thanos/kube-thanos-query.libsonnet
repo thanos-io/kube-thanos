@@ -13,10 +13,10 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     stores: error 'must provide store addresses',
 
     commonLabels:: {
-      'app.kubernetes.io/name': 'thanos',
+      'app.kubernetes.io/name': 'thanos-query',
       'app.kubernetes.io/instance': tq.config.name,
       'app.kubernetes.io/version': tq.config.version,
-      'app.kubernetes.io/component': 'thanos-query',
+      'app.kubernetes.io/component': 'query-layer',
     },
 
     podLabelSelector:: {

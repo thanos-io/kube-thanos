@@ -15,10 +15,10 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     queriers: [],
 
     commonLabels:: {
-      'app.kubernetes.io/name': 'thanos',
+      'app.kubernetes.io/name': 'thanos-rule',
       'app.kubernetes.io/instance': tr.config.name,
       'app.kubernetes.io/version': tr.config.version,
-      'app.kubernetes.io/component': 'thanos-rule',
+      'app.kubernetes.io/component': 'rule-evaluation-engine',
     },
 
     podLabelSelector:: {

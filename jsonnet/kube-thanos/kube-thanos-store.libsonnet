@@ -12,10 +12,10 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     objectStorageConfig: error 'must provide objectStorageConfig',
 
     commonLabels:: {
-      'app.kubernetes.io/name': 'thanos',
+      'app.kubernetes.io/name': 'thanos-store',
       'app.kubernetes.io/instance': ts.config.name,
       'app.kubernetes.io/version': ts.config.version,
-      'app.kubernetes.io/component': 'thanos-store',
+      'app.kubernetes.io/component': 'object-store-gateway',
     },
 
     podLabelSelector:: {
