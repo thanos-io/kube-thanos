@@ -227,7 +227,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             ],
 
             local volume = k.apps.v1.statefulSet.mixin.spec.template.spec.volumesType,
-            volumes: [
+            volumes+: [
               volume.withName('hashring-config') +
               volume.mixin.configMap.withName(tr.config.hashringConfigMapName),
             ],
