@@ -149,10 +149,14 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
   withPodDisruptionBudget:: {
     local tr = self,
+    config+:: {
+      podDisruptionBudgetMinAvailable: tr.config.replicas - (std.floor(tr.config.replicationFactor / 2)),
+    },
+
     podDisruptionBudget:
       local pdb = k.policy.v1beta1.podDisruptionBudget;
       pdb.new() +
-      pdb.mixin.spec.withMinAvailable(tr.config.replicas - (std.floor(tr.config.replicationFactor / 2))) +
+      pdb.mixin.spec.withMinAvailable(tr.config.podDisruptionBudgetMinAvailable) +
       pdb.mixin.spec.selector.withMatchLabels(tr.config.podLabelSelector) +
       pdb.mixin.metadata.withName(tr.config.name) +
       pdb.mixin.metadata.withNamespace(tr.config.namespace),
