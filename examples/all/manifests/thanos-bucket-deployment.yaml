@@ -39,18 +39,18 @@ spec:
           failureThreshold: 4
           httpGet:
             path: /-/healthy
-            port: 8080
+            port: 10902
             scheme: HTTP
           periodSeconds: 30
         name: thanos-bucket
         ports:
-        - containerPort: 8080
+        - containerPort: 10902
           name: http
         readinessProbe:
           failureThreshold: 20
           httpGet:
             path: /-/ready
-            port: 8080
+            port: 10902
             scheme: HTTP
           periodSeconds: 5
       terminationGracePeriodSeconds: 120

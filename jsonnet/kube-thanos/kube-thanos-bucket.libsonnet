@@ -31,7 +31,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     service.new(
       tb.config.name,
       tb.config.podLabelSelector,
-      [ports.newNamed('http', 8080, 'http')],
+      [ports.newNamed('http', 10902, 'http')],
     ) +
     service.mixin.metadata.withNamespace(tb.config.namespace) +
     service.mixin.metadata.withLabels(tb.config.commonLabels),
