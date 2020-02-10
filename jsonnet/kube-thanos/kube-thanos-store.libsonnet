@@ -135,6 +135,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         volumeClaimTemplates: [ts.config.volumeClaimTemplate {
           metadata+: {
             name: 'data',
+            labels+: ts.config.podLabelSelector,
           },
         }],
       },
