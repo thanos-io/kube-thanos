@@ -73,6 +73,10 @@ spec:
       volumes: null
   volumeClaimTemplates:
   - metadata:
+      labels:
+        app.kubernetes.io/component: rule-evaluation-engine
+        app.kubernetes.io/instance: thanos-rule
+        app.kubernetes.io/name: thanos-rule
       name: data
     spec:
       accessModes:

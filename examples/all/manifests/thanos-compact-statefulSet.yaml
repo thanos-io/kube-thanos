@@ -64,6 +64,10 @@ spec:
       volumes: null
   volumeClaimTemplates:
   - metadata:
+      labels:
+        app.kubernetes.io/component: database-compactor
+        app.kubernetes.io/instance: thanos-compact
+        app.kubernetes.io/name: thanos-compact
       name: data
     spec:
       accessModes:
