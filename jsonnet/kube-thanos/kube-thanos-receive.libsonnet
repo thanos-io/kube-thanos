@@ -172,7 +172,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       spec+: {
         template+: {
           spec+: {
-            volumes: null,
+            volumes: std.filter(function(v) v.name != 'data', super.volumes),
           },
         },
         volumeClaimTemplates: [tr.config.volumeClaimTemplate {

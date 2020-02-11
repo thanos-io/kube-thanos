@@ -63,7 +63,7 @@ spec:
           name: data
           readOnly: false
       terminationGracePeriodSeconds: 120
-      volumes: null
+      volumes: []
   volumeClaimTemplates:
   - metadata:
       labels:

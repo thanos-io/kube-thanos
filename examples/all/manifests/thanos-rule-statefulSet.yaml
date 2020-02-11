@@ -70,7 +70,7 @@ spec:
         - mountPath: /var/thanos/rule
           name: data
           readOnly: false
-      volumes: null
+      volumes: []
   volumeClaimTemplates:
   - metadata:
       labels:
