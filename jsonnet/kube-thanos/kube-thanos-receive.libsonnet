@@ -53,7 +53,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     local containerVolumeMount = container.volumeMountsType;
 
     local replicationFactor = tr.config.replicationFactor;
-    local localEndpointFlag = '--receive.local-endpoint=http://$(NAME).%s.$(NAMESPACE).svc.cluster.local:%d/api/v1/receive' % [tr.config.name, tr.service.spec.ports[2].port];
+    local localEndpointFlag = '--receive.local-endpoint=$(NAME).%s.$(NAMESPACE).svc.cluster.local:%d' % [tr.config.name, tr.service.spec.ports[0].port];
 
     local c =
       container.new('thanos-receive', tr.config.image) +
