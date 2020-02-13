@@ -56,6 +56,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         '--grpc-address=0.0.0.0:%d' % ts.service.spec.ports[0].port,
         '--http-address=0.0.0.0:%d' % ts.service.spec.ports[1].port,
         '--objstore.config=$(OBJSTORE_CONFIG)',
+        '--experimental.enable-index-header',
       ]) +
       container.withEnv([
         containerEnv.fromSecretRef(
