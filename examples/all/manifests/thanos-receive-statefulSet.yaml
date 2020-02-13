@@ -49,7 +49,7 @@ spec:
         - --tsdb.path=/var/thanos/receive
         - --label=replica="$(NAME)"
         - --label=receive="true"
-        - --receive.local-endpoint=http://$(NAME).thanos-receive.$(NAMESPACE).svc.cluster.local:19291/api/v1/receive
+        - --receive.local-endpoint=$(NAME).thanos-receive.$(NAMESPACE).svc.cluster.local:10901
         env:
         - name: NAME
           valueFrom:
