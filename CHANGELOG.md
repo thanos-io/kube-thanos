@@ -13,7 +13,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ## Unreleased
 
-### Fixed
+### Changed
 
 -
 
@@ -23,7 +23,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#99](https://github.com/thanos-io/kube-thanos/pull/99) receive: Adapt receive local endpoint to gRPC based endpoint
 
-### Changed
+### Fixed
 
 -
 
@@ -36,6 +36,24 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 > This version includes lots of breaking changes, you may have to change your downstream changes and re-create your resources when you apply.
 
 - [#90](https://github.com/thanos-io/kube-thanos/pull/90)  *: Refactor to not mutate global objects
+
+### Changed
+
+- [#90](https://github.com/thanos-io/kube-thanos/pull/90)  *: Refactor to not mutate global objects
+
+- [#89](https://github.com/thanos-io/kube-thanos/pull/89)  *: Remove resource requests and limits
+
+- [#63](https://github.com/thanos-io/kube-thanos/pull/63)  store, receive: Hide volumes in StatefulSet when null
+
+- [#67](https://github.com/thanos-io/kube-thanos/pull/67)  *: Move thanos-mixin to main Thanos repo
+
+- [#75](https://github.com/thanos-io/kube-thanos/pull/75)  *: Remove references to metalmatze repo
+
+### Added
+
+- [#83](https://github.com/thanos-io/kube-thanos/pull/83)  ruler, querier: De-duplicate ruler_replica when using Thanos Ruler
+
+- [#84](https://github.com/thanos-io/kube-thanos/pull/84)  receive, querier: Add host anti-affinity to receive and querier
 
 ### Fixed
 
@@ -50,24 +68,6 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#95](https://github.com/thanos-io/kube-thanos/pull/95) bucket: fix bucket port
 
 - [#96](https://github.com/thanos-io/kube-thanos/pull/96) *: Filter emptyDir instead of resetting volumes with PVC
-
-### Added
-
-- [#83](https://github.com/thanos-io/kube-thanos/pull/83)  ruler, querier: De-duplicate ruler_replica when using Thanos Ruler
-
-- [#84](https://github.com/thanos-io/kube-thanos/pull/84)  receive, querier: Add host anti-affinity to receive and querier
-
-### Changed
-
-- [#90](https://github.com/thanos-io/kube-thanos/pull/90)  *: Refactor to not mutate global objects
-
-- [#89](https://github.com/thanos-io/kube-thanos/pull/89)  *: Remove resource requests and limits
-
-- [#63](https://github.com/thanos-io/kube-thanos/pull/63)  store, receive: Hide volumes in StatefulSet when null
-
-- [#67](https://github.com/thanos-io/kube-thanos/pull/67)  *: Move thanos-mixin to main Thanos repo
-
-- [#75](https://github.com/thanos-io/kube-thanos/pull/75)  *: Remove references to metalmatze repo
 
 
 [Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.9.0...v0.10.0)
