@@ -47,6 +47,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
     local c =
       container.new('thanos-compact', tc.config.image) +
+      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
       container.withArgs([
         'compact',
         '--wait',

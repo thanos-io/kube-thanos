@@ -50,6 +50,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
     local c =
       container.new('thanos-store', ts.config.image) +
+      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
       container.withArgs([
         'store',
         '--data-dir=/var/thanos/store',

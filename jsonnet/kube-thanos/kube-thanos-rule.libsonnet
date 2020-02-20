@@ -53,6 +53,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
     local c =
       container.new('thanos-rule', tr.config.image) +
+      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
       container.withArgs(
         [
           'rule',
