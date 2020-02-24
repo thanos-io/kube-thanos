@@ -49,6 +49,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
     local c =
       container.new('thanos-query', tq.config.image) +
+      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
       container.withArgs([
         'query',
         '--grpc-address=0.0.0.0:%d' % tq.service.spec.ports[0].port,

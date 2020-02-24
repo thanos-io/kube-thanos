@@ -66,6 +66,7 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 5
+        terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /var/thanos/rule
           name: data

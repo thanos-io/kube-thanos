@@ -57,6 +57,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
     local c =
       container.new('thanos-receive', tr.config.image) +
+      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
       container.withArgs([
         'receive',
         '--grpc-address=0.0.0.0:%d' % tr.service.spec.ports[0].port,
