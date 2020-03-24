@@ -23,6 +23,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#99](https://github.com/thanos-io/kube-thanos/pull/99) receive: Adapt receive local endpoint to gRPC based endpoint
 
+- [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
+
 ### Fixed
 
 -
