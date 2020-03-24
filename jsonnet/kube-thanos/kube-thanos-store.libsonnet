@@ -101,6 +101,26 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       },
     },
 
+  withIgnoreDeletionMarksDelay:: {
+    local ts = self,
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-store' then c {
+                args+: [
+                  '--ignore-deletion-marks-delay=' + ts.config.ignoreDeletionMarksDelay,
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
   withServiceMonitor:: {
     local ts = self,
     serviceMonitor: {
