@@ -188,6 +188,28 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     },
   },
 
+  withDeduplication:: {
+    local tc = self,
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-compact' then c {
+                args+: [
+                  '--deduplication.replica-label=' + l
+                  for l in tc.config.deduplicationReplicaLabels
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
   withResources:: {
     local tc = self,
     config+:: {
