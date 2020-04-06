@@ -62,6 +62,16 @@ local s = t.store + t.store.withVolumeClaimTemplate + t.store.withServiceMonitor
   },
 };
 
+local swm = t.store + t.store.withVolumeClaimTemplate + t.store.withServiceMonitor + t.store.withMemcachedIndexCache + commonConfig + {
+  config+:: {
+    name: 'thanos-store',
+    replicas: 1,
+    memcached+: {
+      addresses: [],
+    },
+  },
+};
+
 local q = t.query + t.query.withServiceMonitor + commonConfig + {
   config+:: {
     name: 'thanos-query',
@@ -85,4 +95,5 @@ local finalRu = ru {
 { ['thanos-receive-' + name]: re[name] for name in std.objectFields(re) } +
 { ['thanos-rule-' + name]: finalRu[name] for name in std.objectFields(finalRu) } +
 { ['thanos-store-' + name]: s[name] for name in std.objectFields(s) } +
-{ ['thanos-query-' + name]: q[name] for name in std.objectFields(q) }
+{ ['thanos-query-' + name]: q[name] for name in std.objectFields(q) } +
+{ 'thanos-store-statefulSet-with-memcached': swm.statefulSet }
