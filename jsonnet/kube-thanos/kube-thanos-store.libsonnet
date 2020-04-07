@@ -132,7 +132,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         maxItemSize: '1MiB',
         maxGetMultiConcurrency: 0,
         maxGetMultiBatchSize: 0,
-        dnsProviderUpdateInterval: '500ms',
+        dnsProviderUpdateInterval: '3s',
       },
     },
     local m = ts.config.memcached,
