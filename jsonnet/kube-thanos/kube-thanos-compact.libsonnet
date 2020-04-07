@@ -81,7 +81,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
       container.mixin.readinessProbe.httpGet.withPath('/-/ready');
 
-    statefulSet.new(tc.config.name, 1, c, [], tc.config.commonLabels) +
+    statefulSet.new(tc.config.name, tc.config.replicas, c, [], tc.config.commonLabels) +
     statefulSet.mixin.metadata.withNamespace(tc.config.namespace) +
     statefulSet.mixin.metadata.withLabels(tc.config.commonLabels) +
     statefulSet.mixin.spec.withServiceName(tc.service.metadata.name) +
