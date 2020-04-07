@@ -1,17 +1,7 @@
 {
+  "version": 1,
   "dependencies": [
     {
-      "name": "grafana-builder",
-      "source": {
-        "git": {
-          "remote": "https://github.com/grafana/jsonnet-libs",
-          "subdir": "grafana-builder"
-        }
-      },
-      "version": "master"
-    },
-    {
-      "name": "grafonnet",
       "source": {
         "git": {
           "remote": "https://github.com/grafana/grafonnet-lib",
@@ -21,7 +11,15 @@
       "version": "master"
     },
     {
-      "name": "kube-thanos",
+      "source": {
+        "git": {
+          "remote": "https://github.com/grafana/jsonnet-libs",
+          "subdir": "grafana-builder"
+        }
+      },
+      "version": "master"
+    },
+    {
       "source": {
         "local": {
           "directory": "jsonnet/kube-thanos"
@@ -29,5 +27,6 @@
       },
       "version": "."
     }
-  ]
+  ],
+  "legacyImports": true
 }
