@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: object-store-gateway
     app.kubernetes.io/instance: thanos-store
     app.kubernetes.io/name: thanos-store
-    app.kubernetes.io/version: v0.11.0
+    app.kubernetes.io/version: v0.12.0-rc.0
   name: thanos-store
   namespace: thanos
 spec:
@@ -22,7 +22,7 @@ spec:
         app.kubernetes.io/component: object-store-gateway
         app.kubernetes.io/instance: thanos-store
         app.kubernetes.io/name: thanos-store
-        app.kubernetes.io/version: v0.11.0
+        app.kubernetes.io/version: v0.12.0-rc.0
     spec:
       containers:
       - args:
@@ -31,14 +31,13 @@ spec:
         - --grpc-address=0.0.0.0:10901
         - --http-address=0.0.0.0:10902
         - --objstore.config=$(OBJSTORE_CONFIG)
-        - --experimental.enable-index-header
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:v0.11.0
+        image: quay.io/thanos/thanos:v0.12.0-rc.0
         livenessProbe:
           failureThreshold: 8
           httpGet:
