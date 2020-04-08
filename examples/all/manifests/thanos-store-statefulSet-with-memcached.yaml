@@ -35,14 +35,14 @@ spec:
         - |-
           --index-cache.config="config":
             "addresses": []
-            "dns_provider_update_interval": "3s"
-            "max_async_buffer_size": 0
-            "max_async_concurrency": 0
+            "dns_provider_update_interval": "10s"
+            "max_async_buffer_size": 10000
+            "max_async_concurrency": 20
             "max_get_multi_batch_size": 0
-            "max_get_multi_concurrency": 0
-            "max_idle_connections": 0
+            "max_get_multi_concurrency": 100
+            "max_idle_connections": 100
             "max_item_size": "1MiB"
-            "timeout": "0s"
+            "timeout": "500ms"
           "type": "MEMCACHED"
         env:
         - name: OBJSTORE_CONFIG
