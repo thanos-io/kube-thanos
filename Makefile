@@ -72,5 +72,5 @@ $(JSONNET_FMT): $(BIN_DIR)
 	go build -o $@ github.com/google/go-jsonnet/cmd/jsonnetfmt
 
 $(JSONNET_BUNDLER): $(BIN_DIR)
-	curl -L -o $(JSONNET_BUNDLER) "https://github.com/jsonnet-bundler/jsonnet-bundler/releases/download/v0.2.0/jb-$(shell go env GOOS)-$(shell go env GOARCH)"
+	curl -L -o $(JSONNET_BUNDLER) "https://github.com/jsonnet-bundler/jsonnet-bundler/releases/download/v0.3.1/jb-$(shell go env GOOS)-$(shell go env GOARCH)"
 	chmod +x $(JSONNET_BUNDLER)
