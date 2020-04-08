@@ -19,9 +19,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Added
 
-- [#97](https://github.com/thanos-io/kube-thanos/pull/97) store: Enable binary index header
-
-- [#99](https://github.com/thanos-io/kube-thanos/pull/99) receive: Adapt receive local endpoint to gRPC based endpoint
+- [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
 
 - [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
 
@@ -29,9 +27,29 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 -
 
-[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/53b47dd3c5c262bc17a5c37bad004839f7eda866...v0.9.0)
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.11.0)
+
+## [v0.11.0](https://github.com/thanos-io/kube-thanos/tree/v0.11.0) (2020-02-11)
+
+Compatible with https://github.com/thanos-io/thanos/releases/tag/v0.11.0
+
+### Fixed
+
+- [#109](https://github.com/thanos-io/kube-thanos/pull/109) compactor: Use tc.config.replicas variable in compact component
+
+### Added
+
+- [#97](https://github.com/thanos-io/kube-thanos/pull/97) store: Enable binary index header
+
+- [#99](https://github.com/thanos-io/kube-thanos/pull/99) receive: Adapt receive local endpoint to gRPC based endpoint
+
+- [#103](https://github.com/thanos-io/kube-thanos/pull/103) *: Add termination message policy to containers
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.10.0...v0.11.0)
 
 ## [v0.10.0](https://github.com/thanos-io/kube-thanos/tree/v0.10.0) (2020-02-11)
+
+Compatible with https://github.com/thanos-io/thanos/releases/tag/v0.10.0
 
 ### Breaking Changes
 
@@ -75,6 +93,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 [Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.9.0...v0.10.0)
 
 ## [v0.9.0](https://github.com/thanos-io/kube-thanos/tree/v0.9.0) (2019-12-13)
+
+Compatible with https://github.com/thanos-io/thanos/releases/tag/v0.9.0
 
 `Initial release:` See full changelog for long history of changes.
 
