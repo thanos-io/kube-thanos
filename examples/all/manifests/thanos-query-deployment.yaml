@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: query-layer
     app.kubernetes.io/instance: thanos-query
     app.kubernetes.io/name: thanos-query
-    app.kubernetes.io/version: v0.10.1
+    app.kubernetes.io/version: v0.11.0
   name: thanos-query
   namespace: thanos
 spec:
@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/component: query-layer
         app.kubernetes.io/instance: thanos-query
         app.kubernetes.io/name: thanos-query
-        app.kubernetes.io/version: v0.10.1
+        app.kubernetes.io/version: v0.11.0
     spec:
       affinity:
         podAntiAffinity:
@@ -47,7 +47,7 @@ spec:
         - --store=dnssrv+_grpc._tcp.thanos-receive.thanos.svc.cluster.local
         - --store=dnssrv+_grpc._tcp.thanos-rule.thanos.svc.cluster.local
         - --store=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local
-        image: quay.io/thanos/thanos:v0.10.1
+        image: quay.io/thanos/thanos:v0.11.0
         livenessProbe:
           failureThreshold: 4
           httpGet:
