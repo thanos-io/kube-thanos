@@ -26,7 +26,8 @@ local commonConfig = {
   },
 };
 
-local b = t.bucket + commonConfig + {
+local b = t.bucket +
+          commonConfig + {
   config+:: {
     name: 'thanos-bucket',
     replicas: 1,
@@ -43,7 +44,8 @@ local c = t.compact +
   },
 };
 
-local re = t.receive + t.receive.withVolumeClaimTemplate +
+local re = t.receive +
+           t.receive.withVolumeClaimTemplate +
            t.receive.withServiceMonitor +
            commonConfig + {
   config+:: {
@@ -53,7 +55,8 @@ local re = t.receive + t.receive.withVolumeClaimTemplate +
   },
 };
 
-local ru = t.rule + t.rule.withVolumeClaimTemplate +
+local ru = t.rule +
+           t.rule.withVolumeClaimTemplate +
            t.rule.withServiceMonitor +
            commonConfig + {
   config+:: {
@@ -62,7 +65,8 @@ local ru = t.rule + t.rule.withVolumeClaimTemplate +
   },
 };
 
-local s = t.store + t.store.withVolumeClaimTemplate +
+local s = t.store +
+          t.store.withVolumeClaimTemplate +
           t.store.withServiceMonitor +
           commonConfig + {
   config+:: {
@@ -79,7 +83,10 @@ local swm = t.store +
     name: 'thanos-store',
     replicas: 1,
     memcached+: {
-      addresses: [],
+      // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
+      // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.config.namespace],
     },
   },
 };

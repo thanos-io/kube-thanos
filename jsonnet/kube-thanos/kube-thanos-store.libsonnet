@@ -124,6 +124,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     local ts = self,
     config+:: {
       memcached+: {
+        // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+        // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
         addresses: error 'must provide memcached addresses',
         timeout: '500ms',
         maxIdleConnections: 100,
