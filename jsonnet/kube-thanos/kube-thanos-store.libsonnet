@@ -120,6 +120,58 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     },
   },
 
+  withMemcachedIndexCache:: {
+    local ts = self,
+    config+:: {
+      memcached+: {
+        // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+        // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+        addresses: error 'must provide memcached addresses',
+        timeout: '500ms',
+        maxIdleConnections: 100,
+        maxAsyncConcurrency: 20,
+        maxAsyncBufferSize: 10000,
+        maxItemSize: '1MiB',
+        maxGetMultiConcurrency: 100,
+        maxGetMultiBatchSize: 0,
+        dnsProviderUpdateInterval: '10s',
+      },
+    },
+    local m = ts.config.memcached,
+    local cfg =
+      {
+        type: 'MEMCACHED',
+        config: {
+          addresses: m.addresses,
+          timeout: m.timeout,
+          max_idle_connections: m.maxIdleConnections,
+          max_async_concurrency: m.maxAsyncConcurrency,
+          max_async_buffer_size: m.maxAsyncBufferSize,
+          max_item_size: m.maxItemSize,
+          max_get_multi_concurrency: m.maxGetMultiConcurrency,
+          max_get_multi_batch_size: m.maxGetMultiBatchSize,
+          dns_provider_update_interval: m.dnsProviderUpdateInterval,
+        },
+      },
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-store' then c {
+                args+: [
+                  '--experimental.enable-index-cache-postings-compression',
+                  '--index-cache.config=' + std.manifestYamlDoc(cfg),
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
   withServiceMonitor:: {
     local ts = self,
     serviceMonitor: {
