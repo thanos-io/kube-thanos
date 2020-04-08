@@ -26,84 +26,91 @@ local commonConfig = {
   },
 };
 
-local b = t.bucket +
-          commonConfig + {
-  config+:: {
-    name: 'thanos-bucket',
-    replicas: 1,
-  },
-};
-
-local c = t.compact +
-          t.compact.withVolumeClaimTemplate +
-          t.compact.withServiceMonitor +
-          commonConfig + {
-  config+:: {
-    name: 'thanos-compact',
-    replicas: 1,
-  },
-};
-
-local re = t.receive +
-           t.receive.withVolumeClaimTemplate +
-           t.receive.withServiceMonitor +
-           commonConfig + {
-  config+:: {
-    name: 'thanos-receive',
-    replicas: 1,
-    replicationFactor: 1,
-  },
-};
-
-local ru = t.rule +
-           t.rule.withVolumeClaimTemplate +
-           t.rule.withServiceMonitor +
-           commonConfig + {
-  config+:: {
-    name: 'thanos-rule',
-    replicas: 1,
-  },
-};
-
-local s = t.store +
-          t.store.withVolumeClaimTemplate +
-          t.store.withServiceMonitor +
-          commonConfig + {
-  config+:: {
-    name: 'thanos-store',
-    replicas: 1,
-  },
-};
-
-local swm = t.store +
-            t.store.withVolumeClaimTemplate +
-            t.store.withServiceMonitor + t.store.withMemcachedIndexCache +
-            commonConfig + {
-  config+:: {
-    name: 'thanos-store',
-    replicas: 1,
-    memcached+: {
-      // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
-      // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
-      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.config.namespace],
+local b =
+  t.bucket +
+  commonConfig + {
+    config+:: {
+      name: 'thanos-bucket',
+      replicas: 1,
     },
-  },
-};
+  };
 
-local q = t.query +
-          t.query.withServiceMonitor +
-          commonConfig + {
-  config+:: {
-    name: 'thanos-query',
-    replicas: 1,
-    stores: [
-      'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
-      for service in [re.service, ru.service, s.service]
-    ],
-    replicaLabels: ['prometheus_replica', 'rule_replica'],
-  },
-};
+local c =
+  t.compact +
+  t.compact.withVolumeClaimTemplate +
+  t.compact.withServiceMonitor +
+  commonConfig + {
+    config+:: {
+      name: 'thanos-compact',
+      replicas: 1,
+    },
+  };
+
+local re =
+  t.receive +
+  t.receive.withVolumeClaimTemplate +
+  t.receive.withServiceMonitor +
+  commonConfig + {
+    config+:: {
+      name: 'thanos-receive',
+      replicas: 1,
+      replicationFactor: 1,
+    },
+  };
+
+local ru =
+  t.rule +
+  t.rule.withVolumeClaimTemplate +
+  t.rule.withServiceMonitor +
+  commonConfig + {
+    config+:: {
+      name: 'thanos-rule',
+      replicas: 1,
+    },
+  };
+
+local s =
+  t.store +
+  t.store.withVolumeClaimTemplate +
+  t.store.withServiceMonitor +
+  commonConfig + {
+    config+:: {
+      name: 'thanos-store',
+      replicas: 1,
+    },
+  };
+
+local swm =
+  t.store +
+  t.store.withVolumeClaimTemplate +
+  t.store.withServiceMonitor + t.store.withMemcachedIndexCache +
+  commonConfig + {
+    config+:: {
+      name: 'thanos-store',
+      replicas: 1,
+      memcached+: {
+        // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
+        // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+        // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+        addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.config.namespace],
+      },
+    },
+  };
+
+local q =
+  t.query +
+  t.query.withServiceMonitor +
+  commonConfig + {
+    config+:: {
+      name: 'thanos-query',
+      replicas: 1,
+      stores: [
+        'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
+        for service in [re.service, ru.service, s.service]
+      ],
+      replicaLabels: ['prometheus_replica', 'rule_replica'],
+    },
+  };
 
 local finalRu = ru {
   config+:: {
