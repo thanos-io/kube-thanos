@@ -19,17 +19,27 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Added
 
-- [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
-
-- [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
+-
 
 ### Fixed
 
 -
 
-[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.11.0)
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.12.0...master)
 
-## [v0.11.0](https://github.com/thanos-io/kube-thanos/tree/v0.11.0) (2020-02-11)
+## [v0.12.0](https://github.com/thanos-io/kube-thanos/tree/v0.12.0) (2020-04-16)
+
+Compatible with https://github.com/thanos-io/thanos/releases/tag/v0.12.0
+
+### Added
+
+- [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
+
+- [#106](https://github.com/thanos-io/kube-thanos/pull/106) store: Add memcached mixin
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.11.0...v0.12.0)
+
+## [v0.11.0](https://github.com/thanos-io/kube-thanos/tree/v0.11.0) (2020-04-08)
 
 Compatible with https://github.com/thanos-io/thanos/releases/tag/v0.11.0
 
