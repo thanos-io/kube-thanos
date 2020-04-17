@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: query-layer
+    app.kubernetes.io/instance: query-frontend
+    app.kubernetes.io/name: thanos-query-frontend
+    app.kubernetes.io/version: v1.0.0
+  name: thanos-query-frontend
+  namespace: thanos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: query-layer
+      app.kubernetes.io/instance: query-frontend
+      app.kubernetes.io/name: thanos-query-frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: query-layer
+        app.kubernetes.io/instance: query-frontend
+        app.kubernetes.io/name: thanos-query-frontend
+        app.kubernetes.io/version: v1.0.0
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - thanos-query-frontend
+              namespaces:
+              - thanos
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      - args:
+        - -config.file=/etc/cache-config/thanos-query-frontend-configMap.yaml
+        - -frontend.downstream-url=http://thanos-query.thanos.svc.cluster.local:10902
+        image: quay.io/cortexproject/cortex:v1.0.0
+        name: thanos-query-frontend
+        ports:
+        - containerPort: 9091
+          name: http
+        volumeMounts:
+        - mountPath: /etc/cache-config/
+          name: thanos-query-frontend-configMap
+          readOnly: false
+        terminationMessagePolicy: FallbackToLogsOnError
+      terminationGracePeriodSeconds: 120
+      volumes:
+      - configMap:
+          name: thanos-query-frontend-configMap
+        name: thanos-query-frontend-configMap

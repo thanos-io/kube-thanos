@@ -1,0 +1,64 @@
+apiVersion: v1
+data:
+  thanos-query-frontend-configMap.yaml: |-
+    # Disable the requirement that every request to Cortex has a
+    # X-Scope-OrgID header. `fake` will be substituted in instead.
+    auth_enabled: false
+
+    # We only want to run the query-frontend module.
+    target: query-frontend
+
+    # We don't want the usual /api/prom prefix.
+    http_prefix:
+
+    server:
+      http_listen_port: 9091
+
+    query_range:
+      # split_queries_by_day: true
+      split_queries_by_interval: 24h
+      align_queries_with_step: true
+      cache_results: true
+
+      results_cache:
+        max_freshness: 1m
+        cache:
+
+          # We're going to use the in-process "FIFO" cache, but you can enable
+          # memcached below.
+          enable_fifocache: false
+          # fifocache:
+          #   size: 1024
+          #   validity: 6h
+
+          # If you want to use a memcached cluster, you can either configure a
+          # headless service in Kubernetes and Cortex will discover the individual
+          # instances using a SRV DNS query (host) or list comma separated
+          # memcached addresses.
+          # host + service: this is the config you should set when you use the
+          # SRV DNS (this is considered stable)
+          # addresses: this is experimental and supports service discovery
+          # (https://cortexmetrics.io/docs/configuration/arguments/#dns-service-discovery)
+          # so it could either be a list of single addresses, or a SRV record
+          # prefixed with dnssrvnoa+. Cortex will then do client-side hashing to
+          # spread the load evenly.
+          # memcached:
+          #   expiration : 6h
+          # memcached_client:
+          #   # host: ""
+          #   service: memcached
+          #   consistent_hash: true
+          #   addresses: ""
+
+    frontend:
+      log_queries_longer_than: 1s
+      compress_responses: true
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/component: query-layer
+    app.kubernetes.io/instance: query-frontend
+    app.kubernetes.io/name: thanos-query-frontend
+    app.kubernetes.io/version: v1.0.0
+  name: thanos-query-frontend-configMap
+  namespace: thanos

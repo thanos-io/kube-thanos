@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: query-layer
+    app.kubernetes.io/instance: query-frontend
+    app.kubernetes.io/name: thanos-query-frontend
+    app.kubernetes.io/version: v1.0.0
+  name: thanos-query-frontend
+  namespace: thanos
+spec:
+  ports:
+  - port: 80
+    targetPort: 9091
+    name: http
+  selector:
+    app.kubernetes.io/component: query-layer
+    app.kubernetes.io/instance: query-frontend
+    app.kubernetes.io/name: thanos-query-frontend
