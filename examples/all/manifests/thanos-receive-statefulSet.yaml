@@ -92,7 +92,7 @@ spec:
         - mountPath: /var/thanos/receive
           name: data
           readOnly: false
-      terminationGracePeriodSeconds: 120
+      terminationGracePeriodSeconds: 900
       volumes: []
   volumeClaimTemplates:
   - metadata:

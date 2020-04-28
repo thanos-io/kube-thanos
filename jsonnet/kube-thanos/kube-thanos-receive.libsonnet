@@ -104,7 +104,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     sts.mixin.metadata.withNamespace(tr.config.namespace) +
     sts.mixin.metadata.withLabels(tr.config.commonLabels) +
     sts.mixin.spec.withServiceName(tr.service.metadata.name) +
-    sts.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
+    sts.mixin.spec.template.spec.withTerminationGracePeriodSeconds(900) +
     sts.mixin.spec.template.spec.withVolumes([
       volume.fromEmptyDir('data'),
     ]) +
