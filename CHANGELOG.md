@@ -15,7 +15,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Changed
 
--
+- [#118](https://github.com/thanos-io/kube-thanos/pull/118) receive: Extend shutdown grace period to 900s (15min).
 
 ### Added
 
