@@ -62,7 +62,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           '--objstore.config=$(OBJSTORE_CONFIG)',
           '--data-dir=/var/thanos/rule',
           '--label=rule_replica="$(NAME)"',
-          '--alert.label-drop="rule_replica"',
+          '--alert.label-drop=rule_replica',
         ] +
         (['--query=%s' % querier for querier in tr.config.queriers]) +
         (['--rule-file=%s' % path for path in tr.config.ruleFiles]) +
