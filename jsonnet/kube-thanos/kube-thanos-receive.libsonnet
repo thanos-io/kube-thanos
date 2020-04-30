@@ -119,6 +119,16 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         matchExpression.withOperator('In') +
         matchExpression.withValues([tr.statefulSet.metadata.labels['app.kubernetes.io/instance']]),
       ]),
+      affinity.new() +
+      affinity.withWeight(100) +
+      affinity.mixin.podAffinityTerm.withNamespaces(tr.config.namespace) +
+      affinity.mixin.podAffinityTerm.withTopologyKey('topology.kubernetes.io/zone') +
+      affinity.mixin.podAffinityTerm.labelSelector.withMatchExpressions([
+        matchExpression.new() +
+        matchExpression.withKey('app.kubernetes.io/instance') +
+        matchExpression.withOperator('In') +
+        matchExpression.withValues([tr.statefulSet.metadata.labels['app.kubernetes.io/instance']]),
+      ]),
     ]) +
     sts.mixin.spec.selector.withMatchLabels(tr.config.podLabelSelector) +
     {

@@ -23,6 +23,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
 
+- [#119](https://github.com/thanos-io/kube-thanos/pull/119) receive: Distribute receive instances across node zones via pod anti affinity (note: only available on 1.17+).
+
 ### Fixed
 
 -

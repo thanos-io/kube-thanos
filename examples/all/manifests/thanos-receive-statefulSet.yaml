@@ -38,6 +38,17 @@ spec:
               - thanos
               topologyKey: kubernetes.io/hostname
             weight: 100
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/instance
+                  operator: In
+                  values:
+                  - thanos-receive
+              namespaces:
+              - thanos
+              topologyKey: topology.kubernetes.io/zone
+            weight: 100
       containers:
       - args:
         - receive
