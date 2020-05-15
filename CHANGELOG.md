@@ -17,13 +17,17 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#118](https://github.com/thanos-io/kube-thanos/pull/118) receive: Extend shutdown grace period to 900s (15min).
 
+- [#122](https://github.com/thanos-io/kube-thanos/pull/122) store: Rename `withMemcachedIndexCache` to `withIndexCacheMemcached`
+
 ### Added
 
 - [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
 
 - [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
 
-- [#119](https://github.com/thanos-io/kube-thanos/pull/119) receive: Distribute receive instances across node zones via pod anti affinity (note: only available on 1.17+).
+- [#119](https://github.com/thanos-io/kube-thanos/pull/119) receive: Distribute receive instances across node zones via pod anti affinity (note: only available on Kubernetes 1.17+)
+
+- [#122](https://github.com/thanos-io/kube-thanos/pull/122) store: Enable caching bucket support
 
 ### Fixed
 
