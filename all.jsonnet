@@ -83,7 +83,9 @@ local s =
 local swm =
   t.store +
   t.store.withVolumeClaimTemplate +
-  t.store.withServiceMonitor + t.store.withMemcachedIndexCache +
+  t.store.withServiceMonitor +
+  t.store.withIndexCacheMemcached +
+  t.store.withCachingBucketMemcached +
   commonConfig + {
     config+:: {
       name: 'thanos-store',
