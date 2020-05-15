@@ -7,7 +7,7 @@ t.receive {
   local tr = self,
   name:: 'thanos-receive',
   namespace:: 'observability',
-  version:: 'v0.12.0-rc.0',
+  version:: 'master-2020-05-07-b9ff23c5',
   image:: 'quay.io/thanos/thanos:v' + tr.version,
   replicas:: 3,
   replicationFactor:: 3,
