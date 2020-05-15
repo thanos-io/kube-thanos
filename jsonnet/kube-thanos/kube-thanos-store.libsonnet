@@ -139,7 +139,11 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     config+:: {
       memcached+: memcachedDefaults,
     },
-    local m = ts.config.memcached,
+    local m = if std.objectHas(ts.config.memcached, 'indexCache')
+    then
+      ts.config.memcached.indexCache
+    else
+      ts.config.memcached,
     local cfg =
       {
         type: 'MEMCACHED',
@@ -185,7 +189,11 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         chunkSubrangeTTL: '24h',
       },
     },
-    local m = ts.config.memcached,
+    local m = if std.objectHas(ts.config.memcached, 'bucketCache')
+    then
+      ts.config.memcached.bucketCache
+    else
+      ts.config.memcached,
     local c = ts.config.bucketCacheConfig,
     local cfg =
       {
