@@ -187,6 +187,11 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         maxChunksGetRangeRequests: 3,
         chunkObjectSizeTTL: '24h',
         chunkSubrangeTTL: '24h',
+        blocksIterTTL: '5m',
+        metafileExistsTTL: '2h',
+        metafileDoesntExistTTL: '15m',
+        metafileContentTTL: '24h',
+        metafileMaxSize: '1MiB',  // Equal to default MaxItemSize in memcached client.
       },
     },
     local m = if std.objectHas(ts.config.memcached, 'bucketCache')
@@ -210,12 +215,15 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           dns_provider_update_interval: m.dnsProviderUpdateInterval,
         },
 
-        caching_config: {
-          chunk_subrange_size: c.chunkSubrangeSize,
-          max_chunks_get_range_requests: c.maxChunksGetRangeRequests,
-          chunk_object_size_ttl: c.chunkObjectSizeTTL,
-          chunk_subrange_ttl: c.chunkSubrangeTTL,
-        },
+        chunk_subrange_size: c.chunkSubrangeSize,
+        max_chunks_get_range_requests: c.maxChunksGetRangeRequests,
+        chunk_object_size_ttl: c.chunkObjectSizeTTL,
+        chunk_subrange_ttl: c.chunkSubrangeTTL,
+        blocks_iter_ttl: c.blocksIterTTL,
+        metafile_exists_ttl: c.metafileExistsTTL,
+        metafile_doesnt_exist_ttl: c.metafileDoesntExistTTL,
+        metafile_content_ttl: c.metafileContentTTL,
+        metafile_max_size: m.maxItemSize,
       },
     statefulSet+: {
       spec+: {

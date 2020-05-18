@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: object-store-bucket-debugging
     app.kubernetes.io/instance: thanos-bucket
     app.kubernetes.io/name: thanos-bucket
-    app.kubernetes.io/version: master-2020-05-07-b9ff23c5
+    app.kubernetes.io/version: master-2020-05-18-6cfcb345
   name: thanos-bucket
   namespace: thanos
 spec:
