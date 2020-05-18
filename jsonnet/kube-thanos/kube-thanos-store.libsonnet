@@ -191,7 +191,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         metafileExistsTTL: '2h',
         metafileDoesntExistTTL: '15m',
         metafileContentTTL: '24h',
-        metafileMaxSize: '1MiB',  // Equal to default MaxItemSize in memcached client.
       },
     },
     local m = if std.objectHas(ts.config.memcached, 'bucketCache')
