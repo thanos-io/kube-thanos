@@ -201,8 +201,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     local c = ts.config.bucketCacheConfig,
     local cfg =
       {
-        backend: 'memcached',
-        backend_config: {
+        type: 'MEMCACHED',
+        config: {
           addresses: m.addresses,
           timeout: m.timeout,
           max_idle_connections: m.maxIdleConnections,

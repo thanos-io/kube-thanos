@@ -46,8 +46,11 @@ spec:
             "timeout": "500ms"
           "type": "MEMCACHED"
         - |-
-          --store.caching-bucket.config="backend": "memcached"
-          "backend_config":
+          --store.caching-bucket.config="blocks_iter_ttl": "5m"
+          "chunk_object_size_ttl": "24h"
+          "chunk_subrange_size": 16000
+          "chunk_subrange_ttl": "24h"
+          "config":
             "addresses":
             - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
             "dns_provider_update_interval": "10s"
@@ -58,15 +61,12 @@ spec:
             "max_idle_connections": 100
             "max_item_size": "1MiB"
             "timeout": "500ms"
-          "blocks_iter_ttl": "5m"
-          "chunk_object_size_ttl": "24h"
-          "chunk_subrange_size": 16000
-          "chunk_subrange_ttl": "24h"
           "max_chunks_get_range_requests": 3
           "metafile_content_ttl": "24h"
           "metafile_doesnt_exist_ttl": "15m"
           "metafile_exists_ttl": "2h"
           "metafile_max_size": "1MiB"
+          "type": "MEMCACHED"
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
