@@ -7,7 +7,7 @@ local commonConfig = {
   config+:: {
     local cfg = self,
     namespace: 'thanos',
-    version: 'v0.12.0',
+    version: 'v0.13.0-rc.0',
     image: 'quay.io/thanos/thanos:' + cfg.version,
     objectStorageConfig: {
       name: 'thanos-objectstorage',
@@ -83,7 +83,9 @@ local s =
 local swm =
   t.store +
   t.store.withVolumeClaimTemplate +
-  t.store.withServiceMonitor + t.store.withMemcachedIndexCache +
+  t.store.withServiceMonitor +
+  t.store.withIndexCacheMemcached +
+  t.store.withCachingBucketMemcached +
   commonConfig + {
     config+:: {
       name: 'thanos-store',

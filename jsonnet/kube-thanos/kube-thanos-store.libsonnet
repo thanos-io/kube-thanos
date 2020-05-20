@@ -120,24 +120,30 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     },
   },
 
-  withMemcachedIndexCache:: {
+  local memcachedDefaults = {
+    // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+    // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+    addresses: error 'must provide memcached addresses',
+    timeout: '500ms',
+    maxIdleConnections: 100,
+    maxAsyncConcurrency: 20,
+    maxAsyncBufferSize: 10000,
+    maxItemSize: '1MiB',
+    maxGetMultiConcurrency: 100,
+    maxGetMultiBatchSize: 0,
+    dnsProviderUpdateInterval: '10s',
+  },
+
+  withIndexCacheMemcached:: {
     local ts = self,
     config+:: {
-      memcached+: {
-        // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-        // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
-        addresses: error 'must provide memcached addresses',
-        timeout: '500ms',
-        maxIdleConnections: 100,
-        maxAsyncConcurrency: 20,
-        maxAsyncBufferSize: 10000,
-        maxItemSize: '1MiB',
-        maxGetMultiConcurrency: 100,
-        maxGetMultiBatchSize: 0,
-        dnsProviderUpdateInterval: '10s',
-      },
+      memcached+: memcachedDefaults,
     },
-    local m = ts.config.memcached,
+    local m = if std.objectHas(ts.config.memcached, 'indexCache')
+    then
+      ts.config.memcached.indexCache
+    else
+      ts.config.memcached,
     local cfg =
       {
         type: 'MEMCACHED',
@@ -159,10 +165,74 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           spec+: {
             containers: [
               if c.name == 'thanos-store' then c {
-                args+: [
+                args+: if m != {} then [
                   '--experimental.enable-index-cache-postings-compression',
                   '--index-cache.config=' + std.manifestYamlDoc(cfg),
-                ],
+                ] else [],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
+  withCachingBucketMemcached:: {
+    local ts = self,
+    config+:: {
+      memcached+: memcachedDefaults,
+      bucketCacheConfig+: {
+        chunkSubrangeSize: 16000,
+        maxChunksGetRangeRequests: 3,
+        chunkObjectSizeTTL: '24h',
+        chunkSubrangeTTL: '24h',
+        blocksIterTTL: '5m',
+        metafileExistsTTL: '2h',
+        metafileDoesntExistTTL: '15m',
+        metafileContentTTL: '24h',
+      },
+    },
+    local m = if std.objectHas(ts.config.memcached, 'bucketCache')
+    then
+      ts.config.memcached.bucketCache
+    else
+      ts.config.memcached,
+    local c = ts.config.bucketCacheConfig,
+    local cfg =
+      {
+        type: 'MEMCACHED',
+        config: {
+          addresses: m.addresses,
+          timeout: m.timeout,
+          max_idle_connections: m.maxIdleConnections,
+          max_async_concurrency: m.maxAsyncConcurrency,
+          max_async_buffer_size: m.maxAsyncBufferSize,
+          max_item_size: m.maxItemSize,
+          max_get_multi_concurrency: m.maxGetMultiConcurrency,
+          max_get_multi_batch_size: m.maxGetMultiBatchSize,
+          dns_provider_update_interval: m.dnsProviderUpdateInterval,
+        },
+
+        chunk_subrange_size: c.chunkSubrangeSize,
+        max_chunks_get_range_requests: c.maxChunksGetRangeRequests,
+        chunk_object_size_ttl: c.chunkObjectSizeTTL,
+        chunk_subrange_ttl: c.chunkSubrangeTTL,
+        blocks_iter_ttl: c.blocksIterTTL,
+        metafile_exists_ttl: c.metafileExistsTTL,
+        metafile_doesnt_exist_ttl: c.metafileDoesntExistTTL,
+        metafile_content_ttl: c.metafileContentTTL,
+        metafile_max_size: m.maxItemSize,
+      },
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-store' then c {
+                args+: if m != {} then [
+                  '--store.caching-bucket.config=' + std.manifestYamlDoc(cfg),
+                ] else [],
               } else c
               for c in super.containers
             ],
