@@ -165,10 +165,10 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           spec+: {
             containers: [
               if c.name == 'thanos-store' then c {
-                args+: [
+                args+: if m != {} then [
                   '--experimental.enable-index-cache-postings-compression',
                   '--index-cache.config=' + std.manifestYamlDoc(cfg),
-                ],
+                ] else [],
               } else c
               for c in super.containers
             ],
@@ -230,9 +230,9 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           spec+: {
             containers: [
               if c.name == 'thanos-store' then c {
-                args+: [
+                args+: if m != {} then [
                   '--store.caching-bucket.config=' + std.manifestYamlDoc(cfg),
-                ],
+                ] else [],
               } else c
               for c in super.containers
             ],
