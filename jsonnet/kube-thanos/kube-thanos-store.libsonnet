@@ -146,7 +146,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       ts.config.memcached,
     local cfg =
       {
-        type: 'MEMCACHED',
+        type: 'memcached',
         config: {
           addresses: m.addresses,
           timeout: m.timeout,
@@ -201,7 +201,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     local c = ts.config.bucketCacheConfig,
     local cfg =
       {
-        type: 'MEMCACHED',
+        type: 'memcached',
         config: {
           addresses: m.addresses,
           timeout: m.timeout,
