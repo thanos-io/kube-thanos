@@ -44,7 +44,7 @@ spec:
             "max_idle_connections": 100
             "max_item_size": "1MiB"
             "timeout": "500ms"
-          "type": "MEMCACHED"
+          "type": "memcached"
         - |-
           --store.caching-bucket.config="blocks_iter_ttl": "5m"
           "chunk_object_size_ttl": "24h"
@@ -66,7 +66,7 @@ spec:
           "metafile_doesnt_exist_ttl": "15m"
           "metafile_exists_ttl": "2h"
           "metafile_max_size": "1MiB"
-          "type": "MEMCACHED"
+          "type": "memcached"
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
