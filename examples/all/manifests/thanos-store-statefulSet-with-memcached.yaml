@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: object-store-gateway
     app.kubernetes.io/instance: thanos-store
     app.kubernetes.io/name: thanos-store
-    app.kubernetes.io/version: v0.13.0-rc.0
+    app.kubernetes.io/version: master-2020-05-24-079ad427
   name: thanos-store
   namespace: thanos
 spec:
@@ -22,7 +22,7 @@ spec:
         app.kubernetes.io/component: object-store-gateway
         app.kubernetes.io/instance: thanos-store
         app.kubernetes.io/name: thanos-store
-        app.kubernetes.io/version: v0.13.0-rc.0
+        app.kubernetes.io/version: master-2020-05-24-079ad427
     spec:
       containers:
       - args:
@@ -47,7 +47,7 @@ spec:
           "type": "MEMCACHED"
         - |-
           --store.caching-bucket.config="blocks_iter_ttl": "5m"
-          "chunk_object_size_ttl": "24h"
+          "chunk_object_attrs_ttl": "24h"
           "chunk_subrange_size": 16000
           "chunk_subrange_ttl": "24h"
           "config":
@@ -73,7 +73,7 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:v0.13.0-rc.0
+        image: quay.io/thanos/thanos:master-2020-05-24-079ad427
         livenessProbe:
           failureThreshold: 8
           httpGet:
