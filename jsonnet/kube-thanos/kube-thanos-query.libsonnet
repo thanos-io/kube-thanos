@@ -162,4 +162,28 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       },
     },
   },
+
+  withQueryTimeout:: {
+    local tq = self,
+    config+:: {
+      queryTimeout: error 'must provide queryTimeout',
+    },
+
+    deployment+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-query' then c {
+                args+: [
+                  '--query.timeout=' + tq.config.queryTimeout,
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
 }
