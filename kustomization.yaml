@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ./manifests/thanos-query-deployment.yaml
+- ./manifests/thanos-query-service.yaml
+- ./manifests/thanos-query-serviceMonitor.yaml
+- ./manifests/thanos-store-service.yaml
+- ./manifests/thanos-store-serviceMonitor.yaml
+- ./manifests/thanos-store-statefulSet.yaml
