@@ -29,6 +29,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#122](https://github.com/thanos-io/kube-thanos/pull/122) store: Enable caching bucket support
 
+- [#128](https://github.com/thanos-io/kube-thanos/pull/128) query: Allow configuring query timeout
+
 ### Fixed
 
 -

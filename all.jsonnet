@@ -7,7 +7,7 @@ local commonConfig = {
   config+:: {
     local cfg = self,
     namespace: 'thanos',
-    version: 'master-2020-05-24-079ad427', # v0.13.0-rc.1 candiate
+    version: 'master-2020-05-24-079ad427',  // v0.13.0-rc.1 candiate
     image: 'quay.io/thanos/thanos:' + cfg.version,
     objectStorageConfig: {
       name: 'thanos-objectstorage',
@@ -102,6 +102,7 @@ local swm =
 local q =
   t.query +
   t.query.withServiceMonitor +
+  t.query.withQueryTimeout +
   commonConfig + {
     config+:: {
       name: 'thanos-query',
@@ -111,6 +112,7 @@ local q =
         for service in [re.service, ru.service, s.service]
       ],
       replicaLabels: ['prometheus_replica', 'rule_replica'],
+      queryTimeout: '5m',
     },
   };
 
