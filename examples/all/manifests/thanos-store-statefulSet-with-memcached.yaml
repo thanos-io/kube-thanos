@@ -24,6 +24,24 @@ spec:
         app.kubernetes.io/name: thanos-store
         app.kubernetes.io/version: master-2020-05-24-079ad427
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - thanos-store
+                - key: app.kubernetes.io/instance
+                  operator: In
+                  values:
+                  - thanos-store
+              namespaces:
+              - thanos
+              topologyKey: kubernetes.io/hostname
+            weight: 100
       containers:
       - args:
         - store

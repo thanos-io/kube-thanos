@@ -31,6 +31,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#128](https://github.com/thanos-io/kube-thanos/pull/128) query: Allow configuring query timeout
 
+- [#129](https://github.com/thanos-io/kube-thanos/pull/129) store: Set pod anti affinity between store pods
+
 ### Fixed
 
 -
