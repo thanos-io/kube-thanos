@@ -45,6 +45,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       container.new('thanos-bucket', tb.config.image) +
       container.withTerminationMessagePolicy('FallbackToLogsOnError') +
       container.withArgs([
+        'tools',
         'bucket',
         'web',
         '--objstore.config=$(OBJSTORE_CONFIG)',

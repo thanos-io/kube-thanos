@@ -25,6 +25,7 @@ spec:
     spec:
       containers:
       - args:
+        - tools
         - bucket
         - web
         - --objstore.config=$(OBJSTORE_CONFIG)
