@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: thanos-store
     app.kubernetes.io/version: v0.13.0-rc.0
   name: thanos-store
-  namespace: thanos
+  namespace: monitoring
 spec:
   replicas: 1
   selector:
@@ -24,6 +24,8 @@ spec:
         app.kubernetes.io/name: thanos-store
         app.kubernetes.io/version: v0.13.0-rc.0
     spec:
+      nodeSelector:
+        role: prometheus
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -39,7 +41,7 @@ spec:
                   values:
                   - thanos-store
               namespaces:
-              - thanos
+              - monitoring
               topologyKey: kubernetes.io/hostname
             weight: 100
       containers:
