@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: query-layer
     app.kubernetes.io/instance: thanos-query
     app.kubernetes.io/name: thanos-query
-    app.kubernetes.io/version: v0.13.0-rc.0
+    app.kubernetes.io/version: v0.13.0
   name: thanos-query
   namespace: monitoring
 spec:
