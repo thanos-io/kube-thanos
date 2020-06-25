@@ -9,7 +9,7 @@ The content of this project is written in [jsonnet](http://jsonnet.org/). This p
 ## Prerequisites (per STASH)
 
 Update the docker image version in StashInvest/kube-prometheus/secops/manifests/prometheus-prometheus.yaml to match the docker image used in StashInvest/kube-thanos/manifests.
-In this case, it is: v0.13.0-rc.0
+In this case, it is: v0.13.0
 
 The code snippet in prometheus-prometheus.yaml is:
 ```shell
@@ -19,7 +19,7 @@ The code snippet in prometheus-prometheus.yaml is:
       key: thanos.yaml
       name: thanos-objectstorage
     #version: v0.7.0
-    version: v0.13.0-rc.0
+    version: v0.13.0
 ```
 
 
