@@ -6,7 +6,21 @@ This repository collects Kubernetes manifests combined with documentation and sc
 
 The content of this project is written in [jsonnet](http://jsonnet.org/). This project could both be described as a package as well as a library.
 
-## Prerequisites
+## Prerequisites (per STASH)
+
+Update the docker image version in StashInvest/kube-prometheus/secops/manifests/prometheus-prometheus.yaml to match the docker image used in StashInvest/kube-thanos/manifests.
+In this case, it is: v0.13.0-rc.0
+
+The code snippet in prometheus-prometheus.yaml is:
+```shell
+  thanos:
+    baseImage: quay.io/thanos/thanos
+    objectStorageConfig:
+      key: thanos.yaml
+      name: thanos-objectstorage
+    #version: v0.7.0
+    version: v0.13.0-rc.0
+```
 
 ### kind
 
