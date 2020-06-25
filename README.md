@@ -22,13 +22,6 @@ The code snippet in prometheus-prometheus.yaml is:
     version: v0.13.0-rc.0
 ```
 
-### kind
-
-In order to just try out this stack, start [kind](https://github.com/kubernetes-sigs/kind) with the following command:
-
-```shell
-$ kind create cluster
-```
 
 ## Quickstart
 
