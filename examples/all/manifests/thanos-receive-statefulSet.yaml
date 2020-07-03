@@ -30,6 +30,10 @@ spec:
           - podAffinityTerm:
               labelSelector:
                 matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - thanos-receive
                 - key: app.kubernetes.io/instance
                   operator: In
                   values:
@@ -41,6 +45,10 @@ spec:
           - podAffinityTerm:
               labelSelector:
                 matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - thanos-receive
                 - key: app.kubernetes.io/instance
                   operator: In
                   values:
