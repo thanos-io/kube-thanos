@@ -11,6 +11,12 @@ metadata:
 spec:
   endpoints:
   - port: http
+    relabelings:
+    - separator: /
+      sourceLabels:
+      - namespace
+      - pod
+      targetLabel: instance
   selector:
     matchLabels:
       app.kubernetes.io/component: database-compactor

@@ -111,7 +111,14 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
           matchLabels: tq.config.podLabelSelector,
         },
         endpoints: [
-          { port: 'http' },
+          {
+            port: 'http',
+            relabelings: [{
+              sourceLabels: ['namespace', 'pod'],
+              separator: '/',
+              targetLabel: 'instance',
+            }],
+          },
         ],
       },
     },
