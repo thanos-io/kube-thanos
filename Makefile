@@ -44,6 +44,11 @@ ${MANIFESTS}: $(JSONNET) $(GOJSONTOYAML) vendor example.jsonnet build.sh
 fmt: $(JSONNET_FMT)
 	PATH=$$PATH:$$(pwd)/$(BIN_DIR) echo ${JSONNET_SRC} | xargs -n 1 -- $(JSONNET_FMT_CMD) -i
 
+examples/extend: examples/extend.jsonnet
+	@rm -rf $@
+	@mkdir -p $@
+	$(JSONNET) -J vendor -m $@ examples/extend.jsonnet | xargs -I{} sh -c 'cat {} | gojsontoyaml > {}.yaml; rm -f {}' -- {}
+
 vendor: | $(JSONNET_BUNDLER) jsonnetfile.json jsonnetfile.lock.json
 	$(JSONNET_BUNDLER) install
 
