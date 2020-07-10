@@ -6,6 +6,7 @@ GOJSONTOYAML ?= $(BIN_DIR)/gojsontoyaml
 JSONNET ?= $(BIN_DIR)/jsonnet
 JSONNET_BUNDLER ?= $(BIN_DIR)/jb
 JSONNET_FMT ?= $(BIN_DIR)/jsonnetfmt
+KUBEVAL ?= $(BIN_DIR)/kubeval
 JSONNET_SRC = $(shell find . -name 'vendor' -prune -o -name 'jsonnet/vendor' -prune -o -name 'tmp' -prune -o -name '*.libsonnet' -print -o -name '*.jsonnet' -print)
 JSONNET_FMT_CMD := $(JSONNET_FMT) -n 2 --max-blank-lines 2 --string-style s --comment-style s
 
@@ -44,6 +45,13 @@ ${MANIFESTS}: $(JSONNET) $(GOJSONTOYAML) vendor example.jsonnet build.sh
 fmt: $(JSONNET_FMT)
 	PATH=$$PATH:$$(pwd)/$(BIN_DIR) echo ${JSONNET_SRC} | xargs -n 1 -- $(JSONNET_FMT_CMD) -i
 
+.PHONY: validate
+validate: $(KUBEVAL)
+	$(KUBEVAL) --ignore-missing-schemas manifests/*.yaml
+	$(KUBEVAL) --ignore-missing-schemas examples/all/manifests/*.yaml
+	$(KUBEVAL) examples/extend/*.yaml
+	$(KUBEVAL) examples/development-minio/*.yaml
+
 examples/extend: examples/extend.jsonnet
 	@rm -rf $@
 	@mkdir -p $@
@@ -79,3 +87,7 @@ $(JSONNET_FMT): $(BIN_DIR)
 $(JSONNET_BUNDLER): $(BIN_DIR)
 	curl -L -o $(JSONNET_BUNDLER) "https://github.com/jsonnet-bundler/jsonnet-bundler/releases/download/v0.3.1/jb-$(shell go env GOOS)-$(shell go env GOARCH)"
 	chmod +x $(JSONNET_BUNDLER)
+
+$(KUBEVAL): $(BIN_DIR)
+	go get -d github.com/instrumenta/kubeval
+	go build -o $@ github.com/instrumenta/kubeval

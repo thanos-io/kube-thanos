@@ -6,6 +6,7 @@ jobs:
     steps:
       - checkout
       - run: make --always-make vendor generate
+      - run: make --always-make validate
       - run: git diff --exit-code
 workflows:
   version: 2
