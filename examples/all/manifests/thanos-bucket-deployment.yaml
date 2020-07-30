@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: object-store-bucket-debugging
     app.kubernetes.io/instance: thanos-bucket
     app.kubernetes.io/name: thanos-bucket
-    app.kubernetes.io/version: v0.13.0
+    app.kubernetes.io/version: v0.14.0
   name: thanos-bucket
   namespace: thanos
 spec:
@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/component: object-store-bucket-debugging
         app.kubernetes.io/instance: thanos-bucket
         app.kubernetes.io/name: thanos-bucket
-        app.kubernetes.io/version: v0.13.0
+        app.kubernetes.io/version: v0.14.0
     spec:
       containers:
       - args:
@@ -35,7 +35,7 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:v0.13.0
+        image: quay.io/thanos/thanos:v0.14.0
         livenessProbe:
           failureThreshold: 4
           httpGet:
