@@ -15,17 +15,29 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Changed
 
+### Added
+
+### Fixed
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.13.0)
+
+-
+
+## [v0.13.0](https://github.com/thanos-io/kube-thanos/tree/v0.13.0) (2020-06-22)
+
+Compatible with https://github.com/thanos-io/thanos/releases/tag/v0.13.0
+
+### Changed
+
 - [#118](https://github.com/thanos-io/kube-thanos/pull/118) receive: Extend shutdown grace period to 900s (15min).
 
-- [#122](https://github.com/thanos-io/kube-thanos/pull/122) store: Rename `withMemcachedIndexCache` to `withIndexCacheMemcached`
+- [#131](https://github.com/thanos-io/kube-thanos/pull/131) bucket: Update bucket web to tools bucket web
 
 ### Added
 
-- [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
-
-- [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
-
 - [#119](https://github.com/thanos-io/kube-thanos/pull/119) receive: Distribute receive instances across node zones via pod anti affinity (note: only available on Kubernetes 1.17+)
+
+- [#122](https://github.com/thanos-io/kube-thanos/pull/122) store: Rename `withMemcachedIndexCache` to `withIndexCacheMemcached`
 
 - [#122](https://github.com/thanos-io/kube-thanos/pull/122) store: Enable caching bucket support
 
@@ -35,11 +47,23 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Fixed
 
--
+- [#116](https://github.com/thanos-io/kube-thanos/pull/116) rule: No quotation marks on alert.label-drop
 
-[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.11.0)
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.12.0...v0.13.0)
 
-## [v0.11.0](https://github.com/thanos-io/kube-thanos/tree/v0.11.0) (2020-02-11)
+## [v0.12.0](https://github.com/thanos-io/kube-thanos/tree/v0.12.0) (2020-04-16)
+
+Compatible with https://github.com/thanos-io/thanos/releases/tag/v0.12.0
+
+### Added
+
+- [#105](https://github.com/thanos-io/kube-thanos/pull/105) compactor, store: Add deduplication replica label flags and delete delay labels
+
+- [#106](https://github.com/thanos-io/kube-thanos/pull/106) store: Add memcached mixin
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.11.0...v0.12.0)
+
+## [v0.11.0](https://github.com/thanos-io/kube-thanos/tree/v0.11.0) (2020-04-08)
 
 Compatible with https://github.com/thanos-io/thanos/releases/tag/v0.11.0
 
