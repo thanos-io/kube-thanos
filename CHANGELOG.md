@@ -19,9 +19,21 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Fixed
 
-[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.13.0)
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.14.0)
 
 -
+
+## [v0.14.0](https://github.com/thanos-io/kube-thanos/tree/v0.14.0) (2020-07-10)
+
+Compatible with https://github.com/thanos-io/thanos/releases/tag/v0.14.0
+
+### Changed
+
+- [#135](https://github.com/thanos-io/kube-thanos/pull/135) *: Relabel pod reference into instance label
+
+- [#134](https://github.com/thanos-io/kube-thanos/pull/131) receive: Only perform anti affinity against receive pods
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.13.0...v0.14.0)
 
 ## [v0.13.0](https://github.com/thanos-io/kube-thanos/tree/v0.13.0) (2020-06-22)
 
