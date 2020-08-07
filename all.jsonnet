@@ -7,7 +7,7 @@ local commonConfig = {
   config+:: {
     local cfg = self,
     namespace: 'thanos',
-    version: 'v0.14.0',
+    version: 'master-2020-08-11-2ea2c2b7',
     image: 'quay.io/thanos/thanos:' + cfg.version,
     objectStorageConfig: {
       name: 'thanos-objectstorage',
@@ -122,10 +122,34 @@ local finalRu = ru {
   },
 };
 
+local qf =
+  t.queryFrontend +
+  t.queryFrontend.withServiceMonitor +
+  t.queryFrontend.withSplitInterval +
+  t.queryFrontend.withMaxRetries +
+  t.queryFrontend.withLogQueriesLongerThan +
+  t.queryFrontend.withInMemoryResponseCache +
+  commonConfig + {
+    config+:: {
+      name: 'thanos-query-frontend',
+      replicas: 1,
+      downstreamURL: 'http://%s.%s.svc.cluster.local.:%d' % [
+        q.service.metadata.name,
+        q.service.metadata.namespace,
+        9090,
+      ],
+      splitInterval: '24h',
+      maxRetries: 5,
+      logQueriesLongerThan: '5s',
+    },
+  };
+
+
 { ['thanos-bucket-' + name]: b[name] for name in std.objectFields(b) } +
 { ['thanos-compact-' + name]: c[name] for name in std.objectFields(c) } +
 { ['thanos-receive-' + name]: re[name] for name in std.objectFields(re) } +
 { ['thanos-rule-' + name]: finalRu[name] for name in std.objectFields(finalRu) } +
 { ['thanos-store-' + name]: s[name] for name in std.objectFields(s) } +
 { ['thanos-query-' + name]: q[name] for name in std.objectFields(q) } +
+{ ['thanos-query-frontend-' + name]: qf[name] for name in std.objectFields(qf) } +
 { 'thanos-store-statefulSet-with-memcached': swm.statefulSet }
