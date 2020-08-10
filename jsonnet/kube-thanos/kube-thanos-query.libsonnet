@@ -1,222 +1,197 @@
-local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
+// These are the defaults for this components configuration.
+// When calling the function to generate the component's manifest,
+// you can pass an object structured like the default to overwrite default values.
+local defaults = {
+  local defaults = self,
+  name: 'thanos-query',
+  namespace: error 'must provide namespace',
+  version: error 'must provide version',
+  image: error 'must provide image',
+  replicas: error 'must provide replicas',
+  replicaLabels: error 'must provide replicaLabels',
+  stores: ['dnssrv+_grpc._tcp.thanos-store.%s.svc.cluster.local' % defaults.namespace],
+  externalPrefix: '',
+  resources: {},
+  queryTimeout: '',
+  lookbackDelta: '',
+  ports: {
+    grpc: 10901,
+    http: 9090,
+  },
+  serviceMonitor: false,
 
-{
+  commonLabels:: {
+    'app.kubernetes.io/name': 'thanos-query',
+    'app.kubernetes.io/instance': defaults.name,
+    'app.kubernetes.io/version': defaults.version,
+    'app.kubernetes.io/component': 'query-layer',
+  },
+
+  podLabelSelector:: {
+    [labelName]: defaults.commonLabels[labelName]
+    for labelName in std.objectFields(defaults.commonLabels)
+    if !std.setMember(labelName, ['app.kubernetes.io/version'])
+  },
+};
+
+function(params) {
   local tq = self,
 
-  config:: {
-    name: error 'must provide name',
-    namespace: error 'must provide namespace',
-    version: error 'must provide version',
-    image: error 'must provide image',
-    replicas: error 'must provide replicas',
-    replicaLabels: error 'must provide replica labels',
-    stores: error 'must provide store addresses',
-    logLevel: 'info',
+  // Combine the defaults and the passed params to make the component's config.
+  config:: defaults + params,
+  // Safety checks for combined config of defaults and params
+  assert std.isNumber(tq.config.replicas) && tq.config.replicas >= 0 : 'thanos query replicas has to be number >= 0',
+  assert std.isArray(tq.config.replicaLabels),
+  assert std.isObject(tq.config.resources),
+  assert std.isString(tq.config.externalPrefix),
+  assert std.isString(tq.config.queryTimeout),
+  assert std.isBoolean(tq.config.serviceMonitor),
 
-    commonLabels:: {
-      'app.kubernetes.io/name': 'thanos-query',
-      'app.kubernetes.io/instance': tq.config.name,
-      'app.kubernetes.io/version': tq.config.version,
-      'app.kubernetes.io/component': 'query-layer',
+  service: {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      name: tq.config.name,
+      namespace: tq.config.namespace,
+      labels: tq.config.commonLabels,
     },
+    spec: {
+      selector: tq.config.podLabelSelector,
+      ports: [
+        {
+          assert std.isString(name),
+          assert std.isNumber(tq.config.ports[name]),
 
-    podLabelSelector:: {
-      [labelName]: tq.config.commonLabels[labelName]
-      for labelName in std.objectFields(tq.config.commonLabels)
-      if !std.setMember(labelName, ['app.kubernetes.io/version'])
-    },
-  },
-
-  service:
-    local service = k.core.v1.service;
-    local ports = service.mixin.spec.portsType;
-
-    service.new(
-      tq.config.name,
-      tq.config.podLabelSelector,
-      [
-        ports.newNamed('grpc', 10901, 'grpc'),
-        ports.newNamed('http', 9090, 'http'),
-      ]
-    ) +
-    service.mixin.metadata.withNamespace(tq.config.namespace) +
-    service.mixin.metadata.withLabels(tq.config.commonLabels),
-
-  deployment:
-    local deployment = k.apps.v1.deployment;
-    local container = deployment.mixin.spec.template.spec.containersType;
-    local affinity = deployment.mixin.spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecutionType;
-    local matchExpression = affinity.mixin.podAffinityTerm.labelSelector.matchExpressionsType;
-
-    local c =
-      container.new('thanos-query', tq.config.image) +
-      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
-      container.withArgs([
-        'query',
-        '--log.level=' + tq.config.logLevel,
-        '--grpc-address=0.0.0.0:%d' % tq.service.spec.ports[0].port,
-        '--http-address=0.0.0.0:%d' % tq.service.spec.ports[1].port,
-      ] + [
-        '--query.replica-label=%s' % labelName
-        for labelName in tq.config.replicaLabels
-      ] + [
-        '--store=%s' % store
-        for store in tq.config.stores
-      ]) +
-      container.withPorts([
-        { name: 'grpc', containerPort: tq.service.spec.ports[0].port },
-        { name: 'http', containerPort: tq.service.spec.ports[1].port },
-      ]) +
-      container.mixin.livenessProbe +
-      container.mixin.livenessProbe.withPeriodSeconds(30) +
-      container.mixin.livenessProbe.withFailureThreshold(4) +
-      container.mixin.livenessProbe.httpGet.withPort(tq.service.spec.ports[1].port) +
-      container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
-      container.mixin.readinessProbe +
-      container.mixin.readinessProbe.withPeriodSeconds(5) +
-      container.mixin.readinessProbe.withFailureThreshold(20) +
-      container.mixin.readinessProbe.httpGet.withPort(tq.service.spec.ports[1].port) +
-      container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.readinessProbe.httpGet.withPath('/-/ready');
-
-    deployment.new(tq.config.name, tq.config.replicas, c, tq.config.commonLabels) +
-    deployment.mixin.metadata.withNamespace(tq.config.namespace) +
-    deployment.mixin.metadata.withLabels(tq.config.commonLabels) +
-    deployment.mixin.spec.selector.withMatchLabels(tq.config.podLabelSelector) +
-    deployment.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
-    deployment.mixin.spec.template.spec.affinity.podAntiAffinity.withPreferredDuringSchedulingIgnoredDuringExecution([
-      affinity.new() +
-      affinity.withWeight(100) +
-      affinity.mixin.podAffinityTerm.withNamespaces(tq.config.namespace) +
-      affinity.mixin.podAffinityTerm.withTopologyKey('kubernetes.io/hostname') +
-      affinity.mixin.podAffinityTerm.labelSelector.withMatchExpressions([
-        matchExpression.new() +
-        matchExpression.withKey('app.kubernetes.io/name') +
-        matchExpression.withOperator('In') +
-        matchExpression.withValues([tq.deployment.metadata.labels['app.kubernetes.io/name']]),
-      ]),
-    ]),
-
-  withServiceMonitor:: {
-    local tq = self,
-    serviceMonitor: {
-      apiVersion: 'monitoring.coreos.com/v1',
-      kind: 'ServiceMonitor',
-      metadata+: {
-        name: tq.config.name,
-        namespace: tq.config.namespace,
-        labels: tq.config.commonLabels,
-      },
-      spec: {
-        selector: {
-          matchLabels: tq.config.podLabelSelector,
-        },
-        endpoints: [
-          {
-            port: 'http',
-            relabelings: [{
-              sourceLabels: ['namespace', 'pod'],
-              separator: '/',
-              targetLabel: 'instance',
-            }],
-          },
-        ],
-      },
+          name: name,
+          targetPort: name,
+          port: tq.config.ports[name],
+        }
+        for name in std.objectFields(tq.config.ports)
+      ],
     },
   },
 
-  withResources:: {
-    local tq = self,
-    config+:: {
-      resources: error 'must provide resources',
+  deployment: {
+    apiVersion: 'apps/v1',
+    kind: 'Deployment',
+    metadata: {
+      name: tq.config.name,
+      namespace: tq.config.namespace,
+      labels: tq.config.commonLabels,
     },
-
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-query' then c {
-                resources: tq.config.resources,
-              } else c
-              for c in super.containers
-            ],
+    spec: {
+      replicas: tq.config.replicas,
+      selector: { matchLabels: tq.config.podLabelSelector },
+      template: {
+        metadata: { labels: tq.config.commonLabels },
+        spec: {
+          containers: [
+            {
+              name: tq.config.name,
+              image: tq.config.image,
+              args:
+                [
+                  'query',
+                  '--grpc-address=0.0.0.0:%d' % tq.config.ports.grpc,
+                  '--http-address=0.0.0.0:%d' % tq.config.ports.http,
+                ] + [
+                  '--query.replica-label=%s' % labelName
+                  for labelName in tq.config.replicaLabels
+                ] + [
+                  '--store=%s' % store
+                  for store in tq.config.stores
+                ] +
+                (
+                  if tq.config.externalPrefix != '' then [
+                    '--web.external-prefix=' + tq.config.externalPrefix,
+                  ] else []
+                ) +
+                (
+                  if tq.config.queryTimeout != '' then [
+                    '--query.timeout=' + tq.config.queryTimeout,
+                  ] else []
+                ) +
+                (
+                  if tq.config.lookbackDelta != '' then [
+                    '--query.lookback-delta=' + tq.config.lookbackDelta,
+                  ] else []
+                ),
+              ports: [
+                { name: name, containerPort: tq.config.ports[name] }
+                for name in std.objectFields(tq.config.ports)
+              ],
+              livenessProbe: {
+                failureThreshold: 4,
+                httpGet: {
+                  path: '/-/healthy',
+                  port: tq.config.ports.http,
+                  scheme: 'HTTP',
+                },
+                periodSeconds: 30,
+              },
+              readinessProbe: {
+                failureThreshold: 20,
+                httpGet: {
+                  path: '/-/ready',
+                  port: tq.config.ports.http,
+                  scheme: 'HTTP',
+                },
+                periodSeconds: 5,
+              },
+              terminationMessagePolicy: 'FallbackToLogsOnError',
+              resources: if tq.config.resources != {} then tq.config.resources else {},
+            },
+          ],
+          terminationGracePeriodSeconds: 120,
+          affinity: {
+            podAntiAffinity: {
+              preferredDuringSchedulingIgnoredDuringExecution: [
+                {
+                  podAffinityTerm: {
+                    labelSelector: {
+                      matchExpressions: [
+                        {
+                          key: 'app.kubernetes.io/name',
+                          operator: 'In',
+                          values: [tq.config.name],
+                        },
+                      ],
+                    },
+                    namespaces: [tq.config.namespace],
+                    topologyKey: 'kubernetes.io/hostname',
+                  },
+                  weight: 100,
+                },
+              ],
+            },
           },
         },
       },
     },
   },
 
-  withExternalPrefix:: {
-    local tq = self,
-    config+:: {
-      externalPrefix: error 'must provide externalPrefix',
+  serviceMonitor: if tq.config.serviceMonitor == true then {
+    apiVersion: 'monitoring.coreos.com/v1',
+    kind: 'ServiceMonitor',
+    metadata+: {
+      name: tq.config.name,
+      namespace: tq.config.namespace,
+      labels: tq.config.commonLabels,
     },
-
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-query' then c {
-                args+: [
-                  '--web.external-prefix=' + tq.config.externalPrefix,
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
+    spec: {
+      selector: {
+        matchLabels: tq.config.podLabelSelector,
       },
-    },
-  },
-
-  withQueryTimeout:: {
-    local tq = self,
-    config+:: {
-      queryTimeout: error 'must provide queryTimeout',
-    },
-
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-query' then c {
-                args+: [
-                  '--query.timeout=' + tq.config.queryTimeout,
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
+      endpoints: [
+        {
+          port: 'http',
+          relabelings: [{
+            sourceLabels: ['namespace', 'pod'],
+            separator: '/',
+            targetLabel: 'instance',
+          }],
         },
-      },
+      ],
     },
-  },
-
-  withLookbackDelta:: {
-    local tq = self,
-    config+:: {
-      lookbackDelta: error 'must provide lookbackDelta',
-    },
-
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-query' then c {
-                args+: [
-                  '--query.lookback-delta=' + tq.config.lookbackDelta,
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
+  } else null,
 }

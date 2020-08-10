@@ -184,7 +184,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         },
       },
     },
-  }, 
+  },
 
   withSplitInterval:: {
     local tqf = self,
@@ -208,7 +208,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         },
       },
     },
-  }, 
+  },
 
   local fifoCacheDefaults = {
     // Don't limit maximum item size.
