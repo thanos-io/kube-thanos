@@ -46,12 +46,12 @@ Install this library in your own project with [jsonnet-bundler](https://github.c
 $ mkdir my-kube-thanos; cd my-kube-thanos
 $ jb init  # Creates the initial/empty `jsonnetfile.json`
 # Install the kube-thanos dependency
-$ jb install github.com/thanos-io/kube-thanos/jsonnet/kube-thanos@master # Creates `vendor/` & `jsonnetfile.lock.json`, and fills in `jsonnetfile.json`
+$ jb install github.com/thanos-io/kube-thanos/jsonnet/kube-thanos # Creates `vendor/` & `jsonnetfile.lock.json`, and fills in `jsonnetfile.json`
 ```
 
 > `jb` can be installed with `go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb`
 
-> An e.g. of how to install a given version of this library: `jb install github.com/thanos-io/kube-thanos/jsonnet/kube-thanos@master`
+> An e.g. of how to install a given version of this library: `jb install github.com/thanos-io/kube-thanos/jsonnet/kube-thanos`
 
 In order to update the kube-thanos dependency, simply use the jsonnet-bundler update functionality:
 ```shell
@@ -110,44 +110,83 @@ local query = thanos.query(config {
 { ['thanos-query-' + name]: query[name] for name in std.objectFields(query) }
 ```
 
-And here's the [build.sh](build.sh) script (which uses `vendor/` to render all manifests in a json structure of `{filename: manifest-content}`):
-
-[embedmd]:# (build.sh)
-```sh
-#!/usr/bin/env bash
-
-# This script uses arg $1 (name of *.jsonnet file to use) to generate the manifests/*.yaml files.
-
-set -e
-set -x
-# only exit with zero if all commands of the pipeline exit successfully
-set -o pipefail
-
-# Make sure to start with a clean 'manifests' dir
-rm -rf manifests
-mkdir manifests
-
-# optional, but we would like to generate yaml, not json
-jsonnet -J vendor -m manifests "${1-example.jsonnet}" | xargs -I{} sh -c 'cat {} | gojsontoyaml > {}.yaml; rm -f {}' -- {}
-
-# The following script generates all components, mostly used for testing
-
-rm -rf examples/all/manifests
-mkdir examples/all/manifests
-
-jsonnet -J vendor -m examples/all/manifests "${1-all.jsonnet}" | xargs -I{} sh -c 'cat {} | gojsontoyaml > {}.yaml; rm -f {}' -- {}
-```
-
 > Note you need `jsonnet` (`go get github.com/google/go-jsonnet/cmd/jsonnet`) and `gojsontoyaml` (`go get github.com/brancz/gojsontoyaml`) installed to run `build.sh`. If you just want json output, not yaml, then you can skip the pipe and everything afterwards.
 
 This script runs the jsonnet code, then reads each key of the generated json and uses that as the file name, and writes the value of that key to that file, and converts each json manifest to yaml.
 
-### Apply the kube-thanos stack
-The previous steps (compilation) has created a bunch of manifest files in the manifest/ folder.
-Now simply use `kubectl` to install Thanos as per your configuration:
+### Extending / Overwriting
 
-```shell
-$ kubectl apply -f manifests/
+Whenever there are very specific changes you want to make to the Thanos deployment, that only really you need or aren't applicable to be part of kube-thanos, 
+you can use merging of jsonnet objects and arrays to extend or overwrite the generated Kubernetes objects.
+
+
+[embedmd]:# (examples/extend.jsonnet)
+```jsonnet
+// Usually this should be an absolute import paths.
+// In this instance, however, we use a local symlink cause this is within the same repository.
+local thanos = import 'kube-thanos/thanos.libsonnet';
+
+// This example demonstrates how to overwrite or extends each component,
+// whenever out-of-the-box configuration isn't enough.
+
+local query = thanos.query({
+  namespace: 'thanos',
+  version: 'v0.13.0',
+  image: 'quay.io/thanos/thanos:' + self.version,
+  replicas: 1,
+  replicaLabels: ['replica'],
+});
+
+local queryExtended = query {
+  deployment+: {
+    metadata+: {
+      // Let's extend the deployment with our specific annotations
+      annotations: {
+        'some-specific-annotation': 'foobar',
+      },
+      // We can also overwrite existing labels completely.
+      labels: {
+        app: 'thanos-query',
+      },
+    },
+    // We can even add a sidecar without changing the initial component.
+    // By doing that, we can still upgrade kube-thanos but never lose our own sidecar.
+    spec+: {
+      template+: {
+        spec+: {
+          containers+: [
+            {
+              name: 'thanos-query-sidecar',
+              image: 'quay.io/org/app:dont-use-latest',
+              args: ['--foo=bar'],
+            },
+          ],
+        },
+      },
+    },
+  },
+};
+
+{ ['thanos-query-' + name]: queryExtended[name] for name in std.objectFields(queryExtended) if queryExtended[name] != null }
+
+// The same can be done without the extra variable:
+
+// local query = thanos.query({
+//   namespace: 'thanos',
+//   version: 'v0.13.0',
+//   image: 'quay.io/thanos/thanos:' + self.version,
+//   replicas: 1,
+//   replicaLabels: ['replica'],
+// }) + {
+//   deployment+: {
+//     metadata+: {
+//       annotations: {
+//         'some-specific-annotation': 'foobar',
+//       },
+//     },
+//   },
+// };
+
+
+
 ```
-
-Check the monitoring namespace (or the namespace you have specific in `namespace: `) and make sure the pods are running.
