@@ -10,6 +10,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     image: error 'must provide image',
     replicas: error 'must provide replicas',
     objectStorageConfig: error 'must provide objectStorageConfig',
+    logLevel: 'info',
 
     commonLabels:: {
       'app.kubernetes.io/name': 'thanos-store',
@@ -55,6 +56,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       container.withTerminationMessagePolicy('FallbackToLogsOnError') +
       container.withArgs([
         'store',
+        '--log.level=' + ts.config.logLevel,
         '--data-dir=/var/thanos/store',
         '--grpc-address=0.0.0.0:%d' % ts.service.spec.ports[0].port,
         '--http-address=0.0.0.0:%d' % ts.service.spec.ports[1].port,

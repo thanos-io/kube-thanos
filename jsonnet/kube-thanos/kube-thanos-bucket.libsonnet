@@ -9,6 +9,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     version: error 'must provide version',
     image: error 'must provide image',
     objectStorageConfig: error 'must provide objectStorageConfig',
+    logLevel: 'info',
 
     commonLabels:: {
       'app.kubernetes.io/name': 'thanos-bucket',
@@ -48,6 +49,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         'tools',
         'bucket',
         'web',
+        '--log.level=' + tb.config.logLevel,
         '--objstore.config=$(OBJSTORE_CONFIG)',
       ]) +
       container.withEnv([

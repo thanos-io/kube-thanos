@@ -11,6 +11,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     replicas: error 'must provide replicas',
     replicaLabels: error 'must provide replica labels',
     stores: error 'must provide store addresses',
+    logLevel: 'info',
 
     commonLabels:: {
       'app.kubernetes.io/name': 'thanos-query',
@@ -52,6 +53,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       container.withTerminationMessagePolicy('FallbackToLogsOnError') +
       container.withArgs([
         'query',
+        '--log.level=' + tq.config.logLevel,
         '--grpc-address=0.0.0.0:%d' % tq.service.spec.ports[0].port,
         '--http-address=0.0.0.0:%d' % tq.service.spec.ports[1].port,
       ] + [

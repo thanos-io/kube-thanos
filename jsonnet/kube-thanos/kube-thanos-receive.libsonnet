@@ -11,6 +11,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     replicas: error 'must provide replicas',
     replicationFactor: error 'must provide replication factor',
     objectStorageConfig: error 'must provide objectStorageConfig',
+    logLevel: 'info',
 
     commonLabels:: {
       'app.kubernetes.io/name': 'thanos-receive',
@@ -60,6 +61,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       container.withTerminationMessagePolicy('FallbackToLogsOnError') +
       container.withArgs([
         'receive',
+        '--log.level=' + tr.config.logLevel,
         '--grpc-address=0.0.0.0:%d' % tr.service.spec.ports[0].port,
         '--http-address=0.0.0.0:%d' % tr.service.spec.ports[1].port,
         '--remote-write.address=0.0.0.0:%d' % tr.service.spec.ports[2].port,
