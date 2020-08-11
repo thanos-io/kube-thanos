@@ -17,6 +17,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Added
 
+- [#142](https://github.com/thanos-io/kube-thanos/pull/142) query-frontend: Add thanos query frontend component.
+
 ### Fixed
 
 [Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.14.0)
