@@ -109,7 +109,7 @@ function(params) {
         metadata: { labels: ts.config.commonLabels },
         spec: {
           containers: [{
-            name: ts.config.name,
+            name: 'thanos-store',
             image: ts.config.image,
             args: [
               'store',

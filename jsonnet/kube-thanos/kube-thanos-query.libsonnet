@@ -87,7 +87,7 @@ function(params) {
         spec: {
           containers: [
             {
-              name: tq.config.name,
+              name: 'thanos-query',
               image: tq.config.image,
               args:
                 [
