@@ -10,6 +10,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     image: error 'must provide image',
     replicas: error 'must provide replicas',
     objectStorageConfig: error 'must provide objectStorageConfig',
+    logLevel: 'info',
     ruleFiles: [],
     alertmanagersURLs: [],
     queriers: [],
@@ -57,6 +58,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       container.withArgs(
         [
           'rule',
+          '--log.level=' + tr.config.logLevel,
           '--grpc-address=0.0.0.0:%d' % tr.service.spec.ports[0].port,
           '--http-address=0.0.0.0:%d' % tr.service.spec.ports[1].port,
           '--objstore.config=$(OBJSTORE_CONFIG)',

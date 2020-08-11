@@ -9,6 +9,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     version: error 'must provide version',
     image: error 'must provide image',
     objectStorageConfig: error 'must provide objectStorageConfig',
+    logLevel: 'info',
 
     commonLabels:: {
       'app.kubernetes.io/name': 'thanos-compact',
@@ -51,6 +52,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       container.withArgs([
         'compact',
         '--wait',
+        '--log.level=' + tc.config.logLevel,
         '--objstore.config=$(OBJSTORE_CONFIG)',
         '--data-dir=/var/thanos/compact',
         '--debug.accept-malformed-index',

@@ -28,6 +28,7 @@ spec:
         - tools
         - bucket
         - web
+        - --log.level=info
         - --objstore.config=$(OBJSTORE_CONFIG)
         env:
         - name: OBJSTORE_CONFIG

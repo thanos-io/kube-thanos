@@ -28,6 +28,7 @@ spec:
       - args:
         - compact
         - --wait
+        - --log.level=info
         - --objstore.config=$(OBJSTORE_CONFIG)
         - --data-dir=/var/thanos/compact
         - --debug.accept-malformed-index
