@@ -2,25 +2,25 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/component: query-layer
-    app.kubernetes.io/instance: thanos-query
-    app.kubernetes.io/name: thanos-query
+    app.kubernetes.io/component: query-cache
+    app.kubernetes.io/instance: thanos-query-frontend
+    app.kubernetes.io/name: thanos-query-frontend
     app.kubernetes.io/version: master-2020-08-11-2ea2c2b7
-  name: thanos-query
+  name: thanos-query-frontend
   namespace: thanos
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/component: query-layer
-      app.kubernetes.io/instance: thanos-query
-      app.kubernetes.io/name: thanos-query
+      app.kubernetes.io/component: query-cache
+      app.kubernetes.io/instance: thanos-query-frontend
+      app.kubernetes.io/name: thanos-query-frontend
   template:
     metadata:
       labels:
-        app.kubernetes.io/component: query-layer
-        app.kubernetes.io/instance: thanos-query
-        app.kubernetes.io/name: thanos-query
+        app.kubernetes.io/component: query-cache
+        app.kubernetes.io/instance: thanos-query-frontend
+        app.kubernetes.io/name: thanos-query-frontend
         app.kubernetes.io/version: master-2020-08-11-2ea2c2b7
     spec:
       affinity:
@@ -32,23 +32,26 @@ spec:
                 - key: app.kubernetes.io/name
                   operator: In
                   values:
-                  - thanos-query
+                  - thanos-query-frontend
               namespaces:
               - thanos
               topologyKey: kubernetes.io/hostname
             weight: 100
       containers:
       - args:
-        - query
-        - --log.level=info
-        - --grpc-address=0.0.0.0:10901
+        - query-frontend
+        - --query-frontend.compress-responses
         - --http-address=0.0.0.0:9090
-        - --query.replica-label=prometheus_replica
-        - --query.replica-label=rule_replica
-        - --store=dnssrv+_grpc._tcp.thanos-receive.thanos.svc.cluster.local
-        - --store=dnssrv+_grpc._tcp.thanos-rule.thanos.svc.cluster.local
-        - --store=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local
-        - --query.timeout=5m
+        - --query-frontend.downstream-url=http://thanos-query.thanos.svc.cluster.local.:9090
+        - --query-range.split-interval=24h
+        - --query-range.max-retries-per-request=5
+        - --query-frontend.log_queries_longer_than=5s
+        - |-
+          --query-range.response-cache-config="config":
+            "max_size": "0"
+            "max_size_items": 2048
+            "validity": "6h"
+          "type": "in-memory"
         image: quay.io/thanos/thanos:master-2020-08-11-2ea2c2b7
         livenessProbe:
           failureThreshold: 4
@@ -57,10 +60,8 @@ spec:
             port: 9090
             scheme: HTTP
           periodSeconds: 30
-        name: thanos-query
+        name: thanos-query-frontend
         ports:
-        - containerPort: 10901
-          name: grpc
         - containerPort: 9090
           name: http
         readinessProbe:

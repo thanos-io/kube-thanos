@@ -5,4 +5,5 @@
   receive: (import 'kube-thanos-receive.libsonnet'),
   rule: (import 'kube-thanos-rule.libsonnet'),
   store: (import 'kube-thanos-store.libsonnet'),
+  queryFrontend: (import 'kube-thanos-query-frontend.libsonnet'),
 }

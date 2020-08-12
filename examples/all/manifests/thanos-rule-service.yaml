@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: rule-evaluation-engine
     app.kubernetes.io/instance: thanos-rule
     app.kubernetes.io/name: thanos-rule
-    app.kubernetes.io/version: v0.14.0
+    app.kubernetes.io/version: master-2020-08-11-2ea2c2b7
   name: thanos-rule
   namespace: thanos
 spec:
