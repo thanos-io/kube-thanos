@@ -136,7 +136,7 @@ local qf =
       downstreamURL: 'http://%s.%s.svc.cluster.local.:%d' % [
         q.service.metadata.name,
         q.service.metadata.namespace,
-        9090,
+        q.service.spec.ports[1].port,
       ],
       splitInterval: '24h',
       maxRetries: 5,
