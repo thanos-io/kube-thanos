@@ -195,4 +195,28 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       },
     },
   },
+
+  withLookbackDelta:: {
+    local tq = self,
+    config+:: {
+      lookbackDelta: error 'must provide lookbackDelta',
+    },
+
+    deployment+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-query' then c {
+                args+: [
+                  '--query.lookback-delta=' + tq.config.lookbackDelta,
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
 }
