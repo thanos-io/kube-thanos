@@ -18,6 +18,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 ### Added
 
 - [#142](https://github.com/thanos-io/kube-thanos/pull/142) query-frontend: Add thanos query frontend component.
+- [#145](https://github.com/thanos-io/kube-thanos/pull/145) querier: Add a new mixin to specify `--query.lookback-delta` flag.
 
 ### Fixed
 
