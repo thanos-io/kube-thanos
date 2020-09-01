@@ -103,6 +103,7 @@ local q =
   t.query +
   t.query.withServiceMonitor +
   t.query.withQueryTimeout +
+  t.query.withLookbackDelta +
   commonConfig + {
     config+:: {
       name: 'thanos-query',
@@ -113,6 +114,7 @@ local q =
       ],
       replicaLabels: ['prometheus_replica', 'rule_replica'],
       queryTimeout: '5m',
+      lookbackDelta: '15m',
     },
   };
 

@@ -49,6 +49,7 @@ spec:
         - --store=dnssrv+_grpc._tcp.thanos-rule.thanos.svc.cluster.local
         - --store=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local
         - --query.timeout=5m
+        - --query.lookback-delta=15m
         image: quay.io/thanos/thanos:master-2020-08-11-2ea2c2b7
         livenessProbe:
           failureThreshold: 4
