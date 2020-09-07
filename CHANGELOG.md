@@ -15,16 +15,27 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Changed
 
+-
+
 ### Added
 
-- [#142](https://github.com/thanos-io/kube-thanos/pull/142) query-frontend: Add thanos query frontend component.
-- [#145](https://github.com/thanos-io/kube-thanos/pull/145) querier: Add a new mixin to specify `--query.lookback-delta` flag.
+-
 
 ### Fixed
 
-[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.14.0)
-
 -
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.15.0)
+
+## [v0.15.0](https://github.com/thanos-io/kube-thanos/tree/v0.15.0) (2020-09-07)
+
+### Added
+
+- [#142](https://github.com/thanos-io/kube-thanos/pull/142) query-frontend: Add thanos query frontend component.
+
+- [#145](https://github.com/thanos-io/kube-thanos/pull/145) querier: Add a new mixin to specify `--query.lookback-delta` flag.
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.14.0...v0.15.0)
 
 ## [v0.14.0](https://github.com/thanos-io/kube-thanos/tree/v0.14.0) (2020-07-10)
 
