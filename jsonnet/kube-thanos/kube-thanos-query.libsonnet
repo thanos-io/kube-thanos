@@ -26,6 +26,14 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       if !std.setMember(labelName, ['app.kubernetes.io/version'])
     },
   },
+    
+  serviceAccount:
+    local sa = k.core.v1.serviceAccount;
+
+    sa.new() +
+    sa.mixin.metadata.withName(tq.config.name) +
+    sa.mixin.metadata.withNamespace(tq.config.namespace) +
+    sa.mixin.metadata.withLabels(tq.config.commonLabels),
 
   service:
     local service = k.core.v1.service;
@@ -85,6 +93,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     deployment.mixin.metadata.withLabels(tq.config.commonLabels) +
     deployment.mixin.spec.selector.withMatchLabels(tq.config.podLabelSelector) +
     deployment.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
+    deployment.mixin.spec.template.spec.withServiceAccount(tq.serviceAccount.metadata.name) +
     deployment.mixin.spec.template.spec.affinity.podAntiAffinity.withPreferredDuringSchedulingIgnoredDuringExecution([
       affinity.new() +
       affinity.withWeight(100) +

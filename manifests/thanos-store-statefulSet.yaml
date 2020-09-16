@@ -82,6 +82,7 @@ spec:
         - mountPath: /var/thanos/store
           name: data
           readOnly: false
+      serviceAccount: thanos-store
       terminationGracePeriodSeconds: 120
       volumes: []
   volumeClaimTemplates:

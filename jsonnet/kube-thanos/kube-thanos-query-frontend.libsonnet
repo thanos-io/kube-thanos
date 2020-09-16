@@ -25,6 +25,14 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     },
   },
 
+  serviceAccount:
+    local sa = k.core.v1.serviceAccount;
+
+    sa.new() +
+    sa.mixin.metadata.withName(tqf.config.name) +
+    sa.mixin.metadata.withNamespace(tqf.config.namespace) +
+    sa.mixin.metadata.withLabels(tqf.config.commonLabels),
+
   service:
     local service = k.core.v1.service;
     local ports = service.mixin.spec.portsType;
@@ -75,6 +83,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     deployment.mixin.metadata.withLabels(tqf.config.commonLabels) +
     deployment.mixin.spec.selector.withMatchLabels(tqf.config.podLabelSelector) +
     deployment.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
+    deployment.mixin.spec.template.spec.withServiceAccount(tqf.serviceAccount.metadata.name) +
     deployment.mixin.spec.template.spec.affinity.podAntiAffinity.withPreferredDuringSchedulingIgnoredDuringExecution([
       affinity.new() +
       affinity.withWeight(100) +
