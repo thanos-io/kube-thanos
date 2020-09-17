@@ -63,7 +63,7 @@ function(params) {
           assert std.isNumber(tq.config.ports[name]),
 
           name: name,
-          targetPort: name,
+          targetPort: tq.config.ports[name],
           port: tq.config.ports[name],
         }
         for name in std.objectFields(tq.config.ports)

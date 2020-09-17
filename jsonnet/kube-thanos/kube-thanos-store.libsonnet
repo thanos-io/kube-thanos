@@ -85,7 +85,7 @@ function(params) {
           assert std.isNumber(ts.config.ports[name]),
 
           name: name,
-          targetPort: name,
+          targetPort: ts.config.ports[name],
           port: ts.config.ports[name],
         }
         for name in std.objectFields(ts.config.ports)
