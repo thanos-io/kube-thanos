@@ -62,7 +62,6 @@ spec:
         - mountPath: /var/thanos/compact
           name: data
           readOnly: false
-      serviceAccount: thanos-compact
       terminationGracePeriodSeconds: 120
       volumes: []
   volumeClaimTemplates:

@@ -25,14 +25,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     },
   },
 
-  serviceAccount:
-    local sa = k.core.v1.serviceAccount;
-
-    sa.new() +
-    sa.mixin.metadata.withName(tc.config.name) +
-    sa.mixin.metadata.withNamespace(tc.config.namespace) +
-    sa.mixin.metadata.withLabels(tc.config.commonLabels),
-
   service:
     local service = k.core.v1.service;
     local ports = service.mixin.spec.portsType;
@@ -99,7 +91,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
     statefulSet.mixin.spec.template.spec.withVolumes([
       volume.fromEmptyDir('data'),
     ]) +
-    statefulSet.mixin.spec.template.spec.withServiceAccount(tc.serviceAccount.metadata.name) +
     statefulSet.mixin.spec.selector.withMatchLabels(tc.config.podLabelSelector) +
     {
       spec+: {
@@ -265,6 +256,23 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
               } else c
               for c in super.containers
             ],
+          },
+        },
+      },
+    },
+  },
+
+  withServiceAccount:: {
+    local tc = self,
+    config+:: {
+      serviceAccount: error 'must provide serviceAccount',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            serviceAccount: tc.config.serviceAccount,
           },
         },
       },

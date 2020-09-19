@@ -72,7 +72,6 @@ spec:
         - mountPath: /var/thanos/rule
           name: data
           readOnly: false
-      serviceAccount: thanos-rule
       volumes: []
   volumeClaimTemplates:
   - metadata:

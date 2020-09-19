@@ -112,7 +112,6 @@ spec:
         - mountPath: /var/thanos/receive
           name: data
           readOnly: false
-      serviceAccount: thanos-receive
       terminationGracePeriodSeconds: 900
       volumes: []
   volumeClaimTemplates:

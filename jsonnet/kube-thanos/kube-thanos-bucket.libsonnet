@@ -102,4 +102,21 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       },
     },
   },
+
+  withServiceAccount:: {
+    local tb = self,
+    config+:: {
+      serviceAccount: error 'must provide serviceAccount',
+    },
+
+    deployment+: {
+      spec+: {
+        template+: {
+          spec+: {
+            serviceAccount: tb.config.serviceAccount,
+          },
+        },
+      },
+    },
+  },
 }

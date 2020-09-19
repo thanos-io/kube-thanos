@@ -72,5 +72,4 @@ spec:
             scheme: HTTP
           periodSeconds: 5
         terminationMessagePolicy: FallbackToLogsOnError
-      serviceAccount: thanos-query-frontend
       terminationGracePeriodSeconds: 120
