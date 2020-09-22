@@ -183,4 +183,41 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       },
     },
   },
+
+  withAlertmanagers:: {
+    local tr = self,
+    config+:: {
+      rulesConfigMapName: error 'must provide rulesConfigMapName',
+      alertmanagersURL: error 'must provide alertmanagersURL',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-rule' then c {
+                args+: [
+                  '--alertmanagers.url=' + alertmanagerURL,
+                  for alertmanagerURL in tr.config.alertmanagersURL
+                ] + [
+                  '--rule-file=/etc/thanos/rules/*.rules.yaml',
+                ],
+                volumeMounts+: [
+                  { name: 'rules-config', mountPath: '/etc/thanos/rules' },
+                ],
+              } else c
+              for c in super.containers
+            ],
+
+            local volume = k.apps.v1.statefulSet.mixin.spec.template.spec.volumesType,
+            volumes+: [
+              volume.withName('rules-config') +
+              volume.mixin.configMap.withName(tr.config.rulesConfigMapName),
+            ],
+          },
+        },
+      },
+    },
+  },
 }
