@@ -201,7 +201,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
                   '--alertmanagers.url=' + alertmanagerURL,
                   for alertmanagerURL in tr.config.alertmanagersURL
                 ] + [
-                  '--rule-file=/etc/thanos/rules/*.rules.yaml',
+                  '--rule-file=/etc/thanos/rules/*.yaml',
                 ],
                 volumeMounts+: [
                   { name: 'rules-config', mountPath: '/etc/thanos/rules' },
