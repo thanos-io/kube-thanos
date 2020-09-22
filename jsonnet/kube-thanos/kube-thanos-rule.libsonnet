@@ -187,7 +187,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
   withAlertmanagers:: {
     local tr = self,
     config+:: {
-      ruleConfigMapName: error 'must provide rulesConfigMapName',
+      ruleConfigMapName: error 'must provide ruleConfigMapName',
       ruleFileKey: error 'must provide ruleFileKey',
       alertmanagersURL: error 'must provide alertmanagersURL',
     },
