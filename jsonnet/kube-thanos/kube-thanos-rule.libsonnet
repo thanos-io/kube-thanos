@@ -212,8 +212,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
   withRules:: {
     local tr = self,
     config+:: {
-      ruleConfigMapName: error 'must provide ruleConfigMapName',
-      ruleFilesKey: error 'must provide ruleFilesKey',
+      rulesConfig: error 'must provide rulesConfig',
     },
 
     statefulSet+: {
@@ -223,11 +222,12 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             containers: [
               if c.name == 'thanos-rule' then c {
                 args+: [
-                  '--rule-file=/etc/thanos/rules/' + ruleFileKey,
-                  for ruleFileKey in tr.config.ruleFilesKey
+                  '--rule-file=/etc/thanos/rules/' + ruleConfig.name + '/' + ruleConfig.key,
+                  for ruleConfig in tr.config.rulesConfig
                 ],
                 volumeMounts+: [
-                  { name: 'rules-config', mountPath: '/etc/thanos/rules' },
+                  { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name },
+                  for ruleConfig in tr.config.rulesConfig
                 ],
               } else c
               for c in super.containers
@@ -235,8 +235,9 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
 
             local volume = k.apps.v1.statefulSet.mixin.spec.template.spec.volumesType,
             volumes+: [
-              volume.withName('rules-config') +
-              volume.mixin.configMap.withName(tr.config.ruleConfigMapName),
+              volume.withName(ruleConfig.name) +
+              volume.mixin.configMap.withName(ruleConfig.name),
+              for ruleConfig in tr.config.rulesConfig
             ],
           },
         },
