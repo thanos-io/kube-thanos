@@ -187,8 +187,6 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
   withAlertmanagers:: {
     local tr = self,
     config+:: {
-      ruleConfigMapName: error 'must provide ruleConfigMapName',
-      ruleFileKey: error 'must provide ruleFileKey',
       alertmanagersURL: error 'must provide alertmanagersURL',
     },
 
@@ -201,8 +199,32 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
                 args+: [
                   '--alertmanagers.url=' + alertmanagerURL,
                   for alertmanagerURL in tr.config.alertmanagersURL
-                ] + [
-                  '--rule-file=/etc/thanos/rules/' + tr.config.ruleFileKey,
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
+  withRules:: {
+    local tr = self,
+    config+:: {
+      ruleConfigMapName: error 'must provide ruleConfigMapName',
+      ruleFilesKey: error 'must provide ruleFilesKey',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-rule' then c {
+                args+: [
+                  '--rule-file=/etc/thanos/rules/' + ruleFileKey,
+                  for ruleFileKey in tr.config.ruleFilesKey
                 ],
                 volumeMounts+: [
                   { name: 'rules-config', mountPath: '/etc/thanos/rules' },
