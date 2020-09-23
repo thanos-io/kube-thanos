@@ -183,4 +183,65 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       },
     },
   },
+
+  withAlertmanagers:: {
+    local tr = self,
+    config+:: {
+      alertmanagersURL: error 'must provide alertmanagersURL',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-rule' then c {
+                args+: [
+                  '--alertmanagers.url=' + alertmanagerURL,
+                  for alertmanagerURL in tr.config.alertmanagersURL
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
+  withRules:: {
+    local tr = self,
+    config+:: {
+      rulesConfig: error 'must provide rulesConfig',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-rule' then c {
+                args+: [
+                  '--rule-file=/etc/thanos/rules/' + ruleConfig.name + '/' + ruleConfig.key,
+                  for ruleConfig in tr.config.rulesConfig
+                ],
+                volumeMounts+: [
+                  { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name },
+                  for ruleConfig in tr.config.rulesConfig
+                ],
+              } else c
+              for c in super.containers
+            ],
+
+            local volume = k.apps.v1.statefulSet.mixin.spec.template.spec.volumesType,
+            volumes+: [
+              volume.withName(ruleConfig.name) +
+              volume.mixin.configMap.withName(ruleConfig.name),
+              for ruleConfig in tr.config.rulesConfig
+            ],
+          },
+        },
+      },
+    },
+  },
 }
