@@ -197,7 +197,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             containers: [
               if c.name == 'thanos-rule' then c {
                 args+: [
-                  '--alertmanagers.url=' + alertmanagerURL,
+                  '--alertmanagers.url=' + alertmanagerURL
                   for alertmanagerURL in tr.config.alertmanagersURL
                 ],
               } else c
@@ -222,11 +222,11 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             containers: [
               if c.name == 'thanos-rule' then c {
                 args+: [
-                  '--rule-file=/etc/thanos/rules/' + ruleConfig.name + '/' + ruleConfig.key,
+                  '--rule-file=/etc/thanos/rules/' + ruleConfig.name + '/' + ruleConfig.key
                   for ruleConfig in tr.config.rulesConfig
                 ],
                 volumeMounts+: [
-                  { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name },
+                  { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name }
                   for ruleConfig in tr.config.rulesConfig
                 ],
               } else c
@@ -236,7 +236,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             local volume = k.apps.v1.statefulSet.mixin.spec.template.spec.volumesType,
             volumes+: [
               volume.withName(ruleConfig.name) +
-              volume.mixin.configMap.withName(ruleConfig.name),
+              volume.mixin.configMap.withName(ruleConfig.name)
               for ruleConfig in tr.config.rulesConfig
             ],
           },

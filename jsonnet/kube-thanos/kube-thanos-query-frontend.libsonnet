@@ -151,7 +151,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
             containers: [
               if c.name == 'thanos-query-frontend' then c {
                 args+: [
-                  '--query-frontend.log_queries_longer_than=' + tqf.config.logQueriesLongerThan,
+                  '--query-frontend.log-queries-longer-than=' + tqf.config.logQueriesLongerThan,
                 ],
               } else c
               for c in super.containers
@@ -184,7 +184,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         },
       },
     },
-  }, 
+  },
 
   withSplitInterval:: {
     local tqf = self,
@@ -208,7 +208,7 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         },
       },
     },
-  }, 
+  },
 
   local fifoCacheDefaults = {
     // Don't limit maximum item size.
