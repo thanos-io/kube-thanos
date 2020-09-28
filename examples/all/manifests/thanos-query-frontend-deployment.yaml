@@ -45,7 +45,7 @@ spec:
         - --query-frontend.downstream-url=http://thanos-query.thanos.svc.cluster.local.:9090
         - --query-range.split-interval=24h
         - --query-range.max-retries-per-request=5
-        - --query-frontend.log_queries_longer_than=5s
+        - --query-frontend.log-queries-longer-than=5s
         - |-
           --query-range.response-cache-config="config":
             "max_size": "0"
