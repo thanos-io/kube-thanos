@@ -3,6 +3,9 @@ local sts = k.apps.v1.statefulSet;
 local deployment = k.apps.v1.deployment;
 local t = (import 'kube-thanos/thanos.libsonnet');
 
+// THIS IS MERELY AN EXAMPLE MEANT TO SHOW HOW TO USE ALL COMPONENTS!
+// Neither this example nor its manifests in examples/all/manifests/ are meant to ever be run.
+
 local commonConfig = {
   config+:: {
     local cfg = self,
