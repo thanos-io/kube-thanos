@@ -221,7 +221,7 @@ function(params) {
                         {
                           key: 'app.kubernetes.io/name',
                           operator: 'In',
-                          values: [ts.config.name],
+                          values: ['thanos-store'],
                         },
                         {
                           key: 'app.kubernetes.io/instance',

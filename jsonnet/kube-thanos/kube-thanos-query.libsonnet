@@ -153,7 +153,7 @@ function(params) {
                         {
                           key: 'app.kubernetes.io/name',
                           operator: 'In',
-                          values: [tq.config.name],
+                          values: ['thanos-query'],
                         },
                       ],
                     },
