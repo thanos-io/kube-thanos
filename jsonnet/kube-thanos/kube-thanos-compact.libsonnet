@@ -1,5 +1,3 @@
-local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
-
 {
   local tc = self,
 
@@ -26,75 +24,79 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
   },
 
   service:
-    local service = k.core.v1.service;
-    local ports = service.mixin.spec.portsType;
-
-    service.new(
-      tc.config.name,
-      tc.config.podLabelSelector,
-      [
-        ports.newNamed('http', 10902, 'http'),
-      ],
-    ) +
-    service.mixin.metadata.withNamespace(tc.config.namespace) +
-    service.mixin.metadata.withLabels(tc.config.commonLabels),
+    {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: {
+        name: tc.config.name,
+        namespace: tc.config.namespace,
+        labels: tc.config.commonLabels,
+      },
+      spec: {
+        selector: tc.config.podLabelSelector,
+        ports: [{ name: 'http', targetPort: 'http', port: 10902 }],
+      },
+    },
 
   statefulSet:
-    local statefulSet = k.apps.v1.statefulSet;
-    local volume = statefulSet.mixin.spec.template.spec.volumesType;
-    local container = statefulSet.mixin.spec.template.spec.containersType;
-    local containerEnv = container.envType;
-    local containerVolumeMount = container.volumeMountsType;
-
-    local c =
-      container.new('thanos-compact', tc.config.image) +
-      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
-      container.withArgs([
+    local c = {
+      name: 'thanos-compact',
+      image: tc.config.image,
+      args: [
         'compact',
         '--wait',
         '--log.level=' + tc.config.logLevel,
         '--objstore.config=$(OBJSTORE_CONFIG)',
         '--data-dir=/var/thanos/compact',
         '--debug.accept-malformed-index',
-      ]) +
-      container.withEnv([
-        containerEnv.fromSecretRef(
-          'OBJSTORE_CONFIG',
-          tc.config.objectStorageConfig.name,
-          tc.config.objectStorageConfig.key,
-        ),
-      ]) +
-      container.withPorts([
-        { name: 'http', containerPort: tc.service.spec.ports[0].port },
-      ]) +
-      container.withVolumeMounts([
-        containerVolumeMount.new('data', '/var/thanos/compact', false),
-      ]) +
-      container.mixin.livenessProbe +
-      container.mixin.livenessProbe.withPeriodSeconds(30) +
-      container.mixin.livenessProbe.withFailureThreshold(4) +
-      container.mixin.livenessProbe.httpGet.withPort(tc.service.spec.ports[0].port) +
-      container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
-      container.mixin.readinessProbe +
-      container.mixin.readinessProbe.withPeriodSeconds(5) +
-      container.mixin.readinessProbe.withFailureThreshold(20) +
-      container.mixin.readinessProbe.httpGet.withPort(tc.service.spec.ports[0].port) +
-      container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.readinessProbe.httpGet.withPath('/-/ready');
+      ],
+      env: [
+        { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
+          key: tc.config.objectStorageConfig.key,
+          name: tc.config.objectStorageConfig.name,
+        } } },
+      ],
+      ports: [{ name: 'http', containerPort: tc.service.spec.ports[0].port }],
+      livenessProbe: { failureThreshold: 4, periodSeconds: 30, httpGet: {
+        scheme: 'HTTP',
+        port: tc.service.spec.ports[0].port,
+        path: '/-/healthy',
+      } },
+      readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
+        scheme: 'HTTP',
+        port: tc.service.spec.ports[0].port,
+        path: '/-/ready',
+      } },
+      volumeMounts: [{
+        name: 'data',
+        mountPath: '/var/thanos/compact',
+        readOnly: false,
+      }],
+      terminationMessagePolicy: 'FallbackToLogsOnError',
+    };
 
-    statefulSet.new(tc.config.name, tc.config.replicas, c, [], tc.config.commonLabels) +
-    statefulSet.mixin.metadata.withNamespace(tc.config.namespace) +
-    statefulSet.mixin.metadata.withLabels(tc.config.commonLabels) +
-    statefulSet.mixin.spec.withServiceName(tc.service.metadata.name) +
-    statefulSet.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
-    statefulSet.mixin.spec.template.spec.withVolumes([
-      volume.fromEmptyDir('data'),
-    ]) +
-    statefulSet.mixin.spec.selector.withMatchLabels(tc.config.podLabelSelector) +
     {
-      spec+: {
-        volumeClaimTemplates: null,
+      apiVersion: 'apps/v1',
+      kind: 'StatefulSet',
+      metadata: {
+        name: tc.config.name,
+        namespace: tc.config.namespace,
+        labels: tc.config.commonLabels,
+      },
+      spec: {
+        replicas: 1,
+        selector: { matchLabels: tc.config.podLabelSelector },
+        serviceName: tc.service.metadata.name,
+        template: {
+          metadata: {
+            labels: tc.config.commonLabels,
+          },
+          spec: {
+            containers: [c],
+            volumes: [],
+            terminationGracePeriodSeconds: 120,
+          },
+        },
       },
     },
 
