@@ -1,5 +1,3 @@
-local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
-
 {
   local tb = self,
 
@@ -26,60 +24,71 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
   },
 
   service:
-    local service = k.core.v1.service;
-    local ports = service.mixin.spec.portsType;
-
-    service.new(
-      tb.config.name,
-      tb.config.podLabelSelector,
-      [ports.newNamed('http', 10902, 'http')],
-    ) +
-    service.mixin.metadata.withNamespace(tb.config.namespace) +
-    service.mixin.metadata.withLabels(tb.config.commonLabels),
+    {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: {
+        name: tb.config.name,
+        namespace: tb.config.namespace,
+        labels: tb.config.commonLabels,
+      },
+      spec: {
+        ports: [{ name: 'http', targetPort: 'http', port: 10902 }],
+        selector: tb.config.podLabelSelector,
+      },
+    },
 
   deployment:
-    local deployment = k.apps.v1.deployment;
-    local container = deployment.mixin.spec.template.spec.containersType;
-    local containerEnv = container.envType;
-
-    local c =
-      container.new('thanos-bucket', tb.config.image) +
-      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
-      container.withArgs([
+    local container = {
+      name: 'thanos-bucket',
+      image: tb.config.image,
+      args: [
         'tools',
         'bucket',
         'web',
         '--log.level=' + tb.config.logLevel,
         '--objstore.config=$(OBJSTORE_CONFIG)',
-      ]) +
-      container.withEnv([
-        containerEnv.fromSecretRef(
-          'OBJSTORE_CONFIG',
-          tb.config.objectStorageConfig.name,
-          tb.config.objectStorageConfig.key,
-        ),
-      ]) +
-      container.withPorts([
-        { name: 'http', containerPort: tb.service.spec.ports[0].port },
-      ]) +
-      container.mixin.livenessProbe +
-      container.mixin.livenessProbe.withPeriodSeconds(30) +
-      container.mixin.livenessProbe.withFailureThreshold(4) +
-      container.mixin.livenessProbe.httpGet.withPort(tb.service.spec.ports[0].port) +
-      container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
-      container.mixin.readinessProbe +
-      container.mixin.readinessProbe.withPeriodSeconds(5) +
-      container.mixin.readinessProbe.withFailureThreshold(20) +
-      container.mixin.readinessProbe.httpGet.withPort(tb.service.spec.ports[0].port) +
-      container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.readinessProbe.httpGet.withPath('/-/ready');
+      ],
+      env: [
+        { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
+          key: tb.config.objectStorageConfig.key,
+          name: tb.config.objectStorageConfig.name,
+        } } },
+      ],
+      ports: [{ name: 'http', containerPort: tb.service.spec.ports[0].port }],
+      livenessProbe: { failureThreshold: 4, periodSeconds: 30, httpGet: {
+        scheme: 'HTTP',
+        port: tb.service.spec.ports[0].port,
+        path: '/-/healthy',
+      } },
+      readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
+        scheme: 'HTTP',
+        port: tb.service.spec.ports[0].port,
+        path: '/-/ready',
+      } },
+      terminationMessagePolicy: 'FallbackToLogsOnError',
+    };
 
-    deployment.new(tb.config.name, 1, c, tb.config.commonLabels) +
-    deployment.mixin.metadata.withNamespace(tb.config.namespace) +
-    deployment.mixin.metadata.withLabels(tb.config.commonLabels) +
-    deployment.mixin.spec.selector.withMatchLabels(tb.config.podLabelSelector) +
-    deployment.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120),
+    {
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: {
+        name: tb.config.name,
+        namespace: tb.config.namespace,
+        labels: tb.config.commonLabels,
+      },
+      spec: {
+        replicas: 1,
+        selector: { matchLabels: tb.config.podLabelSelector },
+        template: {
+          metadata: { labels: tb.config.commonLabels },
+          spec: {
+            containers: [container],
+            terminationGracePeriodSeconds: 120,
+          },
+        },
+      },
+    },
 
   withResources:: {
     local tb = self,
