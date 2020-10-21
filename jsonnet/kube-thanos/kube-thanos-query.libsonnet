@@ -1,5 +1,3 @@
-local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
-
 {
   local tq = self,
 
@@ -28,30 +26,28 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
   },
 
   service:
-    local service = k.core.v1.service;
-    local ports = service.mixin.spec.portsType;
-
-    service.new(
-      tq.config.name,
-      tq.config.podLabelSelector,
-      [
-        ports.newNamed('grpc', 10901, 'grpc'),
-        ports.newNamed('http', 9090, 'http'),
-      ]
-    ) +
-    service.mixin.metadata.withNamespace(tq.config.namespace) +
-    service.mixin.metadata.withLabels(tq.config.commonLabels),
+    {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: {
+        name: tq.config.name,
+        namespace: tq.config.namespace,
+        labels: tq.config.commonLabels,
+      },
+      spec: {
+        ports: [
+          { name: 'grpc', targetPort: 'grpc', port: 10901 },
+          { name: 'http', targetPort: 'http', port: 9090 },
+        ],
+        selector: tq.config.podLabelSelector,
+      },
+    },
 
   deployment:
-    local deployment = k.apps.v1.deployment;
-    local container = deployment.mixin.spec.template.spec.containersType;
-    local affinity = deployment.mixin.spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecutionType;
-    local matchExpression = affinity.mixin.podAffinityTerm.labelSelector.matchExpressionsType;
-
-    local c =
-      container.new('thanos-query', tq.config.image) +
-      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
-      container.withArgs([
+    local c = {
+      name: 'thanos-query',
+      image: tq.config.image,
+      args: [
         'query',
         '--log.level=' + tq.config.logLevel,
         '--grpc-address=0.0.0.0:%d' % tq.service.spec.ports[0].port,
@@ -62,41 +58,60 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
       ] + [
         '--store=%s' % store
         for store in tq.config.stores
-      ]) +
-      container.withPorts([
-        { name: 'grpc', containerPort: tq.service.spec.ports[0].port },
-        { name: 'http', containerPort: tq.service.spec.ports[1].port },
-      ]) +
-      container.mixin.livenessProbe +
-      container.mixin.livenessProbe.withPeriodSeconds(30) +
-      container.mixin.livenessProbe.withFailureThreshold(4) +
-      container.mixin.livenessProbe.httpGet.withPort(tq.service.spec.ports[1].port) +
-      container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
-      container.mixin.readinessProbe +
-      container.mixin.readinessProbe.withPeriodSeconds(5) +
-      container.mixin.readinessProbe.withFailureThreshold(20) +
-      container.mixin.readinessProbe.httpGet.withPort(tq.service.spec.ports[1].port) +
-      container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.readinessProbe.httpGet.withPath('/-/ready');
+      ],
+      ports: [
+        { name: port.name, containerPort: port.port }
+        for port in tq.service.spec.ports
+      ],
+      livenessProbe: { failureThreshold: 4, periodSeconds: 30, httpGet: {
+        scheme: 'HTTP',
+        port: tq.service.spec.ports[1].port,
+        path: '/-/healthy',
+      } },
+      readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
+        scheme: 'HTTP',
+        port: tq.service.spec.ports[1].port,
+        path: '/-/ready',
+      } },
+      terminationMessagePolicy: 'FallbackToLogsOnError',
+    };
 
-    deployment.new(tq.config.name, tq.config.replicas, c, tq.config.commonLabels) +
-    deployment.mixin.metadata.withNamespace(tq.config.namespace) +
-    deployment.mixin.metadata.withLabels(tq.config.commonLabels) +
-    deployment.mixin.spec.selector.withMatchLabels(tq.config.podLabelSelector) +
-    deployment.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
-    deployment.mixin.spec.template.spec.affinity.podAntiAffinity.withPreferredDuringSchedulingIgnoredDuringExecution([
-      affinity.new() +
-      affinity.withWeight(100) +
-      affinity.mixin.podAffinityTerm.withNamespaces(tq.config.namespace) +
-      affinity.mixin.podAffinityTerm.withTopologyKey('kubernetes.io/hostname') +
-      affinity.mixin.podAffinityTerm.labelSelector.withMatchExpressions([
-        matchExpression.new() +
-        matchExpression.withKey('app.kubernetes.io/name') +
-        matchExpression.withOperator('In') +
-        matchExpression.withValues([tq.deployment.metadata.labels['app.kubernetes.io/name']]),
-      ]),
-    ]),
+    {
+      apiVersion: 'apps/v1',
+      kind: 'Deployment',
+      metadata: {
+        name: tq.config.name,
+        namespace: tq.config.namespace,
+        labels: tq.config.commonLabels,
+      },
+      spec: {
+        replicas: tq.config.replicas,
+        selector: { matchLabels: tq.config.podLabelSelector },
+        template: {
+          metadata: {
+            labels: tq.config.commonLabels,
+          },
+          spec: {
+            containers: [c],
+            terminationGracePeriodSeconds: 120,
+            affinity: { podAntiAffinity: {
+              preferredDuringSchedulingIgnoredDuringExecution: [{
+                podAffinityTerm: {
+                  namespaces: [tq.config.namespace],
+                  topologyKey: 'kubernetes.io/hostname',
+                  labelSelector: { matchExpressions: [{
+                    key: 'app.kubernetes.io/name',
+                    operator: 'In',
+                    values: [tq.deployment.metadata.labels['app.kubernetes.io/name']],
+                  }] },
+                },
+                weight: 100,
+              }],
+            } },
+          },
+        },
+      },
+    },
 
   withServiceMonitor:: {
     local tq = self,
