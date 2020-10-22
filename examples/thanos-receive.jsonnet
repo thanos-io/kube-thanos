@@ -1,7 +1,4 @@
-local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
-local sts = k.apps.v1.statefulSet;
-local deployment = k.apps.v1.deployment;
-local t = (import 'kube-thanos/kube-thanos-receive.libsonnet');
+local t = import 'kube-thanos/kube-thanos-receive.libsonnet';
 
 t.receive {
   local tr = self,
