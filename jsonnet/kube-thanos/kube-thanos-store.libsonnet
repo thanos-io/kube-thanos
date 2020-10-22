@@ -1,5 +1,3 @@
-local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
-
 {
   local ts = self,
 
@@ -27,96 +25,104 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
   },
 
   service:
-    local service = k.core.v1.service;
-    local ports = service.mixin.spec.portsType;
-
-    service.new(
-      ts.config.name,
-      ts.config.podLabelSelector,
-      [
-        ports.newNamed('grpc', 10901, 10901),
-        ports.newNamed('http', 10902, 10902),
-      ]
-    ) +
-    service.mixin.metadata.withNamespace(ts.config.namespace) +
-    service.mixin.metadata.withLabels(ts.config.commonLabels) +
-    service.mixin.spec.withClusterIp('None'),
+    {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: {
+        name: ts.config.name,
+        namespace: ts.config.namespace,
+        labels: ts.config.commonLabels,
+      },
+      spec: {
+        clusterIP: 'None',
+        selector: ts.config.podLabelSelector,
+        ports: [
+          { name: 'grpc', targetPort: 'grpc', port: 10901 },
+          { name: 'http', targetPort: 'http', port: 10902 },
+        ],
+      },
+    },
 
   statefulSet:
-    local sts = k.apps.v1.statefulSet;
-    local volume = sts.mixin.spec.template.spec.volumesType;
-    local container = sts.mixin.spec.template.spec.containersType;
-    local containerEnv = container.envType;
-    local containerVolumeMount = container.volumeMountsType;
-    local affinity = sts.mixin.spec.template.spec.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecutionType;
-    local matchExpression = affinity.mixin.podAffinityTerm.labelSelector.matchExpressionsType;
-
-    local c =
-      container.new('thanos-store', ts.config.image) +
-      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
-      container.withArgs([
+    local c = {
+      name: 'thanos-store',
+      image: ts.config.image,
+      args: [
         'store',
         '--log.level=' + ts.config.logLevel,
         '--data-dir=/var/thanos/store',
         '--grpc-address=0.0.0.0:%d' % ts.service.spec.ports[0].port,
         '--http-address=0.0.0.0:%d' % ts.service.spec.ports[1].port,
         '--objstore.config=$(OBJSTORE_CONFIG)',
-      ]) +
-      container.withEnv([
-        containerEnv.fromSecretRef(
-          'OBJSTORE_CONFIG',
-          ts.config.objectStorageConfig.name,
-          ts.config.objectStorageConfig.key,
-        ),
-      ]) +
-      container.withPorts([
-        { name: 'grpc', containerPort: ts.service.spec.ports[0].port },
-        { name: 'http', containerPort: ts.service.spec.ports[1].port },
-      ]) +
-      container.withVolumeMounts([
-        containerVolumeMount.new('data', '/var/thanos/store', false),
-      ]) +
-      container.mixin.livenessProbe +
-      container.mixin.livenessProbe.withPeriodSeconds(30) +
-      container.mixin.livenessProbe.withFailureThreshold(8) +
-      container.mixin.livenessProbe.httpGet.withPort(ts.service.spec.ports[1].port) +
-      container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
-      container.mixin.readinessProbe +
-      container.mixin.readinessProbe.withPeriodSeconds(5) +
-      container.mixin.readinessProbe.withFailureThreshold(20) +
-      container.mixin.readinessProbe.httpGet.withPort(ts.service.spec.ports[1].port) +
-      container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.readinessProbe.httpGet.withPath('/-/ready');
+      ],
+      env: [
+        { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
+          key: ts.config.objectStorageConfig.key,
+          name: ts.config.objectStorageConfig.name,
+        } } },
+      ],
+      ports: [
+        { name: port.name, containerPort: port.port }
+        for port in ts.service.spec.ports
+      ],
+      volumeMounts: [{
+        name: 'data',
+        mountPath: '/var/thanos/store',
+        readOnly: false,
+      }],
+      livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
+        scheme: 'HTTP',
+        port: ts.service.spec.ports[1].port,
+        path: '/-/healthy',
+      } },
+      readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
+        scheme: 'HTTP',
+        port: ts.service.spec.ports[1].port,
+        path: '/-/ready',
+      } },
+      terminationMessagePolicy: 'FallbackToLogsOnError',
+    };
 
-    sts.new(ts.config.name, ts.config.replicas, c, [], ts.config.commonLabels) +
-    sts.mixin.metadata.withNamespace(ts.config.namespace) +
-    sts.mixin.metadata.withLabels(ts.config.commonLabels) +
-    sts.mixin.spec.withServiceName(ts.service.metadata.name) +
-    sts.mixin.spec.template.spec.withTerminationGracePeriodSeconds(120) +
-    sts.mixin.spec.template.spec.withVolumes([
-      volume.fromEmptyDir('data'),
-    ]) +
-    sts.mixin.spec.template.spec.affinity.podAntiAffinity.withPreferredDuringSchedulingIgnoredDuringExecution([
-      affinity.new() +
-      affinity.withWeight(100) +
-      affinity.mixin.podAffinityTerm.withNamespaces(ts.config.namespace) +
-      affinity.mixin.podAffinityTerm.withTopologyKey('kubernetes.io/hostname') +
-      affinity.mixin.podAffinityTerm.labelSelector.withMatchExpressions([
-        matchExpression.new() +
-        matchExpression.withKey('app.kubernetes.io/name') +
-        matchExpression.withOperator('In') +
-        matchExpression.withValues([ts.statefulSet.metadata.labels['app.kubernetes.io/name']]),
-        matchExpression.new() +
-        matchExpression.withKey('app.kubernetes.io/instance') +
-        matchExpression.withOperator('In') +
-        matchExpression.withValues([ts.statefulSet.metadata.labels['app.kubernetes.io/instance']]),
-      ]),
-    ]) +
-    sts.mixin.spec.selector.withMatchLabels(ts.config.podLabelSelector) +
     {
-      spec+: {
-        volumeClaimTemplates: null,
+      apiVersion: 'apps/v1',
+      kind: 'StatefulSet',
+      metadata: {
+        name: ts.config.name,
+        namespace: ts.config.namespace,
+        labels: ts.config.commonLabels,
+      },
+      spec: {
+        replicas: ts.config.replicas,
+        selector: { matchLabels: ts.config.podLabelSelector },
+        serviceName: ts.service.metadata.name,
+        template: {
+          metadata: {
+            labels: ts.config.commonLabels,
+          },
+          spec: {
+            containers: [c],
+            volumes: [],
+            terminationGracePeriodSeconds: 120,
+            affinity: { podAntiAffinity: {
+              preferredDuringSchedulingIgnoredDuringExecution: [{
+                podAffinityTerm: {
+                  namespaces: [ts.config.namespace],
+                  topologyKey: 'kubernetes.io/hostname',
+                  labelSelector: { matchExpressions: [{
+                    key: 'app.kubernetes.io/name',
+                    operator: 'In',
+                    values: [ts.statefulSet.metadata.labels['app.kubernetes.io/name']],
+                  }, {
+                    key: 'app.kubernetes.io/instance',
+                    operator: 'In',
+                    values: [ts.statefulSet.metadata.labels['app.kubernetes.io/instance']],
+                  }] },
+                },
+                weight: 100,
+              }],
+            } },
+          },
+        },
       },
     },
 
