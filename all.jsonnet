@@ -53,6 +53,7 @@ local re =
   t.receive +
   t.receive.withVolumeClaimTemplate +
   t.receive.withServiceMonitor +
+  t.receive.withPodDisruptionBudget +
   commonConfig + {
     config+:: {
       name: 'thanos-receive',
