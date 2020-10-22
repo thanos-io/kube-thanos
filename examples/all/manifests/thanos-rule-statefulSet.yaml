@@ -35,6 +35,7 @@ spec:
         - --label=rule_replica="$(NAME)"
         - --alert.label-drop=rule_replica
         - --query=dnssrv+_http._tcp.thanos-query.thanos.svc.cluster.local
+        - --rule-file=/etc/thanos/rules/test/test
         env:
         - name: NAME
           valueFrom:
@@ -72,7 +73,12 @@ spec:
         - mountPath: /var/thanos/rule
           name: data
           readOnly: false
-      volumes: []
+        - mountPath: /etc/thanos/rules/test
+          name: test
+      volumes:
+      - configMap:
+          name: test
+        name: test
   volumeClaimTemplates:
   - metadata:
       labels:
