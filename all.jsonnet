@@ -66,10 +66,14 @@ local ru =
   t.rule +
   t.rule.withVolumeClaimTemplate +
   t.rule.withServiceMonitor +
+  t.rule.withRules +
   commonConfig + {
     config+:: {
       name: 'thanos-rule',
       replicas: 1,
+      rulesConfig: [
+        { name: 'test', key: 'test' },
+      ],
     },
   };
 

@@ -1,5 +1,3 @@
-local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
-
 {
   local tr = self,
 
@@ -30,32 +28,29 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
   },
 
   service:
-    local service = k.core.v1.service;
-    local ports = service.mixin.spec.portsType;
-
-    service.new(
-      tr.config.name,
-      tr.config.podLabelSelector,
-      [
-        ports.newNamed('grpc', 10901, 'grpc'),
-        ports.newNamed('http', 10902, 'http'),
-      ],
-    ) +
-    service.mixin.metadata.withNamespace(tr.config.namespace) +
-    service.mixin.metadata.withLabels(tr.config.commonLabels) +
-    service.mixin.spec.withClusterIp('None'),
+    {
+      apiVersion: 'v1',
+      kind: 'Service',
+      metadata: {
+        name: tr.config.name,
+        namespace: tr.config.namespace,
+        labels: tr.config.commonLabels,
+      },
+      spec: {
+        ports: [
+          { name: 'grpc', targetPort: 'grpc', port: 10901 },
+          { name: 'http', targetPort: 'http', port: 10902 },
+        ],
+        clusterIP: 'None',
+        selector: tr.config.podLabelSelector,
+      },
+    },
 
   statefulSet:
-    local statefulSet = k.apps.v1.statefulSet;
-    local volume = statefulSet.mixin.spec.template.spec.volumesType;
-    local container = statefulSet.mixin.spec.template.spec.containersType;
-    local containerEnv = container.envType;
-    local containerVolumeMount = container.volumeMountsType;
-
-    local c =
-      container.new('thanos-rule', tr.config.image) +
-      container.withTerminationMessagePolicy('FallbackToLogsOnError') +
-      container.withArgs(
+    local c = {
+      name: 'thanos-rule',
+      image: tr.config.image,
+      args:
         [
           'rule',
           '--log.level=' + tr.config.logLevel,
@@ -68,47 +63,58 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
         ] +
         (['--query=%s' % querier for querier in tr.config.queriers]) +
         (['--rule-file=%s' % path for path in tr.config.ruleFiles]) +
-        (['--alertmanagers.url=%s' % url for url in tr.config.alertmanagersURLs])
-      ) +
-      container.withEnv([
-        containerEnv.fromFieldPath('NAME', 'metadata.name'),
-        containerEnv.fromSecretRef(
-          'OBJSTORE_CONFIG',
-          tr.config.objectStorageConfig.name,
-          tr.config.objectStorageConfig.key,
-        ),
-      ]) +
-      container.withVolumeMounts([
-        containerVolumeMount.new('data', '/var/thanos/rule', false),
-      ]) +
-      container.withPorts([
-        { name: 'grpc', containerPort: tr.service.spec.ports[0].port },
-        { name: 'http', containerPort: tr.service.spec.ports[1].port },
-      ]) +
-      container.mixin.livenessProbe +
-      container.mixin.livenessProbe.withPeriodSeconds(5) +
-      container.mixin.livenessProbe.withFailureThreshold(24) +
-      container.mixin.livenessProbe.httpGet.withPort(tr.service.spec.ports[1].port) +
-      container.mixin.livenessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.livenessProbe.httpGet.withPath('/-/healthy') +
-      container.mixin.readinessProbe +
-      container.mixin.readinessProbe.withInitialDelaySeconds(10) +
-      container.mixin.readinessProbe.withPeriodSeconds(5) +
-      container.mixin.readinessProbe.withFailureThreshold(18) +
-      container.mixin.readinessProbe.httpGet.withPort(tr.service.spec.ports[1].port) +
-      container.mixin.readinessProbe.httpGet.withScheme('HTTP') +
-      container.mixin.readinessProbe.httpGet.withPath('/-/ready');
+        (['--alertmanagers.url=%s' % url for url in tr.config.alertmanagersURLs]),
+      env: [
+        { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
+        { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
+          key: tr.config.objectStorageConfig.key,
+          name: tr.config.objectStorageConfig.name,
+        } } },
+      ],
+      ports: [
+        { name: port.name, containerPort: port.port }
+        for port in tr.service.spec.ports
+      ],
+      volumeMounts: [{
+        name: 'data',
+        mountPath: '/var/thanos/rule',
+        readOnly: false,
+      }],
+      livenessProbe: { failureThreshold: 24, periodSeconds: 5, httpGet: {
+        scheme: 'HTTP',
+        port: tr.service.spec.ports[1].port,
+        path: '/-/healthy',
+      } },
+      readinessProbe: { failureThreshold: 18, periodSeconds: 5, initialDelaySeconds: 10, httpGet: {
+        scheme: 'HTTP',
+        port: tr.service.spec.ports[1].port,
+        path: '/-/ready',
 
-    statefulSet.new(tr.config.name, tr.config.replicas, c, [], tr.config.commonLabels) +
-    statefulSet.mixin.metadata.withNamespace(tr.config.namespace) +
-    statefulSet.mixin.metadata.withLabels(tr.config.commonLabels) +
-    statefulSet.mixin.spec.withServiceName(tr.service.metadata.name) +
-    statefulSet.mixin.spec.selector.withMatchLabels(tr.config.podLabelSelector) +
-    statefulSet.mixin.spec.template.spec.withVolumes([
-      volume.fromEmptyDir('data'),
-    ]) + {
-      spec+: {
-        volumeClaimTemplates: null,
+      } },
+      terminationMessagePolicy: 'FallbackToLogsOnError',
+    };
+
+    {
+      apiVersion: 'apps/v1',
+      kind: 'StatefulSet',
+      metadata: {
+        name: tr.config.name,
+        namespace: tr.config.namespace,
+        labels: tr.config.commonLabels,
+      },
+      spec: {
+        replicas: tr.config.replicas,
+        selector: { matchLabels: tr.config.podLabelSelector },
+        serviceName: tr.service.metadata.name,
+        template: {
+          metadata: {
+            labels: tr.config.commonLabels,
+          },
+          spec: {
+            containers: [c],
+            volumes: [],
+          },
+        },
       },
     },
 
@@ -233,10 +239,8 @@ local k = import 'ksonnet/ksonnet.beta.4/k.libsonnet';
               for c in super.containers
             ],
 
-            local volume = k.apps.v1.statefulSet.mixin.spec.template.spec.volumesType,
             volumes+: [
-              volume.withName(ruleConfig.name) +
-              volume.mixin.configMap.withName(ruleConfig.name)
+              { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
               for ruleConfig in tr.config.rulesConfig
             ],
           },
