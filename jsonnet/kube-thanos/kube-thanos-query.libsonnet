@@ -234,4 +234,21 @@
       },
     },
   },
+
+  withNodeSelector:: {
+    local tq = self,
+    config+:: {
+      nodeSelector: error 'must provide nodeSelector',
+    },
+
+    deployment+: {
+      spec+: {
+        template+: {
+          spec+: {
+            nodeSelector: std.mapWithKey(function(k, v) v, tq.config.nodeSelector),
+          },
+        },
+      },
+    },
+  },
 }

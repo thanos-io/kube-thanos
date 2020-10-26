@@ -259,4 +259,21 @@
       },
     },
   },
+
+  withNodeSelector:: {
+    local tqf = self,
+    config+:: {
+      nodeSelector: error 'must provide nodeSelector',
+    },
+
+    deployment+: {
+      spec+: {
+        template+: {
+          spec+: {
+            nodeSelector: std.mapWithKey(function(k, v) v, tqf.config.nodeSelector),
+          },
+        },
+      },
+    },
+  },
 }

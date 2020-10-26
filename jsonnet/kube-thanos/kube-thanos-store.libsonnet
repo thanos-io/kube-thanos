@@ -339,4 +339,21 @@
       },
     },
   },
+
+  withNodeSelector:: {
+    local ts = self,
+    config+:: {
+      nodeSelector: error 'must provide nodeSelector',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            nodeSelector: std.mapWithKey(function(k, v) v, ts.config.nodeSelector),
+          },
+        },
+      },
+    },
+  },
 }

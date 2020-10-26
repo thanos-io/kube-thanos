@@ -297,4 +297,21 @@
       },
     },
   },
+
+  withNodeSelector:: {
+    local tr = self,
+    config+:: {
+      nodeSelector: error 'must provide nodeSelector',
+    },
+
+    statefulSet+: {
+      spec+: {
+        template+: {
+          spec+: {
+            nodeSelector: std.mapWithKey(function(k, v) v, tr.config.nodeSelector),
+          },
+        },
+      },
+    },
+  },
 }
