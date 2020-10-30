@@ -36,7 +36,7 @@ function(params) {
   // Combine the defaults and the passed params to make the component's config.
   config:: defaults + params,
   // Safety checks for combined config of defaults and params
-  assert std.isNumber(tc.config.replicas) && tc.config.replicas >= 0 : 'thanos query replicas has to be number >= 0',
+  assert std.isNumber(tc.config.replicas) && tc.config.replicas >= 0 : 'thanos compact replicas has to be number >= 0',
   assert std.isObject(tc.config.resources),
   assert std.isObject(tc.config.volumeClaimTemplate),
   assert std.isBoolean(tc.config.serviceMonitor),

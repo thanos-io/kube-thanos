@@ -41,7 +41,7 @@ function(params) {
   // Combine the defaults and the passed params to make the component's config.
   config:: defaults + params,
   // Safety checks for combined config of defaults and params
-  assert std.isNumber(tqf.config.replicas) && tqf.config.replicas >= 0 : 'thanos query replicas has to be number >= 0',
+  assert std.isNumber(tqf.config.replicas) && tqf.config.replicas >= 0 : 'thanos query frontend replicas has to be number >= 0',
   assert std.isObject(tqf.config.resources),
   assert std.isBoolean(tqf.config.serviceMonitor),
   assert std.isNumber(tqf.config.maxRetries),
