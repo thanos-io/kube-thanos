@@ -72,5 +72,11 @@ spec:
             scheme: HTTP
           periodSeconds: 5
         terminationMessagePolicy: FallbackToLogsOnError
-      resources: {}
+      resources:
+        limits:
+          cpu: 0.42
+          memory: 420Mi
+        requests:
+          cpu: 0.123
+          memory: 123Mi
       terminationGracePeriodSeconds: 120

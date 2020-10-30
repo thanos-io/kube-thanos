@@ -69,7 +69,13 @@ spec:
         - mountPath: /var/thanos/compact
           name: data
           readOnly: false
-      resources: {}
+      resources:
+        limits:
+          cpu: 0.42
+          memory: 420Mi
+        requests:
+          cpu: 0.123
+          memory: 123Mi
       terminationGracePeriodSeconds: 120
       volumes: []
   volumeClaimTemplates:

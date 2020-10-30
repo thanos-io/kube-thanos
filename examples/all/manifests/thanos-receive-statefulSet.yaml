@@ -116,7 +116,13 @@ spec:
           readOnly: false
         - mountPath: /var/lib/thanos-receive
           name: hashring-config
-      resources: {}
+      resources:
+        limits:
+          cpu: 0.42
+          memory: 420Mi
+        requests:
+          cpu: 0.123
+          memory: 123Mi
       terminationGracePeriodSeconds: 900
       volumes:
       - configMap:

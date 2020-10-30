@@ -14,6 +14,10 @@ local commonConfig = {
       name: 'thanos-objectstorage',
       key: 'thanos.yaml',
     },
+    resources: {
+      requests: { cpu: 0.123, memory: '123Mi' },
+      limits: { cpu: 0.420, memory: '420Mi' },
+    },
     volumeClaimTemplate: {
       spec: {
         accessModes: ['ReadWriteOnce'],
