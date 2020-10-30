@@ -1,27 +1,35 @@
-{
+local defaults = {
+  local defaults = self,
+  name: 'thanos-bucket',
+  namespace: error 'must provide namespace',
+  version: error 'must provide version',
+  image: error 'must provide image',
+  objectStorageConfig: error 'must provide objectStorageConfig',
+  resources: {},
+  logLevel: 'info',
+
+  commonLabels:: {
+    'app.kubernetes.io/name': 'thanos-bucket',
+    'app.kubernetes.io/instance': defaults.name,
+    'app.kubernetes.io/version': defaults.version,
+    'app.kubernetes.io/component': 'object-store-bucket-debugging',
+  },
+
+  podLabelSelector:: {
+    [labelName]: defaults.commonLabels[labelName]
+    for labelName in std.objectFields(defaults.commonLabels)
+    if !std.setMember(labelName, ['app.kubernetes.io/version'])
+  },
+};
+
+function(params) {
   local tb = self,
 
-  config:: {
-    name: error 'must provide name',
-    namespace: error 'must provide namespace',
-    version: error 'must provide version',
-    image: error 'must provide image',
-    objectStorageConfig: error 'must provide objectStorageConfig',
-    logLevel: 'info',
-
-    commonLabels:: {
-      'app.kubernetes.io/name': 'thanos-bucket',
-      'app.kubernetes.io/instance': tb.config.name,
-      'app.kubernetes.io/version': tb.config.version,
-      'app.kubernetes.io/component': 'object-store-bucket-debugging',
-    },
-
-    podLabelSelector:: {
-      [labelName]: tb.config.commonLabels[labelName]
-      for labelName in std.objectFields(tb.config.commonLabels)
-      if !std.setMember(labelName, ['app.kubernetes.io/version'])
-    },
-  },
+  // Combine the defaults and the passed params to make the component's config.
+  config:: defaults + params,
+  // Safety checks for combined config of defaults and params
+  assert std.isNumber(tb.config.replicas) && tb.config.replicas >= 0 : 'thanos query replicas has to be number >= 0',
+  assert std.isObject(tb.config.resources),
 
   service:
     {
@@ -67,6 +75,7 @@
         path: '/-/ready',
       } },
       terminationMessagePolicy: 'FallbackToLogsOnError',
+      resources: if tb.config.resources != {} then tb.config.resources else {},
     };
 
     {
@@ -89,26 +98,4 @@
         },
       },
     },
-
-  withResources:: {
-    local tb = self,
-    config+:: {
-      resources: error 'must provide resources',
-    },
-
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-bucket' then c {
-                resources: tb.config.resources,
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
 }

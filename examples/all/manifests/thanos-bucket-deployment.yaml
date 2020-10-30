@@ -55,5 +55,6 @@ spec:
             port: 10902
             scheme: HTTP
           periodSeconds: 5
+        resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
       terminationGracePeriodSeconds: 120

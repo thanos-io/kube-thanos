@@ -26,14 +26,9 @@ local commonConfig = {
   },
 };
 
-local b =
-  t.bucket +
-  commonConfig + {
-    config+:: {
-      name: 'thanos-bucket',
-      replicas: 1,
-    },
-  };
+local b = t.bucket(commonConfig.config {
+  replicas: 1,
+});
 
 local c =
   t.compact +
