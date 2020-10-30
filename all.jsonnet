@@ -50,20 +50,12 @@ local re = t.receive(commonConfig.config {
 });
 
 
-local ru =
-  t.rule +
-  t.rule.withVolumeClaimTemplate +
-  t.rule.withServiceMonitor +
-  t.rule.withRules +
-  commonConfig + {
-    config+:: {
-      name: 'thanos-rule',
-      replicas: 1,
-      rulesConfig: [
-        { name: 'test', key: 'test' },
-      ],
-    },
-  };
+local ru = t.rule(commonConfig.config {
+  replicas: 1,
+  rulesConfig: [{ name: 'test', key: 'test' }],
+  alertmanagersURLs: ['alertmanager:9093'],
+  serviceMonitor: true,
+});
 
 local s =
   t.store +
