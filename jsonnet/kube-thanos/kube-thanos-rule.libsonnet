@@ -150,9 +150,20 @@ function(params) {
         path: '/-/ready',
 
       } },
-      resources: if tr.config.resources != {} then tr.config.resources else {},
-      terminationMessagePolicy: 'FallbackToLogsOnError',
-    };
+
+    local reloadC = {
+      name: 'configmap-reloader',
+      image: tr.config.reloaderImage,
+      args:
+        [
+          '-webhook-url=http://localhost:' + tr.service.spec.ports[1].port + '/-/reload',
+        ] + 
+        (['-volume-dir=/etc/thanos/rules/' + ruleConfig.name for url in for ruleConfig in tr.config.rulesConfig]),
+      volumeMounts: [
+        { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name }
+        for ruleConfig in tr.config.rulesConfig
+      ],
+    },
 
     {
       apiVersion: 'apps/v1',
@@ -172,7 +183,8 @@ function(params) {
           },
           spec: {
             serviceAccountName: tr.serviceAccount.metadata.name,
-            containers: [c],
+            containers: [c] +
+              if std.length(tr.config.rulesConfig) > 0 then [reloadC] else [],
             volumes: [
               { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
               for ruleConfig in tr.config.rulesConfig
@@ -209,7 +221,7 @@ function(params) {
             targetLabel: 'instance',
           }],
         },
-      ],
+      },
     },
   },
 }
