@@ -69,7 +69,9 @@ spec:
         - --tsdb.path=/var/thanos/receive
         - --label=replica="$(NAME)"
         - --label=receive="true"
+        - --tsdb.retention=15d
         - --receive.local-endpoint=$(NAME).thanos-receive.$(NAMESPACE).svc.cluster.local:10901
+        - --receive.hashrings-file=/var/lib/thanos-receive/hashrings.json
         env:
         - name: NAME
           valueFrom:
@@ -112,8 +114,14 @@ spec:
         - mountPath: /var/thanos/receive
           name: data
           readOnly: false
+        - mountPath: /var/lib/thanos-receive
+          name: hashring-config
+      resources: {}
       terminationGracePeriodSeconds: 900
-      volumes: []
+      volumes:
+      - configMap:
+          name: hashring
+        name: hashring-config
   volumeClaimTemplates:
   - metadata:
       labels:

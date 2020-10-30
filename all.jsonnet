@@ -38,18 +38,13 @@ local c = t.compact(commonConfig.config {
   deduplicationReplicaLabels: super.replicaLabels,  // reuse same labels for deduplication
 });
 
-local re =
-  t.receive +
-  t.receive.withVolumeClaimTemplate +
-  t.receive.withServiceMonitor +
-  t.receive.withPodDisruptionBudget +
-  commonConfig + {
-    config+:: {
-      name: 'thanos-receive',
-      replicas: 1,
-      replicationFactor: 1,
-    },
-  };
+local re = t.receive(commonConfig.config {
+  replicas: 1,
+  replicationFactor: 1,
+  serviceMonitor: true,
+  hashringConfigMapName: 'hashring',
+});
+
 
 local ru =
   t.rule +

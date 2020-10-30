@@ -1,29 +1,48 @@
-{
+// These are the defaults for this components configuration.
+// When calling the function to generate the component's manifest,
+// you can pass an object structured like the default to overwrite default values.
+local defaults = {
+  local defaults = self,
+  name: 'thanos-receive',
+  namespace: error 'must provide namespace',
+  version: error 'must provide version',
+  image: error 'must provide image',
+  replicas: error 'must provide replicas',
+  replicationFactor: error 'must provide replication factor',
+  objectStorageConfig: error 'must provide objectStorageConfig',
+  podDisruptionBudgetMaxUnavailable: (std.floor(defaults.replicationFactor / 2)),
+  hashringConfigMapName: '',
+  volumeClaimTemplate: {},
+  retention: '15d',
+  logLevel: 'info',
+  resources: {},
+  serviceMonitor: false,
+
+  commonLabels:: {
+    'app.kubernetes.io/name': 'thanos-receive',
+    'app.kubernetes.io/instance': defaults.name,
+    'app.kubernetes.io/version': defaults.version,
+    'app.kubernetes.io/component': 'database-write-hashring',
+  },
+
+  podLabelSelector:: {
+    [labelName]: defaults.commonLabels[labelName]
+    for labelName in std.objectFields(defaults.commonLabels)
+    if !std.setMember(labelName, ['app.kubernetes.io/version'])
+  },
+};
+
+function(params) {
   local tr = self,
 
-  config:: {
-    name: error 'must provide name',
-    namespace: error 'must provide namespace',
-    version: error 'must provide version',
-    image: error 'must provide image',
-    replicas: error 'must provide replicas',
-    replicationFactor: error 'must provide replication factor',
-    objectStorageConfig: error 'must provide objectStorageConfig',
-    logLevel: 'info',
-
-    commonLabels:: {
-      'app.kubernetes.io/name': 'thanos-receive',
-      'app.kubernetes.io/instance': tr.config.name,
-      'app.kubernetes.io/version': tr.config.version,
-      'app.kubernetes.io/component': 'database-write-hashring',
-    },
-
-    podLabelSelector:: {
-      [labelName]: tr.config.commonLabels[labelName]
-      for labelName in std.objectFields(tr.config.commonLabels)
-      if !std.setMember(labelName, ['app.kubernetes.io/version'])
-    },
-  },
+  // Combine the defaults and the passed params to make the component's config.
+  config:: defaults + params,
+  // Safety checks for combined config of defaults and params
+  assert std.isNumber(tr.config.replicas) && tr.config.replicas >= 0 : 'thanos receive replicas has to be number >= 0',
+  assert std.isArray(tr.config.replicaLabels),
+  assert std.isObject(tr.config.resources),
+  assert std.isBoolean(tr.config.serviceMonitor),
+  assert std.isObject(tr.config.volumeClaimTemplate),
 
   service:
     {
@@ -46,7 +65,10 @@
     },
 
   statefulSet:
-    local localEndpointFlag = '--receive.local-endpoint=$(NAME).%s.$(NAMESPACE).svc.cluster.local:%d' % [tr.config.name, tr.service.spec.ports[0].port];
+    local localEndpointFlag = '--receive.local-endpoint=$(NAME).%s.$(NAMESPACE).svc.cluster.local:%d' % [
+      tr.config.name,
+      tr.service.spec.ports[0].port,
+    ];
 
     local c = {
       name: 'thanos-receive',
@@ -62,8 +84,13 @@
         '--tsdb.path=/var/thanos/receive',
         '--label=replica="$(NAME)"',
         '--label=receive="true"',
+        '--tsdb.retention=' + tr.config.retention,
         localEndpointFlag,
-      ],
+      ] + (
+        if tr.config.hashringConfigMapName != '' then [
+          '--receive.hashrings-file=/var/lib/thanos-receive/hashrings.json',
+        ] else []
+      ),
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
         { name: 'NAMESPACE', valueFrom: { fieldRef: { fieldPath: 'metadata.namespace' } } },
@@ -80,7 +107,11 @@
         name: 'data',
         mountPath: '/var/thanos/receive',
         readOnly: false,
-      }],
+      }] + (
+        if tr.config.hashringConfigMapName != '' then [
+          { name: 'hashring-config', mountPath: '/var/lib/thanos-receive' },
+        ] else []
+      ),
       livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
         port: tr.service.spec.ports[1].port,
@@ -112,8 +143,12 @@
           },
           spec: {
             containers: [c],
-            volumes: [],
+            volumes: if tr.config.hashringConfigMapName != '' then [{
+              name: 'hashring-config',
+              configMap: { name: tr.config.hashringConfigMapName },
+            }] else [],
             terminationGracePeriodSeconds: 900,
+            resources: if tr.config.resources != {} then tr.config.resources else {},
             affinity: { podAntiAffinity: {
               local labelSelector = { matchExpressions: [{
                 key: 'app.kubernetes.io/name',
@@ -145,156 +180,51 @@
             } },
           },
         },
-      },
-    },
-
-  withServiceMonitor:: {
-    local tr = self,
-    serviceMonitor: {
-      apiVersion: 'monitoring.coreos.com/v1',
-      kind: 'ServiceMonitor',
-      metadata+: {
-        name: tr.config.name,
-        namespace: tr.config.namespace,
-        labels: tr.config.commonLabels,
-      },
-      spec: {
-        selector: {
-          matchLabels: tr.config.podLabelSelector,
-        },
-        endpoints: [
-          {
-            port: 'http',
-            relabelings: [{
-              sourceLabels: ['namespace', 'pod'],
-              separator: '/',
-              targetLabel: 'instance',
-            }],
-          },
-        ],
-      },
-    },
-  },
-
-  withPodDisruptionBudget:: {
-    local tr = self,
-    config+:: {
-      podDisruptionBudgetMaxUnavailable: (std.floor(tr.config.replicationFactor / 2)),
-    },
-
-    podDisruptionBudget:
-      {
-        apiVersion: 'policy/v1beta1',
-        kind: 'PodDisruptionBudget',
-        metadata: {
-          name: tr.config.name,
-          namespace: tr.config.namespace,
-        },
-        spec: {
-          maxUnavailable: 0,
-          selector: { matchLabels: tr.config.podLabelSelector },
-        },
-      },
-  },
-
-  withVolumeClaimTemplate:: {
-    local tr = self,
-    config+:: {
-      volumeClaimTemplate: error 'must provide volumeClaimTemplate',
-    },
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            volumes: std.filter(function(v) v.name != 'data', super.volumes),
-          },
-        },
-        volumeClaimTemplates: [tr.config.volumeClaimTemplate {
+        volumeClaimTemplates: if std.length(tr.config.volumeClaimTemplate) > 0 then [tr.config.volumeClaimTemplate {
           metadata+: {
             name: 'data',
             labels+: tr.config.podLabelSelector,
           },
-        }],
+        }] else [],
       },
     },
-  },
 
-  withRetention:: {
-    local tr = self,
-    config+:: {
-      retention: error 'must provide retention',
+  serviceMonitor: if tr.config.serviceMonitor == true then {
+    apiVersion: 'monitoring.coreos.com/v1',
+    kind: 'ServiceMonitor',
+    metadata+: {
+      name: tr.config.name,
+      namespace: tr.config.namespace,
+      labels: tr.config.commonLabels,
     },
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-receive' then c {
-                args+: [
-                  '--tsdb.retention=' + tr.config.retention,
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
+    spec: {
+      selector: {
+        matchLabels: tr.config.podLabelSelector,
+      },
+      endpoints: [
+        {
+          port: 'http',
+          relabelings: [{
+            sourceLabels: ['namespace', 'pod'],
+            separator: '/',
+            targetLabel: 'instance',
+          }],
         },
-      },
+      ],
     },
   },
 
-  withHashringConfigMap:: {
-    local tr = self,
-    config+:: {
-      hashringConfigMapName: error 'must provide hashringConfigMapName',
-    },
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-receive' then c {
-                args+: [
-                  '--receive.hashrings-file=/var/lib/thanos-receive/hashrings.json',
-                ],
-                volumeMounts+: [
-                  { name: 'hashring-config', mountPath: '/var/lib/thanos-receive' },
-                ],
-              } else c
-              for c in super.containers
-            ],
-
-            volumes+: [{
-              name: 'hashring-config',
-              configMap: { name: tr.config.hashringConfigMapName },
-            }],
-          },
-        },
+  podDisruptionBudget:
+    {
+      apiVersion: 'policy/v1beta1',
+      kind: 'PodDisruptionBudget',
+      metadata: {
+        name: tr.config.name,
+        namespace: tr.config.namespace,
+      },
+      spec: {
+        maxUnavailable: tr.config.podDisruptionBudgetMaxUnavailable,
+        selector: { matchLabels: tr.config.podLabelSelector },
       },
     },
-  },
-
-  withResources:: {
-    local tr = self,
-    config+:: {
-      resources: error 'must provide resources',
-    },
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-receive' then c {
-                resources: tr.config.resources,
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
 }
