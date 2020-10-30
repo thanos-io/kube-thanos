@@ -9,6 +9,7 @@ local commonConfig = {
     namespace: 'thanos',
     version: 'master-2020-08-11-2ea2c2b7',
     image: 'quay.io/thanos/thanos:' + cfg.version,
+    replicaLabels: ['prometheus_replica', 'rule_replica'],
     objectStorageConfig: {
       name: 'thanos-objectstorage',
       key: 'thanos.yaml',
@@ -30,16 +31,12 @@ local b = t.bucket(commonConfig.config {
   replicas: 1,
 });
 
-local c =
-  t.compact +
-  t.compact.withVolumeClaimTemplate +
-  t.compact.withServiceMonitor +
-  commonConfig + {
-    config+:: {
-      name: 'thanos-compact',
-      replicas: 1,
-    },
-  };
+local c = t.compact(commonConfig.config {
+  replicas: 1,
+  serviceMonitor: true,
+  disableDownsampling: true,
+  deduplicationReplicaLabels: super.replicaLabels,  // reuse same labels for deduplication
+});
 
 local re =
   t.receive +
@@ -102,7 +99,6 @@ local swm =
 local q = t.query(commonConfig.config {
   name: 'thanos-query',
   replicas: 1,
-  replicaLabels: ['prometheus_replica', 'rule_replica'],
   stores: [
     'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
     for service in [re.service, ru.service, s.service]

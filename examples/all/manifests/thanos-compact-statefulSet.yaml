@@ -32,6 +32,13 @@ spec:
         - --objstore.config=$(OBJSTORE_CONFIG)
         - --data-dir=/var/thanos/compact
         - --debug.accept-malformed-index
+        - --retention.resolution-raw=0d
+        - --retention.resolution-5m=0d
+        - --retention.resolution-1h=0d
+        - --delete-delay=48h
+        - --downsampling.disable
+        - --deduplication.replica-label=prometheus_replica
+        - --deduplication.replica-label=rule_replica
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
@@ -62,6 +69,7 @@ spec:
         - mountPath: /var/thanos/compact
           name: data
           readOnly: false
+      resources: {}
       terminationGracePeriodSeconds: 120
       volumes: []
   volumeClaimTemplates:

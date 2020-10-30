@@ -1,27 +1,46 @@
-{
+local defaults = {
+  local defaults = self,
+  name: 'thanos-compact',
+  namespace: error 'must provide namespace',
+  version: error 'must provide version',
+  image: error 'must provide image',
+  objectStorageConfig: error 'must provide objectStorageConfig',
+  resources: {},
+  logLevel: 'info',
+  serviceMonitor: false,
+  volumeClaimTemplate: {},
+  retentionResolutionRaw: '0d',
+  retentionResolution5m: '0d',
+  retentionResolution1h: '0d',
+  deleteDelay: '48h',
+  disableDownsampling: false,
+  deduplicationReplicaLabels: [],
+
+  commonLabels:: {
+    'app.kubernetes.io/name': 'thanos-compact',
+    'app.kubernetes.io/instance': defaults.name,
+    'app.kubernetes.io/version': defaults.version,
+    'app.kubernetes.io/component': 'database-compactor',
+  },
+
+  podLabelSelector:: {
+    [labelName]: defaults.commonLabels[labelName]
+    for labelName in std.objectFields(defaults.commonLabels)
+    if !std.setMember(labelName, ['app.kubernetes.io/version'])
+  },
+};
+
+function(params) {
   local tc = self,
 
-  config:: {
-    name: error 'must provide name',
-    namespace: error 'must provide namespace',
-    version: error 'must provide version',
-    image: error 'must provide image',
-    objectStorageConfig: error 'must provide objectStorageConfig',
-    logLevel: 'info',
-
-    commonLabels:: {
-      'app.kubernetes.io/name': 'thanos-compact',
-      'app.kubernetes.io/instance': tc.config.name,
-      'app.kubernetes.io/version': tc.config.version,
-      'app.kubernetes.io/component': 'database-compactor',
-    },
-
-    podLabelSelector:: {
-      [labelName]: tc.config.commonLabels[labelName]
-      for labelName in std.objectFields(tc.config.commonLabels)
-      if !std.setMember(labelName, ['app.kubernetes.io/version'])
-    },
-  },
+  // Combine the defaults and the passed params to make the component's config.
+  config:: defaults + params,
+  // Safety checks for combined config of defaults and params
+  assert std.isNumber(tc.config.replicas) && tc.config.replicas >= 0 : 'thanos query replicas has to be number >= 0',
+  assert std.isObject(tc.config.resources),
+  assert std.isObject(tc.config.volumeClaimTemplate),
+  assert std.isBoolean(tc.config.serviceMonitor),
+  assert std.isArray(tc.config.deduplicationReplicaLabels),
 
   service:
     {
@@ -49,7 +68,19 @@
         '--objstore.config=$(OBJSTORE_CONFIG)',
         '--data-dir=/var/thanos/compact',
         '--debug.accept-malformed-index',
-      ],
+        '--retention.resolution-raw=' + tc.config.retentionResolutionRaw,
+        '--retention.resolution-5m=' + tc.config.retentionResolution5m,
+        '--retention.resolution-1h=' + tc.config.retentionResolution1h,
+        '--delete-delay=' + tc.config.deleteDelay,
+      ] + (
+        if tc.config.disableDownsampling then ['--downsampling.disable'] else []
+      ) + (
+        if std.length(tc.config.deduplicationReplicaLabels) > 0 then
+          [
+            '--deduplication.replica-label=' + l
+            for l in tc.config.deduplicationReplicaLabels
+          ] else []
+      ),
       env: [
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
           key: tc.config.objectStorageConfig.key,
@@ -95,172 +126,40 @@
             containers: [c],
             volumes: [],
             terminationGracePeriodSeconds: 120,
+            resources: if tc.config.resources != {} then tc.config.resources else {},
           },
         },
-      },
-    },
-
-  withServiceMonitor:: {
-    local tc = self,
-    serviceMonitor: {
-      apiVersion: 'monitoring.coreos.com/v1',
-      kind: 'ServiceMonitor',
-      metadata+: {
-        name: tc.config.name,
-        namespace: tc.config.namespace,
-        labels: tc.config.commonLabels,
-      },
-      spec: {
-        selector: {
-          matchLabels: tc.config.podLabelSelector,
-        },
-        endpoints: [
-          {
-            port: 'http',
-            relabelings: [{
-              sourceLabels: ['namespace', 'pod'],
-              separator: '/',
-              targetLabel: 'instance',
-            }],
-          },
-        ],
-      },
-    },
-  },
-
-  withVolumeClaimTemplate:: {
-    local tc = self,
-    config+:: {
-      volumeClaimTemplate: error 'must provide volumeClaimTemplate',
-    },
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            volumes: std.filter(function(v) v.name != 'data', super.volumes),
-          },
-        },
-        volumeClaimTemplates: [tc.config.volumeClaimTemplate {
+        volumeClaimTemplates: if std.length(tc.config.volumeClaimTemplate) > 0 then [tc.config.volumeClaimTemplate {
           metadata+: {
             name: 'data',
             labels+: tc.config.podLabelSelector,
           },
-        }],
+        }] else [],
       },
     },
-  },
 
-  withRetention:: {
-    local tc = self,
-    config+:: {
-      retentionResolutionRaw: error 'must provide retentionResolutionRaw',
-      retentionResolution5m: error 'must provide retentionResolution5m',
-      retentionResolution1h: error 'must provide retentionResolution1h',
+  serviceMonitor: if tc.config.serviceMonitor == true then {
+    apiVersion: 'monitoring.coreos.com/v1',
+    kind: 'ServiceMonitor',
+    metadata+: {
+      name: tc.config.name,
+      namespace: tc.config.namespace,
+      labels: tc.config.commonLabels,
     },
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-compact' then c {
-                args+: [
-                  '--retention.resolution-raw=' + tc.config.retentionResolutionRaw,
-                  '--retention.resolution-5m=' + tc.config.retentionResolution5m,
-                  '--retention.resolution-1h=' + tc.config.retentionResolution1h,
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
+    spec: {
+      selector: {
+        matchLabels: tc.config.podLabelSelector,
+      },
+      endpoints: [
+        {
+          port: 'http',
+          relabelings: [{
+            sourceLabels: ['namespace', 'pod'],
+            separator: '/',
+            targetLabel: 'instance',
+          }],
         },
-      },
-    },
-  },
-
-  withDownsamplingDisabled:: {
-    local tc = self,
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-compact' then c {
-                args+: [
-                  '--downsampling.disable',
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
-
-  withDeduplication:: {
-    local tc = self,
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-compact' then c {
-                args+: [
-                  '--deduplication.replica-label=' + l
-                  for l in tc.config.deduplicationReplicaLabels
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
-
-  withDeleteDelay:: {
-    local tc = self,
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-compact' then c {
-                args+: [
-                  '--delete-delay=' + tc.config.deleteDelay,
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
-
-  withResources:: {
-    local tc = self,
-    config+:: {
-      resources: error 'must provide resources',
-    },
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-compact' then c {
-                resources: tc.config.resources,
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
+      ],
     },
   },
 }
