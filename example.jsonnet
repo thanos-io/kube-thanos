@@ -59,17 +59,11 @@ local s = t.store + t.store.withVolumeClaimTemplate + t.store.withServiceMonitor
   },
 };
 
-local q = t.query + t.query.withServiceMonitor + commonConfig + {
-  config+:: {
-    name: 'thanos-query',
-    replicas: 1,
-    stores: [
-      'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
-      for service in [s.service]
-    ],
-    replicaLabels: ['prometheus_replica', 'rule_replica'],
-  },
-};
+local q = t.query(commonConfig.config {
+  replicas: 1,
+  replicaLabels: ['prometheus_replica', 'rule_replica'],
+  serviceMonitor: true,
+});
 
 //local finalRu = ru {
 //  config+:: {

@@ -104,24 +104,25 @@ local swm =
     },
   };
 
-local q =
-  t.query +
-  t.query.withServiceMonitor +
-  t.query.withQueryTimeout +
-  t.query.withLookbackDelta +
-  commonConfig + {
-    config+:: {
-      name: 'thanos-query',
-      replicas: 1,
-      stores: [
-        'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
-        for service in [re.service, ru.service, s.service]
-      ],
-      replicaLabels: ['prometheus_replica', 'rule_replica'],
-      queryTimeout: '5m',
-      lookbackDelta: '15m',
-    },
-  };
+local q = t.query(commonConfig.config {
+  name: 'thanos-query',
+  replicas: 1,
+  replicaLabels: ['prometheus_replica', 'rule_replica'],
+  stores: [
+    'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
+    for service in [re.service, ru.service, s.service]
+  ],
+  externalPrefix: '',
+  resources: {},
+  queryTimeout: '5m',
+  lookbackDelta: '15m',
+  ports: {
+    grpc: 10901,
+    http: 9090,
+  },
+  serviceMonitor: true,
+  logLevel: 'debug',
+});
 
 local finalRu = ru {
   config+:: {
