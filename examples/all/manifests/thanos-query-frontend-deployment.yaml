@@ -43,9 +43,9 @@ spec:
         - --query-frontend.compress-responses
         - --http-address=0.0.0.0:9090
         - --query-frontend.downstream-url=http://thanos-query.thanos.svc.cluster.local.:9090
-        - --query-range.split-interval=24h
-        - --query-range.max-retries-per-request=5
-        - --query-frontend.log-queries-longer-than=5s
+        - --query-range.split-interval=12h
+        - --query-range.max-retries-per-request=10
+        - --query-frontend.log-queries-longer-than=10s
         - |-
           --query-range.response-cache-config="config":
             "max_size": "0"
@@ -72,4 +72,5 @@ spec:
             scheme: HTTP
           periodSeconds: 5
         terminationMessagePolicy: FallbackToLogsOnError
+      resources: {}
       terminationGracePeriodSeconds: 120

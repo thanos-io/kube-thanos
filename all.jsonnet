@@ -121,28 +121,18 @@ local finalRu = ru {
   },
 };
 
-local qf =
-  t.queryFrontend +
-  t.queryFrontend.withServiceMonitor +
-  t.queryFrontend.withSplitInterval +
-  t.queryFrontend.withMaxRetries +
-  t.queryFrontend.withLogQueriesLongerThan +
-  t.queryFrontend.withInMemoryResponseCache +
-  commonConfig + {
-    config+:: {
-      name: 'thanos-query-frontend',
-      replicas: 1,
-      downstreamURL: 'http://%s.%s.svc.cluster.local.:%d' % [
-        q.service.metadata.name,
-        q.service.metadata.namespace,
-        q.service.spec.ports[1].port,
-      ],
-      splitInterval: '24h',
-      maxRetries: 5,
-      logQueriesLongerThan: '5s',
-    },
-  };
-
+local qf = t.queryFrontend(commonConfig.config {
+  replicas: 1,
+  downstreamURL: 'http://%s.%s.svc.cluster.local.:%d' % [
+    q.service.metadata.name,
+    q.service.metadata.namespace,
+    q.service.spec.ports[1].port,
+  ],
+  splitInterval: '12h',
+  maxRetries: 10,
+  logQueriesLongerThan: '10s',
+  serviceMonitor: true,
+});
 
 { ['thanos-bucket-' + name]: b[name] for name in std.objectFields(b) } +
 { ['thanos-compact-' + name]: c[name] for name in std.objectFields(c) } +
