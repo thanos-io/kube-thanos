@@ -8,6 +8,8 @@ local defaults = {
   version: error 'must provide version',
   image: error 'must provide image',
   replicas: error 'must provide replicas',
+  reloaderVersion: error 'must provide reloader version',
+  reloaderImage: error 'must provide reloader image',
   objectStorageConfig: error 'must provide objectStorageConfig',
   ruleFiles: [],
   rulesConfig: [],
@@ -150,6 +152,9 @@ function(params) {
         path: '/-/ready',
 
       } },
+      resources: if tr.config.resources != {} then tr.config.resources else {},
+      terminationMessagePolicy: 'FallbackToLogsOnError',
+    };
 
     local reloadC = {
       name: 'configmap-reloader',
@@ -158,12 +163,12 @@ function(params) {
         [
           '-webhook-url=http://localhost:' + tr.service.spec.ports[1].port + '/-/reload',
         ] + 
-        (['-volume-dir=/etc/thanos/rules/' + ruleConfig.name for url in for ruleConfig in tr.config.rulesConfig]),
+        (['-volume-dir=/etc/thanos/rules/' + ruleConfig.name for ruleConfig in tr.config.rulesConfig]),
       volumeMounts: [
         { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name }
         for ruleConfig in tr.config.rulesConfig
       ],
-    },
+    };
 
     {
       apiVersion: 'apps/v1',
@@ -183,8 +188,8 @@ function(params) {
           },
           spec: {
             serviceAccountName: tr.serviceAccount.metadata.name,
-            containers: [c] +
-              if std.length(tr.config.rulesConfig) > 0 then [reloadC] else [],
+            containers: [c] + 
+              (if std.length(tr.config.rulesConfig) > 0 then [reloadC] else []),
             volumes: [
               { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
               for ruleConfig in tr.config.rulesConfig
@@ -221,7 +226,7 @@ function(params) {
             targetLabel: 'instance',
           }],
         },
-      },
+      ],
     },
   },
 }
