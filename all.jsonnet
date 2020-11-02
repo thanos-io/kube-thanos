@@ -153,7 +153,6 @@ local qf =
       queryRangeMaxRetries: 5,
       labelsMaxRetries: 5,
       logQueriesLongerThan: '5s',
-      compression: '',
     },
   };
 
