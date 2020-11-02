@@ -4,45 +4,43 @@ local t = import 'kube-thanos/thanos.libsonnet';
 // Neither this example nor its manifests in examples/all/manifests/ are meant to ever be run.
 
 local commonConfig = {
-  config+:: {
-    local cfg = self,
-    namespace: 'thanos',
-    version: 'master-2020-08-11-2ea2c2b7',
-    image: 'quay.io/thanos/thanos:' + cfg.version,
-    replicaLabels: ['prometheus_replica', 'rule_replica'],
-    objectStorageConfig: {
-      name: 'thanos-objectstorage',
-      key: 'thanos.yaml',
-    },
-    resources: {
-      requests: { cpu: 0.123, memory: '123Mi' },
-      limits: { cpu: 0.420, memory: '420Mi' },
-    },
-    volumeClaimTemplate: {
-      spec: {
-        accessModes: ['ReadWriteOnce'],
-        resources: {
-          requests: {
-            storage: '10Gi',
-          },
+  local cfg = self,
+  namespace: 'thanos',
+  version: 'master-2020-08-11-2ea2c2b7',
+  image: 'quay.io/thanos/thanos:' + cfg.version,
+  replicaLabels: ['prometheus_replica', 'rule_replica'],
+  objectStorageConfig: {
+    name: 'thanos-objectstorage',
+    key: 'thanos.yaml',
+  },
+  resources: {
+    requests: { cpu: 0.123, memory: '123Mi' },
+    limits: { cpu: 0.420, memory: '420Mi' },
+  },
+  volumeClaimTemplate: {
+    spec: {
+      accessModes: ['ReadWriteOnce'],
+      resources: {
+        requests: {
+          storage: '10Gi',
         },
       },
     },
   },
 };
 
-local b = t.bucket(commonConfig.config {
+local b = t.bucket(commonConfig {
   replicas: 1,
 });
 
-local c = t.compact(commonConfig.config {
+local c = t.compact(commonConfig {
   replicas: 1,
   serviceMonitor: true,
   disableDownsampling: true,
   deduplicationReplicaLabels: super.replicaLabels,  // reuse same labels for deduplication
 });
 
-local re = t.receive(commonConfig.config {
+local re = t.receive(commonConfig {
   replicas: 1,
   replicationFactor: 1,
   serviceMonitor: true,
@@ -50,14 +48,14 @@ local re = t.receive(commonConfig.config {
 });
 
 
-local ru = t.rule(commonConfig.config {
+local ru = t.rule(commonConfig {
   replicas: 1,
   rulesConfig: [{ name: 'test', key: 'test' }],
   alertmanagersURLs: ['alertmanager:9093'],
   serviceMonitor: true,
 });
 
-local s = t.store(commonConfig.config {
+local s = t.store(commonConfig {
   replicas: 1,
   serviceMonitor: true,
   bucketCache: {
@@ -66,7 +64,7 @@ local s = t.store(commonConfig.config {
       // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
-      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.config.namespace],
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.namespace],
     },
   },
   indexCache: {
@@ -75,12 +73,12 @@ local s = t.store(commonConfig.config {
       // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
-      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.config.namespace],
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.namespace],
     },
   },
 });
 
-local q = t.query(commonConfig.config {
+local q = t.query(commonConfig {
   name: 'thanos-query',
   replicas: 1,
   stores: [
@@ -105,7 +103,7 @@ local finalRu = ru {
   },
 };
 
-local qf = t.queryFrontend(commonConfig.config {
+local qf = t.queryFrontend(commonConfig {
   replicas: 1,
   downstreamURL: 'http://%s.%s.svc.cluster.local.:%d' % [
     q.service.metadata.name,
