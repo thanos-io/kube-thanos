@@ -85,7 +85,7 @@ function(params) {
         (if std.length(tr.config.rulesConfig) > 0 then [
            '--rule-file=/etc/thanos/rules/' + ruleConfig.name + '/' + ruleConfig.key
            for ruleConfig in tr.config.rulesConfig
-         ]),
+         ] else []),
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
@@ -105,7 +105,7 @@ function(params) {
         if std.length(tr.config.rulesConfig) > 0 then [
           { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name }
           for ruleConfig in tr.config.rulesConfig
-        ]
+        ] else []
       ),
       livenessProbe: { failureThreshold: 24, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
