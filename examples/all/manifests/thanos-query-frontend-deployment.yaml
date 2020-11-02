@@ -44,10 +44,18 @@ spec:
         - --http-address=0.0.0.0:9090
         - --query-frontend.downstream-url=http://thanos-query.thanos.svc.cluster.local.:9090
         - --query-range.split-interval=24h
+        - --labels.split-interval=24h
         - --query-range.max-retries-per-request=5
+        - --labels.max-retries-per-request=5
         - --query-frontend.log-queries-longer-than=5s
         - |-
           --query-range.response-cache-config="config":
+            "max_size": "0"
+            "max_size_items": 2048
+            "validity": "6h"
+          "type": "in-memory"
+        - |-
+          --labels.response-cache-config="config":
             "max_size": "0"
             "max_size_items": 2048
             "validity": "6h"

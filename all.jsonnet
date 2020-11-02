@@ -132,10 +132,13 @@ local finalRu = ru {
 local qf =
   t.queryFrontend +
   t.queryFrontend.withServiceMonitor +
-  t.queryFrontend.withSplitInterval +
-  t.queryFrontend.withMaxRetries +
+  t.queryFrontend.withQueryRangeSplitInterval +
+  t.queryFrontend.withLabelsSplitInterval +
+  t.queryFrontend.withQueryRangeMaxRetries +
+  t.queryFrontend.withLabelsMaxRetries +
   t.queryFrontend.withLogQueriesLongerThan +
-  t.queryFrontend.withInMemoryResponseCache +
+  t.queryFrontend.withInMemoryQueryRangeResponseCache +
+  t.queryFrontend.withInMemoryLabelsResponseCache +
   commonConfig + {
     config+:: {
       name: 'thanos-query-frontend',
@@ -145,9 +148,12 @@ local qf =
         q.service.metadata.namespace,
         q.service.spec.ports[1].port,
       ],
-      splitInterval: '24h',
-      maxRetries: 5,
+      queryRangeSplitInterval: '24h',
+      labelsSplitInterval: '24h',
+      queryRangeMaxRetries: 5,
+      labelsMaxRetries: 5,
       logQueriesLongerThan: '5s',
+      compression: '',
     },
   };
 

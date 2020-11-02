@@ -172,10 +172,10 @@
     },
   },
 
-  withMaxRetries:: {
+  withQueryRangeMaxRetries:: {
     local tqf = self,
     config+:: {
-      maxRetries: error 'must provide maxRetries',
+      queryRangeMaxRetries: error 'must provide query range maxRetries',
     },
 
     deployment+: {
@@ -185,7 +185,7 @@
             containers: [
               if c.name == 'thanos-query-frontend' then c {
                 args+: [
-                  '--query-range.max-retries-per-request=' + tqf.config.maxRetries,
+                  '--query-range.max-retries-per-request=' + tqf.config.queryRangeMaxRetries,
                 ],
               } else c
               for c in super.containers
@@ -196,10 +196,10 @@
     },
   },
 
-  withSplitInterval:: {
+  withLabelsMaxRetries:: {
     local tqf = self,
     config+:: {
-      splitInterval: error 'must provide splitInterval',
+      labelsMaxRetries: error 'must provide labels maxRetries',
     },
 
     deployment+: {
@@ -209,7 +209,55 @@
             containers: [
               if c.name == 'thanos-query-frontend' then c {
                 args+: [
-                  '--query-range.split-interval=' + tqf.config.splitInterval,
+                  '--labels.max-retries-per-request=' + tqf.config.labelsMaxRetries,
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
+  withQueryRangeSplitInterval:: {
+    local tqf = self,
+    config+:: {
+      queryRangeSplitInterval: error 'must provide query range splitInterval',
+    },
+
+    deployment+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-query-frontend' then c {
+                args+: [
+                  '--query-range.split-interval=' + tqf.config.queryRangeSplitInterval,
+                ],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
+  withLabelsSplitInterval:: {
+    local tqf = self,
+    config+:: {
+      labelsSplitInterval: error 'must provide labels splitInterval',
+    },
+
+    deployment+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-query-frontend' then c {
+                args+: [
+                  '--labels.split-interval=' + tqf.config.labelsSplitInterval,
                 ],
               } else c
               for c in super.containers
@@ -227,7 +275,7 @@
     validity: '6h',
   },
 
-  withInMemoryResponseCache:: {
+  withInMemoryQueryRangeResponseCache:: {
     local tqf = self,
     config+:: {
       fifoCache: fifoCacheDefaults,
@@ -250,6 +298,39 @@
               if c.name == 'thanos-query-frontend' then c {
                 args+: if m != {} then [
                   '--query-range.response-cache-config=' + std.manifestYamlDoc(cfg),
+                ] else [],
+              } else c
+              for c in super.containers
+            ],
+          },
+        },
+      },
+    },
+  },
+
+  withInMemoryLabelsResponseCache:: {
+    local tqf = self,
+    config+:: {
+      fifoCache: fifoCacheDefaults,
+    },
+    local m = tqf.config.fifoCache,
+    local cfg =
+      {
+        type: 'in-memory',
+        config: {
+          max_size: m.maxSize,
+          max_size_items: m.maxSizeItems,
+          validity: m.validity,
+        },
+      },
+    deployment+: {
+      spec+: {
+        template+: {
+          spec+: {
+            containers: [
+              if c.name == 'thanos-query-frontend' then c {
+                args+: if m != {} then [
+                  '--labels.response-cache-config=' + std.manifestYamlDoc(cfg),
                 ] else [],
               } else c
               for c in super.containers
