@@ -119,8 +119,8 @@ function(params) {
         port: tq.service.spec.ports[1].port,
         path: '/-/ready',
       } },
-      terminationMessagePolicy: 'FallbackToLogsOnError',
       resources: if tq.config.resources != {} then tq.config.resources else {},
+      terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
     {

@@ -92,6 +92,7 @@ function(params) {
         port: tqf.service.spec.ports[0].port,
         path: '/-/ready',
       } },
+      resources: if tqf.config.resources != {} then tqf.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
@@ -111,7 +112,6 @@ function(params) {
           spec: {
             containers: [c],
             terminationGracePeriodSeconds: 120,
-            resources: if tqf.config.resources != {} then tqf.config.resources else {},
             affinity: { podAntiAffinity: {
               preferredDuringSchedulingIgnoredDuringExecution: [{
                 podAffinityTerm: {

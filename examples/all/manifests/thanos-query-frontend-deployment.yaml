@@ -71,12 +71,12 @@ spec:
             port: 9090
             scheme: HTTP
           periodSeconds: 5
+        resources:
+          limits:
+            cpu: 0.42
+            memory: 420Mi
+          requests:
+            cpu: 0.123
+            memory: 123Mi
         terminationMessagePolicy: FallbackToLogsOnError
-      resources:
-        limits:
-          cpu: 0.42
-          memory: 420Mi
-        requests:
-          cpu: 0.123
-          memory: 123Mi
       terminationGracePeriodSeconds: 120

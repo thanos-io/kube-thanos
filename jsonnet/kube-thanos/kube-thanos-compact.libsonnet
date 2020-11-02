@@ -103,6 +103,7 @@ function(params) {
         mountPath: '/var/thanos/compact',
         readOnly: false,
       }],
+      resources: if tc.config.resources != {} then tc.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
@@ -126,7 +127,6 @@ function(params) {
             containers: [c],
             volumes: [],
             terminationGracePeriodSeconds: 120,
-            resources: if tc.config.resources != {} then tc.config.resources else {},
           },
         },
         volumeClaimTemplates: if std.length(tc.config.volumeClaimTemplate) > 0 then [tc.config.volumeClaimTemplate {

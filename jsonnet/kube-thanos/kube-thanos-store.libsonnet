@@ -145,6 +145,7 @@ function(params) {
         port: ts.service.spec.ports[1].port,
         path: '/-/ready',
       } },
+      resources: if ts.config.resources != {} then ts.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
@@ -168,7 +169,6 @@ function(params) {
             containers: [c],
             volumes: [],
             terminationGracePeriodSeconds: 120,
-            resources: if ts.config.resources != {} then ts.config.resources else {},
             affinity: { podAntiAffinity: {
               preferredDuringSchedulingIgnoredDuringExecution: [{
                 podAffinityTerm: {

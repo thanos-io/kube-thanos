@@ -74,8 +74,8 @@ function(params) {
         port: tb.service.spec.ports[0].port,
         path: '/-/ready',
       } },
-      terminationMessagePolicy: 'FallbackToLogsOnError',
       resources: if tb.config.resources != {} then tb.config.resources else {},
+      terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
     {

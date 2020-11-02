@@ -118,8 +118,8 @@ function(params) {
         path: '/-/ready',
 
       } },
-      terminationMessagePolicy: 'FallbackToLogsOnError',
       resources: if tr.config.resources != {} then tr.config.resources else {},
+      terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
     {

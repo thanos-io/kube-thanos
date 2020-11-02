@@ -109,6 +109,13 @@ spec:
             port: 10902
             scheme: HTTP
           periodSeconds: 5
+        resources:
+          limits:
+            cpu: 0.42
+            memory: 420Mi
+          requests:
+            cpu: 0.123
+            memory: 123Mi
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /var/thanos/receive
@@ -116,13 +123,6 @@ spec:
           readOnly: false
         - mountPath: /var/lib/thanos-receive
           name: hashring-config
-      resources:
-        limits:
-          cpu: 0.42
-          memory: 420Mi
-        requests:
-          cpu: 0.123
-          memory: 123Mi
       terminationGracePeriodSeconds: 900
       volumes:
       - configMap:

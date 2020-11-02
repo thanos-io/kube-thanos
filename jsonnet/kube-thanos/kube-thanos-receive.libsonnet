@@ -122,6 +122,7 @@ function(params) {
         port: tr.service.spec.ports[1].port,
         path: '/-/ready',
       } },
+      resources: if tr.config.resources != {} then tr.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
@@ -148,7 +149,6 @@ function(params) {
               configMap: { name: tr.config.hashringConfigMapName },
             }] else [],
             terminationGracePeriodSeconds: 900,
-            resources: if tr.config.resources != {} then tr.config.resources else {},
             affinity: { podAntiAffinity: {
               local labelSelector = { matchExpressions: [{
                 key: 'app.kubernetes.io/name',
