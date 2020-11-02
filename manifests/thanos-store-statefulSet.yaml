@@ -50,6 +50,7 @@ spec:
         - --grpc-address=0.0.0.0:10901
         - --http-address=0.0.0.0:10902
         - --objstore.config=$(OBJSTORE_CONFIG)
+        - --ignore-deletion-marks-delay=24h
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
@@ -82,6 +83,7 @@ spec:
         - mountPath: /var/thanos/store
           name: data
           readOnly: false
+      resources: {}
       terminationGracePeriodSeconds: 120
       volumes: []
   volumeClaimTemplates:

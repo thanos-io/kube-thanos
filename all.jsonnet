@@ -57,35 +57,28 @@ local ru = t.rule(commonConfig.config {
   serviceMonitor: true,
 });
 
-local s =
-  t.store +
-  t.store.withVolumeClaimTemplate +
-  t.store.withServiceMonitor +
-  commonConfig + {
-    config+:: {
-      name: 'thanos-store',
-      replicas: 1,
+local s = t.store(commonConfig.config {
+  replicas: 1,
+  serviceMonitor: true,
+  bucketCache: {
+    type: 'memcached',
+    config: {
+      // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
+      // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.config.namespace],
     },
-  };
-
-local swm =
-  t.store +
-  t.store.withVolumeClaimTemplate +
-  t.store.withServiceMonitor +
-  t.store.withIndexCacheMemcached +
-  t.store.withCachingBucketMemcached +
-  commonConfig + {
-    config+:: {
-      name: 'thanos-store',
-      replicas: 1,
-      memcached+: {
-        // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
-        // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-        // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
-        addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.config.namespace],
-      },
+  },
+  indexCache: {
+    type: 'memcached',
+    config: {
+      // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
+      // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.config.namespace],
     },
-  };
+  },
+});
 
 local q = t.query(commonConfig.config {
   name: 'thanos-query',
@@ -131,5 +124,4 @@ local qf = t.queryFrontend(commonConfig.config {
 { ['thanos-rule-' + name]: finalRu[name] for name in std.objectFields(finalRu) } +
 { ['thanos-store-' + name]: s[name] for name in std.objectFields(s) } +
 { ['thanos-query-' + name]: q[name] for name in std.objectFields(q) } +
-{ ['thanos-query-frontend-' + name]: qf[name] for name in std.objectFields(qf) } +
-{ 'thanos-store-statefulSet-with-memcached': swm.statefulSet }
+{ ['thanos-query-frontend-' + name]: qf[name] for name in std.objectFields(qf) }

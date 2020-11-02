@@ -50,6 +50,47 @@ spec:
         - --grpc-address=0.0.0.0:10901
         - --http-address=0.0.0.0:10902
         - --objstore.config=$(OBJSTORE_CONFIG)
+        - --ignore-deletion-marks-delay=24h
+        - --experimental.enable-index-cache-postings-compression
+        - |-
+          --index-cache.config="addresses":
+          - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
+          "config":
+            "addresses":
+            - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
+            "dns_provider_update_interval": "10s"
+            "max_async_buffer_size": 10000
+            "max_async_concurrency": 20
+            "max_get_multi_batch_size": 0
+            "max_get_multi_concurrency": 100
+            "max_idle_connections": 100
+            "max_item_size": "1MiB"
+            "timeout": "500ms"
+          "type": "memcached"
+        - |-
+          --store.caching-bucket.config="addresses":
+          - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
+          "blocks_iter_ttl": "5m"
+          "chunk_object_attrs_ttl": "24h"
+          "chunk_subrange_size": 16000
+          "chunk_subrange_ttl": "24h"
+          "config":
+            "addresses":
+            - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
+            "dns_provider_update_interval": "10s"
+            "max_async_buffer_size": 10000
+            "max_async_concurrency": 20
+            "max_get_multi_batch_size": 0
+            "max_get_multi_concurrency": 100
+            "max_idle_connections": 100
+            "max_item_size": "1MiB"
+            "timeout": "500ms"
+          "max_chunks_get_range_requests": 3
+          "metafile_content_ttl": "24h"
+          "metafile_doesnt_exist_ttl": "15m"
+          "metafile_exists_ttl": "2h"
+          "metafile_max_size": "1MiB"
+          "type": "memcached"
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
@@ -82,6 +123,13 @@ spec:
         - mountPath: /var/thanos/store
           name: data
           readOnly: false
+      resources:
+        limits:
+          cpu: 0.42
+          memory: 420Mi
+        requests:
+          cpu: 0.123
+          memory: 123Mi
       terminationGracePeriodSeconds: 120
       volumes: []
   volumeClaimTemplates:
