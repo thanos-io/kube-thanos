@@ -17,12 +17,11 @@ local defaults = {
   bucketCache: {},
   indexCache: {},
 
-  memcachedDefaults:: {
-    // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-    // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
-    // addresses: error 'must provide memcached addresses',
-    addresses+: [],
+  memcachedDefaults+:: {
     config+: {
+      // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      addresses+: error 'must provide memcached addresses',
       timeout: '500ms',
       max_idle_connections: 100,
       max_async_concurrency: 20,
@@ -34,7 +33,9 @@ local defaults = {
     },
   },
 
-  memcachedBucketDefaults:: defaults.memcachedDefaults {
+  indexCacheDefaults+:: {},
+
+  bucketCacheMemcachedDefaults+:: {
     chunk_subrange_size: 16000,
     max_chunks_get_range_requests: 3,
     chunk_object_attrs_ttl: '24h',
@@ -66,11 +67,14 @@ function(params) {
   // Combine the defaults and the passed params to make the component's config.
   config:: defaults + params + {
     // If indexCache is given and of type memcached, merge defaults with params
-    indexCache+: if std.objectHas(params, 'indexCache') && params.indexCache.type == 'memcached' then
-      defaults.memcachedDefaults + params.indexCache.config else {},
-    // If bucketCache is given and of type memcached, merge defaults with params
-    bucketCache+: if std.objectHas(params, 'bucketCache') && params.bucketCache.type == 'memcached' then
-      defaults.memcachedBucketDefaults + params.bucketCache.config else {},
+    indexCache+:
+      if std.objectHas(params, 'indexCache') && params.indexCache.type == 'memcached' then
+        defaults.memcachedDefaults + defaults.indexCacheDefaults + params.indexCache
+      else {},
+    bucketCache+:
+      if std.objectHas(params, 'bucketCache') && params.bucketCache.type == 'memcached' then
+        defaults.memcachedDefaults + defaults.bucketCacheMemcachedDefaults + params.bucketCache
+      else {},
   },
 
   // Safety checks for combined config of defaults and params

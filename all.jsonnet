@@ -60,7 +60,7 @@ local s = t.store(commonConfig {
   serviceMonitor: true,
   bucketCache: {
     type: 'memcached',
-    config: {
+    config+: {
       // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
@@ -69,7 +69,7 @@ local s = t.store(commonConfig {
   },
   indexCache: {
     type: 'memcached',
-    config: {
+    config+: {
       // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery

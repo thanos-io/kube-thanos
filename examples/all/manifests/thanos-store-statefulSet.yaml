@@ -53,9 +53,7 @@ spec:
         - --ignore-deletion-marks-delay=24h
         - --experimental.enable-index-cache-postings-compression
         - |-
-          --index-cache.config="addresses":
-          - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
-          "config":
+          --index-cache.config="config":
             "addresses":
             - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
             "dns_provider_update_interval": "10s"
@@ -68,9 +66,7 @@ spec:
             "timeout": "500ms"
           "type": "memcached"
         - |-
-          --store.caching-bucket.config="addresses":
-          - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
-          "blocks_iter_ttl": "5m"
+          --store.caching-bucket.config="blocks_iter_ttl": "5m"
           "chunk_object_attrs_ttl": "24h"
           "chunk_subrange_size": 16000
           "chunk_subrange_ttl": "24h"
