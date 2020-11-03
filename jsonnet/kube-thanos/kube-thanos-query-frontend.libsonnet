@@ -62,7 +62,6 @@ function(params) {
 
   // Combine the defaults and the passed params to make the component's config.
   config:: defaults + params + {
-    // If indexCache is given and of type memcached, merge defaults with params
     queryRangeCache+:
       if std.objectHas(params, 'queryRangeCache') && params.queryRangeCache.type == 'memcached' then
         defaults.memcachedDefaults + params.queryRangeCache
