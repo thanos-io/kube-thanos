@@ -110,10 +110,28 @@ local qf = t.queryFrontend(commonConfig {
     q.service.metadata.namespace,
     q.service.spec.ports[1].port,
   ],
-  splitInterval: '12h',
-  maxRetries: 10,
-  logQueriesLongerThan: '10s',
+  splitInterval: '24h',
+  maxRetries: 5,
+  logQueriesLongerThan: '5s',
   serviceMonitor: true,
+  queryRangeCache: {
+    type: 'memcached',
+    config+: {
+      // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
+      // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.namespace],
+    },
+  },
+  labelsCache: {
+    type: 'memcached',
+    config+: {
+      // NOTICE: <MEMCACHED_SERCIVE> is a placeholder to generate examples.
+      // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.%s.svc.cluster.local' % commonConfig.namespace],
+    },
+  },
 });
 
 { ['thanos-bucket-' + name]: b[name] for name in std.objectFields(b) } +
