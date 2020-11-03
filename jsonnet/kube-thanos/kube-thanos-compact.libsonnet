@@ -15,6 +15,9 @@ local defaults = {
   deleteDelay: '48h',
   disableDownsampling: false,
   deduplicationReplicaLabels: [],
+  ports: {
+    http: 10902,
+  },
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-compact',
@@ -53,7 +56,17 @@ function(params) {
       },
       spec: {
         selector: tc.config.podLabelSelector,
-        ports: [{ name: 'http', targetPort: 'http', port: 10902 }],
+        ports: [
+          {
+            assert std.isString(name),
+            assert std.isNumber(tc.config.ports[name]),
+
+            name: name,
+            port: tc.config.ports[name],
+            targetPort: tc.config.ports[name],
+          }
+          for name in std.objectFields(tc.config.ports)
+        ],
       },
     },
 
@@ -87,15 +100,18 @@ function(params) {
           name: tc.config.objectStorageConfig.name,
         } } },
       ],
-      ports: [{ name: 'http', containerPort: tc.service.spec.ports[0].port }],
+      ports: [
+        { name: name, containerPort: tc.config.ports[name] }
+        for name in std.objectFields(tc.config.ports)
+      ],
       livenessProbe: { failureThreshold: 4, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
-        port: tc.service.spec.ports[0].port,
+        port: tc.config.ports.http,
         path: '/-/healthy',
       } },
       readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
-        port: tc.service.spec.ports[0].port,
+        port: tc.config.ports.http,
         path: '/-/ready',
       } },
       volumeMounts: [{

@@ -16,6 +16,10 @@ local defaults = {
   logLevel: 'info',
   resources: {},
   serviceMonitor: false,
+  ports: {
+    grpc: 10901,
+    http: 10902,
+  },
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-rule',
@@ -56,8 +60,15 @@ function(params) {
       },
       spec: {
         ports: [
-          { name: 'grpc', targetPort: 'grpc', port: 10901 },
-          { name: 'http', targetPort: 'http', port: 10902 },
+          {
+            assert std.isString(name),
+            assert std.isNumber(tr.config.ports[name]),
+
+            name: name,
+            port: tr.config.ports[name],
+            targetPort: tr.config.ports[name],
+          }
+          for name in std.objectFields(tr.config.ports)
         ],
         clusterIP: 'None',
         selector: tr.config.podLabelSelector,
@@ -72,8 +83,8 @@ function(params) {
         [
           'rule',
           '--log.level=' + tr.config.logLevel,
-          '--grpc-address=0.0.0.0:%d' % tr.service.spec.ports[0].port,
-          '--http-address=0.0.0.0:%d' % tr.service.spec.ports[1].port,
+          '--grpc-address=0.0.0.0:%d' % tr.config.ports.grpc,
+          '--http-address=0.0.0.0:%d' % tr.config.ports.http,
           '--objstore.config=$(OBJSTORE_CONFIG)',
           '--data-dir=/var/thanos/rule',
           '--label=rule_replica="$(NAME)"',
@@ -94,8 +105,8 @@ function(params) {
         } } },
       ],
       ports: [
-        { name: port.name, containerPort: port.port }
-        for port in tr.service.spec.ports
+        { name: name, containerPort: tr.config.ports[name] }
+        for name in std.objectFields(tr.config.ports)
       ],
       volumeMounts: [{
         name: 'data',
@@ -109,12 +120,12 @@ function(params) {
       ),
       livenessProbe: { failureThreshold: 24, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
-        port: tr.service.spec.ports[1].port,
+        port: tr.config.ports.http,
         path: '/-/healthy',
       } },
       readinessProbe: { failureThreshold: 18, periodSeconds: 5, initialDelaySeconds: 10, httpGet: {
         scheme: 'HTTP',
-        port: tr.service.spec.ports[1].port,
+        port: tr.config.ports.http,
         path: '/-/ready',
 
       } },

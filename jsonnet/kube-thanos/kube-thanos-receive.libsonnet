@@ -17,6 +17,11 @@ local defaults = {
   logLevel: 'info',
   resources: {},
   serviceMonitor: false,
+  ports: {
+    grpc: 10901,
+    http: 10902,
+    'remote-write': 19291,
+  },
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-receive',
@@ -56,9 +61,15 @@ function(params) {
       spec: {
         clusterIP: 'None',
         ports: [
-          { name: 'grpc', targetPort: 'grpc', port: 10901 },
-          { name: 'http', targetPort: 'http', port: 10902 },
-          { name: 'remote-write', targetPort: 'remote-write', port: 19291 },
+          {
+            assert std.isString(name),
+            assert std.isNumber(tr.config.ports[name]),
+
+            name: name,
+            port: tr.config.ports[name],
+            targetPort: tr.config.ports[name],
+          }
+          for name in std.objectFields(tr.config.ports)
         ],
         selector: tr.config.podLabelSelector,
       },
@@ -67,7 +78,7 @@ function(params) {
   statefulSet:
     local localEndpointFlag = '--receive.local-endpoint=$(NAME).%s.$(NAMESPACE).svc.cluster.local:%d' % [
       tr.config.name,
-      tr.service.spec.ports[0].port,
+      tr.config.ports.grpc,
     ];
 
     local c = {
@@ -76,9 +87,9 @@ function(params) {
       args: [
         'receive',
         '--log.level=' + tr.config.logLevel,
-        '--grpc-address=0.0.0.0:%d' % tr.service.spec.ports[0].port,
-        '--http-address=0.0.0.0:%d' % tr.service.spec.ports[1].port,
-        '--remote-write.address=0.0.0.0:%d' % tr.service.spec.ports[2].port,
+        '--grpc-address=0.0.0.0:%d' % tr.config.ports.grpc,
+        '--http-address=0.0.0.0:%d' % tr.config.ports.http,
+        '--remote-write.address=0.0.0.0:%d' % tr.config.ports['remote-write'],
         '--receive.replication-factor=%d' % tr.config.replicationFactor,
         '--objstore.config=$(OBJSTORE_CONFIG)',
         '--tsdb.path=/var/thanos/receive',
@@ -100,8 +111,8 @@ function(params) {
         } } },
       ],
       ports: [
-        { name: port.name, containerPort: port.port }
-        for port in tr.service.spec.ports
+        { name: name, containerPort: tr.config.ports[name] }
+        for name in std.objectFields(tr.config.ports)
       ],
       volumeMounts: [{
         name: 'data',
@@ -114,12 +125,12 @@ function(params) {
       ),
       livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
-        port: tr.service.spec.ports[1].port,
+        port: tr.config.ports.http,
         path: '/-/healthy',
       } },
       readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
-        port: tr.service.spec.ports[1].port,
+        port: tr.config.ports.http,
         path: '/-/ready',
       } },
       resources: if tr.config.resources != {} then tr.config.resources else {},

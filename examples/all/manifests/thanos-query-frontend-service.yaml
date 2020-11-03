@@ -12,7 +12,7 @@ spec:
   ports:
   - name: http
     port: 9090
-    targetPort: http
+    targetPort: 9090
   selector:
     app.kubernetes.io/component: query-cache
     app.kubernetes.io/instance: thanos-query-frontend

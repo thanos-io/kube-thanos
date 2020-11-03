@@ -7,6 +7,9 @@ local defaults = {
   objectStorageConfig: error 'must provide objectStorageConfig',
   resources: {},
   logLevel: 'info',
+  ports: {
+    http: 10902,
+  },
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-bucket',
@@ -41,7 +44,17 @@ function(params) {
         labels: tb.config.commonLabels,
       },
       spec: {
-        ports: [{ name: 'http', targetPort: 'http', port: 10902 }],
+        ports: [
+          {
+            assert std.isString(name),
+            assert std.isNumber(tb.config.ports[name]),
+
+            name: name,
+            port: tb.config.ports[name],
+            targetPort: tb.config.ports[name],
+          }
+          for name in std.objectFields(tb.config.ports)
+        ],
         selector: tb.config.podLabelSelector,
       },
     },
@@ -63,15 +76,18 @@ function(params) {
           name: tb.config.objectStorageConfig.name,
         } } },
       ],
-      ports: [{ name: 'http', containerPort: tb.service.spec.ports[0].port }],
+      ports: [
+        { name: name, containerPort: tb.config.ports[name] }
+        for name in std.objectFields(tb.config.ports)
+      ],
       livenessProbe: { failureThreshold: 4, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
-        port: tb.service.spec.ports[0].port,
+        port: tb.config.ports.http,
         path: '/-/healthy',
       } },
       readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
-        port: tb.service.spec.ports[0].port,
+        port: tb.config.ports.http,
         path: '/-/ready',
       } },
       resources: if tb.config.resources != {} then tb.config.resources else {},
