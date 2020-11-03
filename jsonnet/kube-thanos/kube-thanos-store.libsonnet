@@ -16,6 +16,10 @@ local defaults = {
   serviceMonitor: false,
   bucketCache: {},
   indexCache: {},
+  ports: {
+    grpc: 10901,
+    http: 10902,
+  },
 
   memcachedDefaults+:: {
     config+: {
@@ -96,8 +100,15 @@ function(params) {
         clusterIP: 'None',
         selector: ts.config.podLabelSelector,
         ports: [
-          { name: 'grpc', targetPort: 'grpc', port: 10901 },
-          { name: 'http', targetPort: 'http', port: 10902 },
+          {
+            assert std.isString(name),
+            assert std.isNumber(ts.config.ports[name]),
+
+            name: name,
+            port: ts.config.ports[name],
+            targetPort: ts.config.ports[name],
+          }
+          for name in std.objectFields(ts.config.ports)
         ],
       },
     },
@@ -110,8 +121,8 @@ function(params) {
         'store',
         '--log.level=' + ts.config.logLevel,
         '--data-dir=/var/thanos/store',
-        '--grpc-address=0.0.0.0:%d' % ts.service.spec.ports[0].port,
-        '--http-address=0.0.0.0:%d' % ts.service.spec.ports[1].port,
+        '--grpc-address=0.0.0.0:%d' % ts.config.ports.grpc,
+        '--http-address=0.0.0.0:%d' % ts.config.ports.http,
         '--objstore.config=$(OBJSTORE_CONFIG)',
         '--ignore-deletion-marks-delay=' + ts.config.ignoreDeletionMarksDelay,
       ] + (
@@ -131,8 +142,8 @@ function(params) {
         } } },
       ],
       ports: [
-        { name: port.name, containerPort: port.port }
-        for port in ts.service.spec.ports
+        { name: name, containerPort: ts.config.ports[name] }
+        for name in std.objectFields(ts.config.ports)
       ],
       volumeMounts: [{
         name: 'data',
@@ -141,12 +152,12 @@ function(params) {
       }],
       livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
-        port: ts.service.spec.ports[1].port,
+        port: ts.config.ports.http,
         path: '/-/healthy',
       } },
       readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
-        port: ts.service.spec.ports[1].port,
+        port: ts.config.ports.http,
         path: '/-/ready',
       } },
       resources: if ts.config.resources != {} then ts.config.resources else {},

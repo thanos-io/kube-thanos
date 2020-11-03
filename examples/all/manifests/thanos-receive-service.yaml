@@ -13,13 +13,13 @@ spec:
   ports:
   - name: grpc
     port: 10901
-    targetPort: grpc
+    targetPort: 10901
   - name: http
     port: 10902
-    targetPort: http
+    targetPort: 10902
   - name: remote-write
     port: 19291
-    targetPort: remote-write
+    targetPort: 19291
   selector:
     app.kubernetes.io/component: database-write-hashring
     app.kubernetes.io/instance: thanos-receive

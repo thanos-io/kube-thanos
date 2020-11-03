@@ -20,6 +20,9 @@ local defaults = {
   logLevel: 'info',
   resources: {},
   serviceMonitor: false,
+  ports: {
+    http: 9090,
+  },
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-query-frontend',
@@ -57,7 +60,17 @@ function(params) {
       },
       spec: {
         selector: tqf.config.podLabelSelector,
-        ports: [{ name: 'http', targetPort: 'http', port: 9090 }],
+        ports: [
+          {
+            assert std.isString(name),
+            assert std.isNumber(tqf.config.ports[name]),
+
+            name: name,
+            port: tqf.config.ports[name],
+            targetPort: tqf.config.ports[name],
+          }
+          for name in std.objectFields(tqf.config.ports)
+        ],
       },
     },
 
@@ -68,7 +81,7 @@ function(params) {
       args: [
         'query-frontend',
         '--query-frontend.compress-responses',
-        '--http-address=0.0.0.0:%d' % tqf.service.spec.ports[0].port,
+        '--http-address=0.0.0.0:%d' % tqf.config.ports.http,
         '--query-frontend.downstream-url=%s' % tqf.config.downstreamURL,
         '--query-range.split-interval=%s' % tqf.config.splitInterval,
         '--query-range.max-retries-per-request=%d' % tqf.config.maxRetries,
@@ -81,15 +94,18 @@ function(params) {
           }),
         ] else []
       ),
-      ports: [{ name: 'http', containerPort: tqf.service.spec.ports[0].port }],
+      ports: [
+        { name: name, containerPort: tqf.config.ports[name] }
+        for name in std.objectFields(tqf.config.ports)
+      ],
       livenessProbe: { failureThreshold: 4, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
-        port: tqf.service.spec.ports[0].port,
+        port: tqf.config.ports.http,
         path: '/-/healthy',
       } },
       readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
-        port: tqf.service.spec.ports[0].port,
+        port: tqf.config.ports.http,
         path: '/-/ready',
       } },
       resources: if tqf.config.resources != {} then tqf.config.resources else {},
