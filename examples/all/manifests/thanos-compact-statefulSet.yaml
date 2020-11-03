@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: database-compactor
     app.kubernetes.io/instance: thanos-compact
     app.kubernetes.io/name: thanos-compact
-    app.kubernetes.io/version: master-2020-08-11-2ea2c2b7
+    app.kubernetes.io/version: v0.16.0
   name: thanos-compact
   namespace: thanos
 spec:
@@ -22,7 +22,7 @@ spec:
         app.kubernetes.io/component: database-compactor
         app.kubernetes.io/instance: thanos-compact
         app.kubernetes.io/name: thanos-compact
-        app.kubernetes.io/version: master-2020-08-11-2ea2c2b7
+        app.kubernetes.io/version: v0.16.0
     spec:
       containers:
       - args:
@@ -32,13 +32,20 @@ spec:
         - --objstore.config=$(OBJSTORE_CONFIG)
         - --data-dir=/var/thanos/compact
         - --debug.accept-malformed-index
+        - --retention.resolution-raw=0d
+        - --retention.resolution-5m=0d
+        - --retention.resolution-1h=0d
+        - --delete-delay=48h
+        - --downsampling.disable
+        - --deduplication.replica-label=prometheus_replica
+        - --deduplication.replica-label=rule_replica
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:master-2020-08-11-2ea2c2b7
+        image: quay.io/thanos/thanos:v0.16.0
         livenessProbe:
           failureThreshold: 4
           httpGet:
@@ -57,6 +64,13 @@ spec:
             port: 10902
             scheme: HTTP
           periodSeconds: 5
+        resources:
+          limits:
+            cpu: 0.42
+            memory: 420Mi
+          requests:
+            cpu: 0.123
+            memory: 123Mi
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /var/thanos/compact

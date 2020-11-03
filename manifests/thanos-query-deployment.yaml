@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: query-layer
     app.kubernetes.io/instance: thanos-query
     app.kubernetes.io/name: thanos-query
-    app.kubernetes.io/version: v0.15.0
+    app.kubernetes.io/version: v0.16.0
   name: thanos-query
   namespace: thanos
 spec:
@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/component: query-layer
         app.kubernetes.io/instance: thanos-query
         app.kubernetes.io/name: thanos-query
-        app.kubernetes.io/version: v0.15.0
+        app.kubernetes.io/version: v0.16.0
     spec:
       affinity:
         podAntiAffinity:
@@ -40,13 +40,13 @@ spec:
       containers:
       - args:
         - query
-        - --log.level=info
         - --grpc-address=0.0.0.0:10901
         - --http-address=0.0.0.0:9090
+        - --log.level=info
         - --query.replica-label=prometheus_replica
         - --query.replica-label=rule_replica
         - --store=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local
-        image: quay.io/thanos/thanos:v0.15.0
+        image: quay.io/thanos/thanos:v0.16.0
         livenessProbe:
           failureThreshold: 4
           httpGet:
@@ -67,5 +67,6 @@ spec:
             port: 9090
             scheme: HTTP
           periodSeconds: 5
+        resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
       terminationGracePeriodSeconds: 120

@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: rule-evaluation-engine
     app.kubernetes.io/instance: thanos-rule
     app.kubernetes.io/name: thanos-rule
-    app.kubernetes.io/version: master-2020-08-11-2ea2c2b7
+    app.kubernetes.io/version: v0.16.0
   name: thanos-rule
   namespace: thanos
 spec:
@@ -22,7 +22,7 @@ spec:
         app.kubernetes.io/component: rule-evaluation-engine
         app.kubernetes.io/instance: thanos-rule
         app.kubernetes.io/name: thanos-rule
-        app.kubernetes.io/version: master-2020-08-11-2ea2c2b7
+        app.kubernetes.io/version: v0.16.0
     spec:
       containers:
       - args:
@@ -35,6 +35,7 @@ spec:
         - --label=rule_replica="$(NAME)"
         - --alert.label-drop=rule_replica
         - --query=dnssrv+_http._tcp.thanos-query.thanos.svc.cluster.local
+        - --alertmanagers.url=alertmanager:9093
         - --rule-file=/etc/thanos/rules/test/test
         env:
         - name: NAME
@@ -46,7 +47,7 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:master-2020-08-11-2ea2c2b7
+        image: quay.io/thanos/thanos:v0.16.0
         livenessProbe:
           failureThreshold: 24
           httpGet:
@@ -68,6 +69,13 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 5
+        resources:
+          limits:
+            cpu: 0.42
+            memory: 420Mi
+          requests:
+            cpu: 0.123
+            memory: 123Mi
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /var/thanos/rule

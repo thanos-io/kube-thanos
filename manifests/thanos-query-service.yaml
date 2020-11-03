@@ -5,17 +5,17 @@ metadata:
     app.kubernetes.io/component: query-layer
     app.kubernetes.io/instance: thanos-query
     app.kubernetes.io/name: thanos-query
-    app.kubernetes.io/version: v0.15.0
+    app.kubernetes.io/version: v0.16.0
   name: thanos-query
   namespace: thanos
 spec:
   ports:
   - name: grpc
     port: 10901
-    targetPort: grpc
+    targetPort: 10901
   - name: http
     port: 9090
-    targetPort: http
+    targetPort: 9090
   selector:
     app.kubernetes.io/component: query-layer
     app.kubernetes.io/instance: thanos-query

@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: database-write-hashring
     app.kubernetes.io/instance: thanos-receive
     app.kubernetes.io/name: thanos-receive
-    app.kubernetes.io/version: master-2020-08-11-2ea2c2b7
+    app.kubernetes.io/version: v0.16.0
   name: thanos-receive
   namespace: thanos
 spec:
@@ -22,7 +22,7 @@ spec:
         app.kubernetes.io/component: database-write-hashring
         app.kubernetes.io/instance: thanos-receive
         app.kubernetes.io/name: thanos-receive
-        app.kubernetes.io/version: master-2020-08-11-2ea2c2b7
+        app.kubernetes.io/version: v0.16.0
     spec:
       affinity:
         podAntiAffinity:
@@ -69,7 +69,9 @@ spec:
         - --tsdb.path=/var/thanos/receive
         - --label=replica="$(NAME)"
         - --label=receive="true"
+        - --tsdb.retention=15d
         - --receive.local-endpoint=$(NAME).thanos-receive.$(NAMESPACE).svc.cluster.local:10901
+        - --receive.hashrings-file=/var/lib/thanos-receive/hashrings.json
         env:
         - name: NAME
           valueFrom:
@@ -84,7 +86,7 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:master-2020-08-11-2ea2c2b7
+        image: quay.io/thanos/thanos:v0.16.0
         livenessProbe:
           failureThreshold: 8
           httpGet:
@@ -107,13 +109,25 @@ spec:
             port: 10902
             scheme: HTTP
           periodSeconds: 5
+        resources:
+          limits:
+            cpu: 0.42
+            memory: 420Mi
+          requests:
+            cpu: 0.123
+            memory: 123Mi
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /var/thanos/receive
           name: data
           readOnly: false
+        - mountPath: /var/lib/thanos-receive
+          name: hashring-config
       terminationGracePeriodSeconds: 900
-      volumes: []
+      volumes:
+      - configMap:
+          name: hashring
+        name: hashring-config
   volumeClaimTemplates:
   - metadata:
       labels:

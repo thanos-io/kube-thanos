@@ -1,31 +1,49 @@
-{
+// These are the defaults for this components configuration.
+// When calling the function to generate the component's manifest,
+// you can pass an object structured like the default to overwrite default values.
+local defaults = {
+  local defaults = self,
+  name: 'thanos-rule',
+  namespace: error 'must provide namespace',
+  version: error 'must provide version',
+  image: error 'must provide image',
+  replicas: error 'must provide replicas',
+  objectStorageConfig: error 'must provide objectStorageConfig',
+  ruleFiles: [],
+  rulesConfig: [],
+  alertmanagersURLs: [],
+  queriers: [],
+  logLevel: 'info',
+  resources: {},
+  serviceMonitor: false,
+
+  commonLabels:: {
+    'app.kubernetes.io/name': 'thanos-rule',
+    'app.kubernetes.io/instance': defaults.name,
+    'app.kubernetes.io/version': defaults.version,
+    'app.kubernetes.io/component': 'rule-evaluation-engine',
+  },
+
+  podLabelSelector:: {
+    [labelName]: defaults.commonLabels[labelName]
+    for labelName in std.objectFields(defaults.commonLabels)
+    if !std.setMember(labelName, ['app.kubernetes.io/version'])
+  },
+};
+
+function(params) {
   local tr = self,
 
-  config:: {
-    name: error 'must provide name',
-    namespace: error 'must provide namespace',
-    version: error 'must provide version',
-    image: error 'must provide image',
-    replicas: error 'must provide replicas',
-    objectStorageConfig: error 'must provide objectStorageConfig',
-    logLevel: 'info',
-    ruleFiles: [],
-    alertmanagersURLs: [],
-    queriers: [],
-
-    commonLabels:: {
-      'app.kubernetes.io/name': 'thanos-rule',
-      'app.kubernetes.io/instance': tr.config.name,
-      'app.kubernetes.io/version': tr.config.version,
-      'app.kubernetes.io/component': 'rule-evaluation-engine',
-    },
-
-    podLabelSelector:: {
-      [labelName]: tr.config.commonLabels[labelName]
-      for labelName in std.objectFields(tr.config.commonLabels)
-      if !std.setMember(labelName, ['app.kubernetes.io/version'])
-    },
-  },
+  // Combine the defaults and the passed params to make the component's config.
+  config:: defaults + params,
+  // Safety checks for combined config of defaults and params
+  assert std.isNumber(tr.config.replicas) && tr.config.replicas >= 0 : 'thanos receive replicas has to be number >= 0',
+  assert std.isArray(tr.config.ruleFiles),
+  assert std.isArray(tr.config.rulesConfig),
+  assert std.isArray(tr.config.alertmanagersURLs),
+  assert std.isObject(tr.config.resources),
+  assert std.isBoolean(tr.config.serviceMonitor),
+  assert std.isObject(tr.config.volumeClaimTemplate),
 
   service:
     {
@@ -63,7 +81,11 @@
         ] +
         (['--query=%s' % querier for querier in tr.config.queriers]) +
         (['--rule-file=%s' % path for path in tr.config.ruleFiles]) +
-        (['--alertmanagers.url=%s' % url for url in tr.config.alertmanagersURLs]),
+        (['--alertmanagers.url=%s' % url for url in tr.config.alertmanagersURLs]) +
+        (if std.length(tr.config.rulesConfig) > 0 then [
+           '--rule-file=/etc/thanos/rules/' + ruleConfig.name + '/' + ruleConfig.key
+           for ruleConfig in tr.config.rulesConfig
+         ] else []),
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
@@ -79,7 +101,12 @@
         name: 'data',
         mountPath: '/var/thanos/rule',
         readOnly: false,
-      }],
+      }] + (
+        if std.length(tr.config.rulesConfig) > 0 then [
+          { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name }
+          for ruleConfig in tr.config.rulesConfig
+        ] else []
+      ),
       livenessProbe: { failureThreshold: 24, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
         port: tr.service.spec.ports[1].port,
@@ -91,6 +118,7 @@
         path: '/-/ready',
 
       } },
+      resources: if tr.config.resources != {} then tr.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
@@ -112,140 +140,43 @@
           },
           spec: {
             containers: [c],
-            volumes: [],
-          },
-        },
-      },
-    },
-
-  withServiceMonitor:: {
-    local tr = self,
-    serviceMonitor: {
-      apiVersion: 'monitoring.coreos.com/v1',
-      kind: 'ServiceMonitor',
-      metadata+: {
-        name: tr.config.name,
-        namespace: tr.config.namespace,
-        labels: tr.config.commonLabels,
-      },
-      spec: {
-        selector: {
-          matchLabels: tr.config.podLabelSelector,
-        },
-        endpoints: [
-          {
-            port: 'http',
-            relabelings: [{
-              sourceLabels: ['namespace', 'pod'],
-              separator: '/',
-              targetLabel: 'instance',
-            }],
-          },
-        ],
-      },
-    },
-  },
-
-  withVolumeClaimTemplate:: {
-    local tr = self,
-    config+:: {
-      volumeClaimTemplate: error 'must provide volumeClaimTemplate',
-    },
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            volumes: std.filter(function(v) v.name != 'data', super.volumes),
-          },
-        },
-        volumeClaimTemplates: [tr.config.volumeClaimTemplate {
-          metadata+: {
-            name: 'data',
-            labels+: tr.config.podLabelSelector,
-          },
-        }],
-      },
-    },
-  },
-
-  withResources:: {
-    local tr = self,
-    config+:: {
-      resources: error 'must provide resources',
-    },
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-rule' then c {
-                resources: tr.config.resources,
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
-
-  withAlertmanagers:: {
-    local tr = self,
-    config+:: {
-      alertmanagersURL: error 'must provide alertmanagersURL',
-    },
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-rule' then c {
-                args+: [
-                  '--alertmanagers.url=' + alertmanagerURL
-                  for alertmanagerURL in tr.config.alertmanagersURL
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
-
-  withRules:: {
-    local tr = self,
-    config+:: {
-      rulesConfig: error 'must provide rulesConfig',
-    },
-
-    statefulSet+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-rule' then c {
-                args+: [
-                  '--rule-file=/etc/thanos/rules/' + ruleConfig.name + '/' + ruleConfig.key
-                  for ruleConfig in tr.config.rulesConfig
-                ],
-                volumeMounts+: [
-                  { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name }
-                  for ruleConfig in tr.config.rulesConfig
-                ],
-              } else c
-              for c in super.containers
-            ],
-
-            volumes+: [
+            volumes: [
               { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
               for ruleConfig in tr.config.rulesConfig
             ],
           },
         },
+        volumeClaimTemplates: if std.length(tr.config.volumeClaimTemplate) > 0 then [tr.config.volumeClaimTemplate {
+          metadata+: {
+            name: 'data',
+            labels+: tr.config.podLabelSelector,
+          },
+        }] else [],
       },
+    },
+
+  serviceMonitor: if tr.config.serviceMonitor == true then {
+    apiVersion: 'monitoring.coreos.com/v1',
+    kind: 'ServiceMonitor',
+    metadata+: {
+      name: tr.config.name,
+      namespace: tr.config.namespace,
+      labels: tr.config.commonLabels,
+    },
+    spec: {
+      selector: {
+        matchLabels: tr.config.podLabelSelector,
+      },
+      endpoints: [
+        {
+          port: 'http',
+          relabelings: [{
+            sourceLabels: ['namespace', 'pod'],
+            separator: '/',
+            targetLabel: 'instance',
+          }],
+        },
+      ],
     },
   },
 }

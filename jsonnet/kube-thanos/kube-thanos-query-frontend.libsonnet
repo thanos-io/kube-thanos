@@ -1,28 +1,50 @@
-{
+// These are the defaults for this components configuration.
+// When calling the function to generate the component's manifest,
+// you can pass an object structured like the default to overwrite default values.
+local defaults = {
+  local defaults = self,
+  name: 'thanos-query-frontend',
+  namespace: error 'must provide namespace',
+  version: error 'must provide version',
+  image: error 'must provide image',
+  replicas: error 'must provide replicas',
+  downstreamURL: error 'must provide downstreamURL',
+  splitInterval: '24h',
+  maxRetries: 5,
+  logQueriesLongerThan: '0',
+  fifoCache: {
+    max_size: '0',  // Don't limit maximum item size.
+    max_size_items: 2048,
+    validity: '6h',
+  },
+  logLevel: 'info',
+  resources: {},
+  serviceMonitor: false,
+
+  commonLabels:: {
+    'app.kubernetes.io/name': 'thanos-query-frontend',
+    'app.kubernetes.io/instance': defaults.name,
+    'app.kubernetes.io/version': defaults.version,
+    'app.kubernetes.io/component': 'query-cache',
+  },
+
+  podLabelSelector:: {
+    [labelName]: defaults.commonLabels[labelName]
+    for labelName in std.objectFields(defaults.commonLabels)
+    if !std.setMember(labelName, ['app.kubernetes.io/version'])
+  },
+};
+
+function(params) {
   local tqf = self,
 
-  config:: {
-    name: error 'must provide name',
-    namespace: error 'must provide namespace',
-    version: error 'must provide version',
-    image: error 'must provide image',
-    replicas: error 'must provide replicas',
-    downstreamURL: error 'must provide downstreamURL',
-    logLevel: 'info',
-
-    commonLabels:: {
-      'app.kubernetes.io/name': 'thanos-query-frontend',
-      'app.kubernetes.io/instance': tqf.config.name,
-      'app.kubernetes.io/version': tqf.config.version,
-      'app.kubernetes.io/component': 'query-cache',
-    },
-
-    podLabelSelector:: {
-      [labelName]: tqf.config.commonLabels[labelName]
-      for labelName in std.objectFields(tqf.config.commonLabels)
-      if !std.setMember(labelName, ['app.kubernetes.io/version'])
-    },
-  },
+  // Combine the defaults and the passed params to make the component's config.
+  config:: defaults + params,
+  // Safety checks for combined config of defaults and params
+  assert std.isNumber(tqf.config.replicas) && tqf.config.replicas >= 0 : 'thanos query frontend replicas has to be number >= 0',
+  assert std.isObject(tqf.config.resources),
+  assert std.isBoolean(tqf.config.serviceMonitor),
+  assert std.isNumber(tqf.config.maxRetries),
 
   service:
     {
@@ -48,7 +70,17 @@
         '--query-frontend.compress-responses',
         '--http-address=0.0.0.0:%d' % tqf.service.spec.ports[0].port,
         '--query-frontend.downstream-url=%s' % tqf.config.downstreamURL,
-      ],
+        '--query-range.split-interval=%s' % tqf.config.splitInterval,
+        '--query-range.max-retries-per-request=%d' % tqf.config.maxRetries,
+        '--query-frontend.log-queries-longer-than=%s' % tqf.config.logQueriesLongerThan,
+      ] + (
+        if std.length(tqf.config.fifoCache) > 0 then [
+          '--query-range.response-cache-config=' + std.manifestYamlDoc({
+            type: 'in-memory',
+            config: tqf.config.fifoCache,
+          }),
+        ] else []
+      ),
       ports: [{ name: 'http', containerPort: tqf.service.spec.ports[0].port }],
       livenessProbe: { failureThreshold: 4, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
@@ -60,6 +92,7 @@
         port: tqf.service.spec.ports[0].port,
         path: '/-/ready',
       } },
+      resources: if tqf.config.resources != {} then tqf.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
@@ -98,165 +131,29 @@
       },
     },
 
-  withServiceMonitor:: {
-    local tqf = self,
-    serviceMonitor: {
-      apiVersion: 'monitoring.coreos.com/v1',
-      kind: 'ServiceMonitor',
-      metadata+: {
-        name: tqf.config.name,
-        namespace: tqf.config.namespace,
-        labels: tqf.config.commonLabels,
+  serviceMonitor: if tqf.config.serviceMonitor == true then {
+    apiVersion: 'monitoring.coreos.com/v1',
+    kind: 'ServiceMonitor',
+    metadata+: {
+      name: tqf.config.name,
+      namespace: tqf.config.namespace,
+      labels: tqf.config.commonLabels,
+    },
+    spec: {
+      selector: {
+        matchLabels: tqf.config.podLabelSelector,
       },
-      spec: {
-        selector: {
-          matchLabels: tqf.config.podLabelSelector,
+      endpoints: [
+        {
+          port: 'http',
+          relabelings: [{
+            sourceLabels: ['namespace', 'pod'],
+            separator: '/',
+            targetLabel: 'instance',
+          }],
         },
-        endpoints: [
-          {
-            port: 'http',
-            relabelings: [{
-              sourceLabels: ['namespace', 'pod'],
-              separator: '/',
-              targetLabel: 'instance',
-            }],
-          },
-        ],
-      },
+      ],
     },
   },
 
-  withResources:: {
-    local tqf = self,
-    config+:: {
-      resources: error 'must provide resources',
-    },
-
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-query-frontend' then c {
-                resources: tqf.config.resources,
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
-
-  withLogQueriesLongerThan:: {
-    local tqf = self,
-    config+:: {
-      logQueriesLongerThan: error 'must provide logQueriesLongerThan',
-    },
-
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-query-frontend' then c {
-                args+: [
-                  '--query-frontend.log-queries-longer-than=' + tqf.config.logQueriesLongerThan,
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
-
-  withMaxRetries:: {
-    local tqf = self,
-    config+:: {
-      maxRetries: error 'must provide maxRetries',
-    },
-
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-query-frontend' then c {
-                args+: [
-                  '--query-range.max-retries-per-request=' + tqf.config.maxRetries,
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
-
-  withSplitInterval:: {
-    local tqf = self,
-    config+:: {
-      splitInterval: error 'must provide splitInterval',
-    },
-
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-query-frontend' then c {
-                args+: [
-                  '--query-range.split-interval=' + tqf.config.splitInterval,
-                ],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
-
-  local fifoCacheDefaults = {
-    // Don't limit maximum item size.
-    maxSize: '0',
-    maxSizeItems: 2048,
-    validity: '6h',
-  },
-
-  withInMemoryResponseCache:: {
-    local tqf = self,
-    config+:: {
-      fifoCache: fifoCacheDefaults,
-    },
-    local m = tqf.config.fifoCache,
-    local cfg =
-      {
-        type: 'in-memory',
-        config: {
-          max_size: m.maxSize,
-          max_size_items: m.maxSizeItems,
-          validity: m.validity,
-        },
-      },
-    deployment+: {
-      spec+: {
-        template+: {
-          spec+: {
-            containers: [
-              if c.name == 'thanos-query-frontend' then c {
-                args+: if m != {} then [
-                  '--query-range.response-cache-config=' + std.manifestYamlDoc(cfg),
-                ] else [],
-              } else c
-              for c in super.containers
-            ],
-          },
-        },
-      },
-    },
-  },
 }
