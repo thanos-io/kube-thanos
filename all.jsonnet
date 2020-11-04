@@ -110,9 +110,9 @@ local qf = t.queryFrontend(commonConfig {
     q.service.metadata.namespace,
     q.service.spec.ports[1].port,
   ],
-  splitInterval: '24h',
-  maxRetries: 5,
-  logQueriesLongerThan: '5s',
+  splitInterval: '12h',
+  maxRetries: 10,
+  logQueriesLongerThan: '10s',
   serviceMonitor: true,
   queryRangeCache: {
     type: 'memcached',
