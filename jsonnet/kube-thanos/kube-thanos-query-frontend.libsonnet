@@ -12,16 +12,35 @@ local defaults = {
   splitInterval: '24h',
   maxRetries: 5,
   logQueriesLongerThan: '0',
-  fifoCache: {
-    max_size: '0',  // Don't limit maximum item size.
-    max_size_items: 2048,
-    validity: '6h',
+  fifoCache+:: {
+    config+: {
+      max_size: '0',  // Don't limit maximum item size.
+      max_size_items: 2048,
+      validity: '6h',
+    }
   },
+  queryRangeCache: {},
+  labelsCache: {},
   logLevel: 'info',
   resources: {},
   serviceMonitor: false,
   ports: {
     http: 9090,
+  },
+
+  memcachedDefaults+:: {
+    config+: {
+      // List of memcached addresses, that will get resolved with the DNS service discovery provider.
+      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      addresses+: error 'must provide memcached addresses',
+      timeout: '500ms',
+      max_idle_connections: 100,
+      max_async_concurrency: 20,
+      max_async_buffer_size: 10000,
+      max_get_multi_concurrency: 100,
+      max_get_multi_batch_size: 0,
+      dns_provider_update_interval: '10s',
+    },
   },
 
   commonLabels:: {
@@ -42,12 +61,25 @@ function(params) {
   local tqf = self,
 
   // Combine the defaults and the passed params to make the component's config.
-  config:: defaults + params,
+  config:: defaults + params + {
+    queryRangeCache+:
+      if std.objectHas(params, 'queryRangeCache') && params.queryRangeCache.type == 'memcached' then
+        defaults.memcachedDefaults + params.queryRangeCache
+      else if std.objectHas(params, 'queryRangeCache') && params.queryRangeCache.type == 'in-memory' then
+        defaults.fifoCache + params.queryRangeCache
+      else {},
+    labelsCache+:
+      if std.objectHas(params, 'labelsCache') && params.labelsCache.type == 'memcached' then
+        defaults.memcachedDefaults + params.labelsCache
+      else if std.objectHas(params, 'labelsCache') && params.labelsCache.type == 'in-memory' then
+        defaults.fifoCache + params.labelsCache   
+      else {},
+  },
   // Safety checks for combined config of defaults and params
   assert std.isNumber(tqf.config.replicas) && tqf.config.replicas >= 0 : 'thanos query frontend replicas has to be number >= 0',
   assert std.isObject(tqf.config.resources),
   assert std.isBoolean(tqf.config.serviceMonitor),
-  assert std.isNumber(tqf.config.maxRetries),
+  assert std.isNumber(tqf.config.maxRetries) && tqf.config.maxRetries >= 0 : 'thanos query frontend maxRetries has to be number >= 0',
 
   service:
     {
@@ -84,14 +116,21 @@ function(params) {
         '--http-address=0.0.0.0:%d' % tqf.config.ports.http,
         '--query-frontend.downstream-url=%s' % tqf.config.downstreamURL,
         '--query-range.split-interval=%s' % tqf.config.splitInterval,
+        '--labels.split-interval=%s' % tqf.config.splitInterval,
         '--query-range.max-retries-per-request=%d' % tqf.config.maxRetries,
+        '--labels.max-retries-per-request=%d' % tqf.config.maxRetries,
         '--query-frontend.log-queries-longer-than=%s' % tqf.config.logQueriesLongerThan,
       ] + (
-        if std.length(tqf.config.fifoCache) > 0 then [
-          '--query-range.response-cache-config=' + std.manifestYamlDoc({
-            type: 'in-memory',
-            config: tqf.config.fifoCache,
-          }),
+        if std.length(tqf.config.queryRangeCache) > 0 then [
+          '--query-range.response-cache-config=' + std.manifestYamlDoc(
+            tqf.config.queryRangeCache
+          ),
+        ] else []
+      ) + (
+        if std.length(tqf.config.labelsCache) > 0 then [
+          '--labels.response-cache-config=' + std.manifestYamlDoc(
+            tqf.config.labelsCache
+          ),
         ] else []
       ),
       ports: [

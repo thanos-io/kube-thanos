@@ -44,14 +44,34 @@ spec:
         - --http-address=0.0.0.0:9090
         - --query-frontend.downstream-url=http://thanos-query.thanos.svc.cluster.local.:9090
         - --query-range.split-interval=12h
+        - --labels.split-interval=12h
         - --query-range.max-retries-per-request=10
+        - --labels.max-retries-per-request=10
         - --query-frontend.log-queries-longer-than=10s
         - |-
           --query-range.response-cache-config="config":
-            "max_size": "0"
-            "max_size_items": 2048
-            "validity": "6h"
-          "type": "in-memory"
+            "addresses":
+            - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
+            "dns_provider_update_interval": "10s"
+            "max_async_buffer_size": 10000
+            "max_async_concurrency": 20
+            "max_get_multi_batch_size": 0
+            "max_get_multi_concurrency": 100
+            "max_idle_connections": 100
+            "timeout": "500ms"
+          "type": "memcached"
+        - |-
+          --labels.response-cache-config="config":
+            "addresses":
+            - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
+            "dns_provider_update_interval": "10s"
+            "max_async_buffer_size": 10000
+            "max_async_concurrency": 20
+            "max_get_multi_batch_size": 0
+            "max_get_multi_concurrency": 100
+            "max_idle_connections": 100
+            "timeout": "500ms"
+          "type": "memcached"
         image: quay.io/thanos/thanos:v0.16.0
         livenessProbe:
           failureThreshold: 4
