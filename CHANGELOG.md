@@ -25,7 +25,23 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 -
 
-[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/master...v0.15.0)
+## [v0.16.0](https://github.com/thanos-io/kube-thanos/tree/v0.16.0) (2020-11-04)
+
+### Changed
+
+- [#164](https://github.com/thanos-io/kube-thanos/pull/164) Expose components via functions with params merged with defaults
+
+- #152 #153 #154 #155 #156 #157 #158 #159 Rewrite all components to not use ksonnet anymore (mostly internal change)
+
+### Added
+
+- [#148](https://github.com/thanos-io/kube-thanos/pull/148) Support for configuring Alertmanager on Thanos Ruler
+
+### Fixed
+
+- [#150](https://github.com/thanos-io/kube-thanos/pull/150) Update query frontend flag name
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.15.0...v0.16.0)
 
 ## [v0.15.0](https://github.com/thanos-io/kube-thanos/tree/v0.15.0) (2020-09-07)
 
