@@ -30,6 +30,12 @@ spec:
         - web
         - --log.level=info
         - --objstore.config=$(OBJSTORE_CONFIG)
+        - |-
+          --tracing.config="config":
+            "sampler_param": 2
+            "sampler_type": "ratelimiting"
+            "service_name": "thanos-bucket"
+          "type": "JAEGER"
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:

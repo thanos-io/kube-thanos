@@ -20,6 +20,7 @@ local defaults = {
     grpc: 10901,
     http: 10902,
   },
+  tracing: {},
 
   memcachedDefaults+:: {
     config+: {
@@ -133,6 +134,12 @@ function(params) {
       ) + (
         if std.length(ts.config.bucketCache) > 0 then [
           '--store.caching-bucket.config=' + std.manifestYamlDoc(ts.config.bucketCache),
+        ] else []
+      ) + (
+        if std.length(ts.config.tracing) > 0 then [
+          '--tracing.config=' + std.manifestYamlDoc(
+            { config+: { service_name: defaults.name } } + ts.config.tracing
+          ),
         ] else []
       ),
       env: [

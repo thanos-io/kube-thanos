@@ -18,6 +18,7 @@ local defaults = {
   ports: {
     http: 10902,
   },
+  tracing: {},
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-compact',
@@ -93,6 +94,12 @@ function(params) {
             '--deduplication.replica-label=' + l
             for l in tc.config.deduplicationReplicaLabels
           ] else []
+      ) + (
+        if std.length(tc.config.tracing) > 0 then [
+          '--tracing.config=' + std.manifestYamlDoc(
+            { config+: { service_name: defaults.name } } + tc.config.tracing
+          ),
+        ] else []
       ),
       env: [
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {

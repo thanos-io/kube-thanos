@@ -87,6 +87,12 @@ spec:
           "metafile_exists_ttl": "2h"
           "metafile_max_size": "1MiB"
           "type": "memcached"
+        - |-
+          --tracing.config="config":
+            "sampler_param": 2
+            "sampler_type": "ratelimiting"
+            "service_name": "thanos-store"
+          "type": "JAEGER"
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:

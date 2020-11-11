@@ -20,6 +20,7 @@ local defaults = {
   },
   serviceMonitor: false,
   logLevel: 'info',
+  tracing: {},
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-query',
@@ -103,6 +104,12 @@ function(params) {
         (
           if tq.config.lookbackDelta != '' then [
             '--query.lookback-delta=' + tq.config.lookbackDelta,
+          ] else []
+        ) + (
+          if std.length(tq.config.tracing) > 0 then [
+            '--tracing.config=' + std.manifestYamlDoc(
+              { config+: { service_name: defaults.name } } + tq.config.tracing
+            ),
           ] else []
         ),
       ports: [

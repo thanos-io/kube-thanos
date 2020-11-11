@@ -22,6 +22,7 @@ local defaults = {
     http: 10902,
     'remote-write': 19291,
   },
+  tracing: {},
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-receive',
@@ -100,6 +101,12 @@ function(params) {
       ] + (
         if tr.config.hashringConfigMapName != '' then [
           '--receive.hashrings-file=/var/lib/thanos-receive/hashrings.json',
+        ] else []
+      ) + (
+        if std.length(tr.config.tracing) > 0 then [
+          '--tracing.config=' + std.manifestYamlDoc(
+            { config+: { service_name: defaults.name } } + tr.config.tracing
+          ),
         ] else []
       ),
       env: [

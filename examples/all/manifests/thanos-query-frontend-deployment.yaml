@@ -72,6 +72,12 @@ spec:
             "max_idle_connections": 100
             "timeout": "500ms"
           "type": "memcached"
+        - |-
+          --tracing.config="config":
+            "sampler_param": 2
+            "sampler_type": "ratelimiting"
+            "service_name": "thanos-query-frontend"
+          "type": "JAEGER"
         image: quay.io/thanos/thanos:v0.16.0
         livenessProbe:
           failureThreshold: 4

@@ -27,10 +27,25 @@ local commonConfig = {
       },
     },
   },
+  // This enables jaeger tracing for all components, as commonConfig is shared
+  tracing+: {
+    type: 'JAEGER',
+    config+: {
+      sampler_type: 'ratelimiting',
+      sampler_param: 2,
+    },
+  },
 };
 
 local b = t.bucket(commonConfig {
   replicas: 1,
+
+  // Example on how to overwrite the tracing config on a per component basis
+  // tracing+: {
+  //   config+: {
+  //     service_name: 'awesome-thanos-bucket',
+  //   },
+  // },
 });
 
 local c = t.compact(commonConfig {
