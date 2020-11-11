@@ -39,6 +39,12 @@ spec:
         - --downsampling.disable
         - --deduplication.replica-label=prometheus_replica
         - --deduplication.replica-label=rule_replica
+        - |-
+          --tracing.config="config":
+            "sampler_param": 2
+            "sampler_type": "ratelimiting"
+            "service_name": "thanos-compact"
+          "type": "JAEGER"
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:

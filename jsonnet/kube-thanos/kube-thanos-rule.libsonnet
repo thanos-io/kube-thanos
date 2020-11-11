@@ -20,6 +20,7 @@ local defaults = {
     grpc: 10901,
     http: 10902,
   },
+  tracing: {},
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-rule',
@@ -93,10 +94,19 @@ function(params) {
         (['--query=%s' % querier for querier in tr.config.queriers]) +
         (['--rule-file=%s' % path for path in tr.config.ruleFiles]) +
         (['--alertmanagers.url=%s' % url for url in tr.config.alertmanagersURLs]) +
-        (if std.length(tr.config.rulesConfig) > 0 then [
-           '--rule-file=/etc/thanos/rules/' + ruleConfig.name + '/' + ruleConfig.key
-           for ruleConfig in tr.config.rulesConfig
-         ] else []),
+        (
+          if std.length(tr.config.rulesConfig) > 0 then [
+            '--rule-file=/etc/thanos/rules/' + ruleConfig.name + '/' + ruleConfig.key
+            for ruleConfig in tr.config.rulesConfig
+          ]
+          else []
+        ) + (
+          if std.length(tr.config.tracing) > 0 then [
+            '--tracing.config=' + std.manifestYamlDoc(
+              { config+: { service_name: defaults.name } } + tr.config.tracing
+            ),
+          ] else []
+        ),
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {

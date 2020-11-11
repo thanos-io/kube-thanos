@@ -17,7 +17,7 @@ local defaults = {
       max_size: '0',  // Don't limit maximum item size.
       max_size_items: 2048,
       validity: '6h',
-    }
+    },
   },
   queryRangeCache: {},
   labelsCache: {},
@@ -27,6 +27,7 @@ local defaults = {
   ports: {
     http: 9090,
   },
+  tracing: {},
 
   memcachedDefaults+:: {
     config+: {
@@ -72,7 +73,7 @@ function(params) {
       if std.objectHas(params, 'labelsCache') && params.labelsCache.type == 'memcached' then
         defaults.memcachedDefaults + params.labelsCache
       else if std.objectHas(params, 'labelsCache') && params.labelsCache.type == 'in-memory' then
-        defaults.fifoCache + params.labelsCache   
+        defaults.fifoCache + params.labelsCache
       else {},
   },
   // Safety checks for combined config of defaults and params
@@ -130,6 +131,12 @@ function(params) {
         if std.length(tqf.config.labelsCache) > 0 then [
           '--labels.response-cache-config=' + std.manifestYamlDoc(
             tqf.config.labelsCache
+          ),
+        ] else []
+      ) + (
+        if std.length(tqf.config.tracing) > 0 then [
+          '--tracing.config=' + std.manifestYamlDoc(
+            { config+: { service_name: defaults.name } } + tqf.config.tracing
           ),
         ] else []
       ),

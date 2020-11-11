@@ -50,6 +50,12 @@ spec:
         - --store=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local
         - --query.timeout=5m
         - --query.lookback-delta=15m
+        - |-
+          --tracing.config="config":
+            "sampler_param": 2
+            "sampler_type": "ratelimiting"
+            "service_name": "thanos-query"
+          "type": "JAEGER"
         image: quay.io/thanos/thanos:v0.16.0
         livenessProbe:
           failureThreshold: 4

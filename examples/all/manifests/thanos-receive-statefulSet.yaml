@@ -72,6 +72,12 @@ spec:
         - --tsdb.retention=15d
         - --receive.local-endpoint=$(NAME).thanos-receive.$(NAMESPACE).svc.cluster.local:10901
         - --receive.hashrings-file=/var/lib/thanos-receive/hashrings.json
+        - |-
+          --tracing.config="config":
+            "sampler_param": 2
+            "sampler_type": "ratelimiting"
+            "service_name": "thanos-receive"
+          "type": "JAEGER"
         env:
         - name: NAME
           valueFrom:

@@ -10,6 +10,7 @@ local defaults = {
   ports: {
     http: 10902,
   },
+  tracing: {},
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-bucket',
@@ -69,7 +70,13 @@ function(params) {
         'web',
         '--log.level=' + tb.config.logLevel,
         '--objstore.config=$(OBJSTORE_CONFIG)',
-      ],
+      ] + (
+        if std.length(tb.config.tracing) > 0 then [
+          '--tracing.config=' + std.manifestYamlDoc(
+            { config+: { service_name: defaults.name } } + tb.config.tracing
+          ),
+        ] else []
+      ),
       env: [
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
           key: tb.config.objectStorageConfig.key,

@@ -37,6 +37,12 @@ spec:
         - --query=dnssrv+_http._tcp.thanos-query.thanos.svc.cluster.local
         - --alertmanagers.url=alertmanager:9093
         - --rule-file=/etc/thanos/rules/test/test
+        - |-
+          --tracing.config="config":
+            "sampler_param": 2
+            "sampler_type": "ratelimiting"
+            "service_name": "thanos-rule"
+          "type": "JAEGER"
         env:
         - name: NAME
           valueFrom:
