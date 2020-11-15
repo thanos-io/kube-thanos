@@ -63,12 +63,10 @@ local re = t.receive(commonConfig {
 });
 
 local ru = t.rule(commonConfig {
-  local cfg = self,
   replicas: 1,
   rulesConfig: [{ name: 'test', key: 'test' }],
   alertmanagersURLs: ['alertmanager:9093'],
-  reloaderImage: 'quay.io/openshift/origin-configmap-reloader:' + cfg.reloaderVersion,
-  reloaderVersion: '4.5.0',
+  reloaderImage: 'quay.io/openshift/origin-configmap-reloader:4.5.0',
   serviceMonitor: true,
 });
 

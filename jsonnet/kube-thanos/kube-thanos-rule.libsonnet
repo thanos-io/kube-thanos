@@ -8,7 +8,6 @@ local defaults = {
   version: error 'must provide version',
   image: error 'must provide image',
   replicas: error 'must provide replicas',
-  reloaderVersion: error 'must provide reloader version',
   reloaderImage: error 'must provide reloader image',
   objectStorageConfig: error 'must provide objectStorageConfig',
   ruleFiles: [],
@@ -156,7 +155,7 @@ function(params) {
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
-    local reloadC = {
+    local reloadContainer = {
       name: 'configmap-reloader',
       image: tr.config.reloaderImage,
       args:
@@ -189,7 +188,7 @@ function(params) {
           spec: {
             serviceAccountName: tr.serviceAccount.metadata.name,
             containers: [c] + 
-              (if std.length(tr.config.rulesConfig) > 0 then [reloadC] else []),
+              (if std.length(tr.config.rulesConfig) > 0 then [reloadContainer] else []),
             volumes: [
               { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
               for ruleConfig in tr.config.rulesConfig
