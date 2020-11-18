@@ -1,4 +1,3 @@
-local h = import 'kube-thanos/helpers.libsonnet';
 local t = import 'kube-thanos/thanos.libsonnet';
 
 // THIS IS MERELY AN EXAMPLE MEANT TO SHOW HOW TO USE ALL COMPONENTS!
@@ -113,11 +112,9 @@ local q = t.query(commonConfig {
   logLevel: 'debug',
 });
 
-local finalRu = ru {
-  config+:: {
-    queriers: ['dnssrv+_http._tcp.%s.%s.svc.cluster.local' % [q.service.metadata.name, q.service.metadata.namespace]],
-  },
-};
+local finalRu = t.rule(ru.config {
+  queriers: ['dnssrv+_http._tcp.%s.%s.svc.cluster.local' % [q.service.metadata.name, q.service.metadata.namespace]],
+});
 
 local qf = t.queryFrontend(commonConfig {
   replicas: 1,
@@ -150,25 +147,25 @@ local qf = t.queryFrontend(commonConfig {
   },
 });
 
-local hashrings = [
-  {
-    hashring: 'default',
-    tenants: [],
-  },
-  {
-    hashring: 'region-1',
-    tenants: [],
-  },
-];
-
-local rcvs = h.receiveHashrings(hashrings, commonConfig {
+local rcvs = t.receiveHashrings(commonConfig {
+  hashrings: [
+    {
+      hashring: 'default',
+      tenants: [],
+    },
+    {
+      hashring: 'region-1',
+      tenants: [],
+    },
+  ],
   replicas: 1,
   replicationFactor: 1,
   serviceMonitor: true,
   hashringConfigMapName: 'hashring',
 });
 
-local strs = h.storeShards(3, commonConfig {
+local strs = t.storeShards(commonConfig {
+  shards: 3,
   replicas: 1,
   serviceMonitor: true,
   bucketCache: {
@@ -191,16 +188,14 @@ local strs = h.storeShards(3, commonConfig {
   },
 });
 
-local finalQ = q {
-  config+:: {
-    stores: [
-      'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
-      for service in [re.service, ru.service, s.service] +
-                     [rcvs[hashring].service for hashring in std.objectFields(rcvs)] +
-                     [strs[shard].service for shard in std.objectFields(strs)]
-    ],
-  },
-};
+local finalQ = t.query(q.config {
+  stores: [
+    'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
+    for service in [re.service, ru.service, s.service] +
+                   [rcvs[hashring].service for hashring in std.objectFields(rcvs)] +
+                   [strs[shard].service for shard in std.objectFields(strs)]
+  ],
+});
 
 { ['thanos-bucket-' + name]: b[name] for name in std.objectFields(b) } +
 { ['thanos-compact-' + name]: c[name] for name in std.objectFields(c) } +
