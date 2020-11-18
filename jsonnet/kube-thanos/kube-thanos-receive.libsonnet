@@ -1,42 +1,4 @@
-// These are the defaults for this components configuration.
-// When calling the function to generate the component's manifest,
-// you can pass an object structured like the default to overwrite default values.
-local defaults = {
-  local defaults = self,
-  name: 'thanos-receive',
-  namespace: error 'must provide namespace',
-  version: error 'must provide version',
-  image: error 'must provide image',
-  replicas: error 'must provide replicas',
-  replicationFactor: error 'must provide replication factor',
-  objectStorageConfig: error 'must provide objectStorageConfig',
-  podDisruptionBudgetMaxUnavailable: (std.floor(defaults.replicationFactor / 2)),
-  hashringConfigMapName: '',
-  volumeClaimTemplate: {},
-  retention: '15d',
-  logLevel: 'info',
-  resources: {},
-  serviceMonitor: false,
-  ports: {
-    grpc: 10901,
-    http: 10902,
-    'remote-write': 19291,
-  },
-  tracing: {},
-
-  commonLabels:: {
-    'app.kubernetes.io/name': 'thanos-receive',
-    'app.kubernetes.io/instance': defaults.name,
-    'app.kubernetes.io/version': defaults.version,
-    'app.kubernetes.io/component': 'database-write-hashring',
-  },
-
-  podLabelSelector:: {
-    [labelName]: defaults.commonLabels[labelName]
-    for labelName in std.objectFields(defaults.commonLabels)
-    if !std.setMember(labelName, ['app.kubernetes.io/version'])
-  },
-};
+local defaults = import 'kube-thanos/kube-thanos-receive-default-params.libsonnet';
 
 function(params) {
   local tr = self,
@@ -50,31 +12,30 @@ function(params) {
   assert std.isBoolean(tr.config.serviceMonitor),
   assert std.isObject(tr.config.volumeClaimTemplate),
 
-  service:
-    {
-      apiVersion: 'v1',
-      kind: 'Service',
-      metadata: {
-        name: tr.config.name,
-        namespace: tr.config.namespace,
-        labels: tr.config.commonLabels,
-      },
-      spec: {
-        clusterIP: 'None',
-        ports: [
-          {
-            assert std.isString(name),
-            assert std.isNumber(tr.config.ports[name]),
-
-            name: name,
-            port: tr.config.ports[name],
-            targetPort: tr.config.ports[name],
-          }
-          for name in std.objectFields(tr.config.ports)
-        ],
-        selector: tr.config.podLabelSelector,
-      },
+  service: {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      name: tr.config.name,
+      namespace: tr.config.namespace,
+      labels: tr.config.commonLabels,
     },
+    spec: {
+      clusterIP: 'None',
+      ports: [
+        {
+          assert std.isString(name),
+          assert std.isNumber(tr.config.ports[name]),
+
+          name: name,
+          port: tr.config.ports[name],
+          targetPort: tr.config.ports[name],
+        }
+        for name in std.objectFields(tr.config.ports)
+      ],
+      selector: tr.config.podLabelSelector,
+    },
+  },
 
   statefulSet:
     local localEndpointFlag = '--receive.local-endpoint=$(NAME).%s.$(NAMESPACE).svc.cluster.local:%d' % [
@@ -232,17 +193,16 @@ function(params) {
     },
   },
 
-  podDisruptionBudget:
-    {
-      apiVersion: 'policy/v1beta1',
-      kind: 'PodDisruptionBudget',
-      metadata: {
-        name: tr.config.name,
-        namespace: tr.config.namespace,
-      },
-      spec: {
-        maxUnavailable: tr.config.podDisruptionBudgetMaxUnavailable,
-        selector: { matchLabels: tr.config.podLabelSelector },
-      },
+  podDisruptionBudget: {
+    apiVersion: 'policy/v1beta1',
+    kind: 'PodDisruptionBudget',
+    metadata: {
+      name: tr.config.name,
+      namespace: tr.config.namespace,
     },
+    spec: {
+      maxUnavailable: tr.config.podDisruptionBudgetMaxUnavailable,
+      selector: { matchLabels: tr.config.podLabelSelector },
+    },
+  },
 }

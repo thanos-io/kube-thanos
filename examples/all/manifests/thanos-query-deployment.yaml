@@ -48,6 +48,11 @@ spec:
         - --store=dnssrv+_grpc._tcp.thanos-receive.thanos.svc.cluster.local
         - --store=dnssrv+_grpc._tcp.thanos-rule.thanos.svc.cluster.local
         - --store=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local
+        - --store=dnssrv+_grpc._tcp.thanos-receive-default.thanos.svc.cluster.local
+        - --store=dnssrv+_grpc._tcp.thanos-receive-region-1.thanos.svc.cluster.local
+        - --store=dnssrv+_grpc._tcp.thanos-store-0.thanos.svc.cluster.local
+        - --store=dnssrv+_grpc._tcp.thanos-store-1.thanos.svc.cluster.local
+        - --store=dnssrv+_grpc._tcp.thanos-store-2.thanos.svc.cluster.local
         - --query.timeout=5m
         - --query.lookback-delta=15m
         - |-

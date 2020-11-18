@@ -49,30 +49,29 @@ function(params) {
   assert std.isString(tq.config.queryTimeout),
   assert std.isBoolean(tq.config.serviceMonitor),
 
-  service:
-    {
-      apiVersion: 'v1',
-      kind: 'Service',
-      metadata: {
-        name: tq.config.name,
-        namespace: tq.config.namespace,
-        labels: tq.config.commonLabels,
-      },
-      spec: {
-        ports: [
-          {
-            assert std.isString(name),
-            assert std.isNumber(tq.config.ports[name]),
-
-            name: name,
-            port: tq.config.ports[name],
-            targetPort: tq.config.ports[name],
-          }
-          for name in std.objectFields(tq.config.ports)
-        ],
-        selector: tq.config.podLabelSelector,
-      },
+  service: {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      name: tq.config.name,
+      namespace: tq.config.namespace,
+      labels: tq.config.commonLabels,
     },
+    spec: {
+      ports: [
+        {
+          assert std.isString(name),
+          assert std.isNumber(tq.config.ports[name]),
+
+          name: name,
+          port: tq.config.ports[name],
+          targetPort: tq.config.ports[name],
+        }
+        for name in std.objectFields(tq.config.ports)
+      ],
+      selector: tq.config.podLabelSelector,
+    },
+  },
 
   deployment:
     local c = {
