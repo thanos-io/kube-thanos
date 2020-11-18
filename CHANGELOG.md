@@ -19,7 +19,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Added
 
--
+- [#170](https://github.com/thanos-io/kube-thanos/pull/170) Add Store shard and Receive hashring helpers
 
 ### Fixed
 
