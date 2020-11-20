@@ -64,15 +64,27 @@ function(params) {
   // Combine the defaults and the passed params to make the component's config.
   config:: defaults + params + {
     queryRangeCache+:
-      if std.objectHas(params, 'queryRangeCache') && params.queryRangeCache.type == 'memcached' then
+      if std.objectHas(params, 'queryRangeCache')
+         && std.objectHas(params.queryRangeCache, 'type')
+         && params.queryRangeCache.type == 'memcached' then
+
         defaults.memcachedDefaults + params.queryRangeCache
-      else if std.objectHas(params, 'queryRangeCache') && params.queryRangeCache.type == 'in-memory' then
+      else if std.objectHas(params, 'queryRangeCache')
+              && std.objectHas(params.queryRangeCache, 'type')
+              && params.queryRangeCache.type == 'in-memory' then
+
         defaults.fifoCache + params.queryRangeCache
       else {},
     labelsCache+:
-      if std.objectHas(params, 'labelsCache') && params.labelsCache.type == 'memcached' then
+      if std.objectHas(params, 'labelsCache')
+         && std.objectHas(params.queryRangeCache, 'type')
+         && params.labelsCache.type == 'memcached' then
+
         defaults.memcachedDefaults + params.labelsCache
-      else if std.objectHas(params, 'labelsCache') && params.labelsCache.type == 'in-memory' then
+      else if std.objectHas(params, 'labelsCache')
+              && std.objectHas(params.queryRangeCache, 'type')
+              && params.labelsCache.type == 'in-memory' then
+
         defaults.fifoCache + params.labelsCache
       else {},
   },
@@ -82,30 +94,29 @@ function(params) {
   assert std.isBoolean(tqf.config.serviceMonitor),
   assert std.isNumber(tqf.config.maxRetries) && tqf.config.maxRetries >= 0 : 'thanos query frontend maxRetries has to be number >= 0',
 
-  service:
-    {
-      apiVersion: 'v1',
-      kind: 'Service',
-      metadata: {
-        name: tqf.config.name,
-        namespace: tqf.config.namespace,
-        labels: tqf.config.commonLabels,
-      },
-      spec: {
-        selector: tqf.config.podLabelSelector,
-        ports: [
-          {
-            assert std.isString(name),
-            assert std.isNumber(tqf.config.ports[name]),
-
-            name: name,
-            port: tqf.config.ports[name],
-            targetPort: tqf.config.ports[name],
-          }
-          for name in std.objectFields(tqf.config.ports)
-        ],
-      },
+  service: {
+    apiVersion: 'v1',
+    kind: 'Service',
+    metadata: {
+      name: tqf.config.name,
+      namespace: tqf.config.namespace,
+      labels: tqf.config.commonLabels,
     },
+    spec: {
+      selector: tqf.config.podLabelSelector,
+      ports: [
+        {
+          assert std.isString(name),
+          assert std.isNumber(tqf.config.ports[name]),
+
+          name: name,
+          port: tqf.config.ports[name],
+          targetPort: tqf.config.ports[name],
+        }
+        for name in std.objectFields(tqf.config.ports)
+      ],
+    },
+  },
 
   deployment:
     local c = {
