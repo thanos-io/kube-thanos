@@ -40,6 +40,8 @@ spec:
       containers:
       - args:
         - query-frontend
+        - --log.level=info
+        - --log.format=logfmt
         - --query-frontend.compress-responses
         - --http-address=0.0.0.0:9090
         - --query-frontend.downstream-url=http://thanos-query.thanos.svc.cluster.local.:9090

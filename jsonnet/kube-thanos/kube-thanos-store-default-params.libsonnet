@@ -11,6 +11,7 @@
   objectStorageConfig: error 'must provide objectStorageConfig',
   ignoreDeletionMarksDelay: '24h',
   logLevel: 'info',
+  logFormat: 'logfmt',
   resources: {},
   volumeClaimTemplate: {},
   serviceMonitor: false,
