@@ -1,27 +1,13 @@
-all: fmt generate validate
-
 include .bingo/Variables.mk
 
+FIRST_GOPATH := $(firstword $(subst :, ,$(shell go env GOPATH)))
 JSONNET_SRC = $(shell find . -name 'vendor' -prune -o -name 'jsonnet/vendor' -prune -o -name 'tmp' -prune -o -name '*.libsonnet' -print -o -name '*.jsonnet' -print)
 JSONNETFMT_CMD := $(JSONNETFMT) -n 2 --max-blank-lines 2 --string-style s --comment-style s
-
-CONTAINER_CMD:=docker run --rm \
-		-u="$(shell id -u):$(shell id -g)" \
-		-v "$(shell go env GOCACHE):/.cache/go-build" \
-		-v "$(PWD):/go/src/github.com/thanos-io/kube-thanos:Z" \
-		-w "/go/src/github.com/thanos-io/kube-thanos" \
-		-e USER=deadbeef \
-		-e GO111MODULE=on \
-		quay.io/coreos/jsonnet-ci
 
 EXAMPLES := examples
 MANIFESTS := manifests
 
-
-.PHONY: generate-in-docker
-generate-in-docker:
-	@echo ">> Compiling assets and generating Kubernetes manifests"
-	$(CONTAINER_CMD) make $(MFLAGS) generate
+all: fmt generate validate
 
 .PHONY: generate
 generate: vendor ${MANIFESTS} **.md
@@ -33,11 +19,15 @@ generate: vendor ${MANIFESTS} **.md
 ${MANIFESTS}: $(JSONNET) $(GOJSONTOYAML) vendor example.jsonnet build.sh
 	@rm -rf ${MANIFESTS}
 	@mkdir -p ${MANIFESTS}
-	PATH=$$PATH:$$(pwd)/$(BIN_DIR) ./build.sh
+	JSONNET=$(JSONNET) ./build.sh
 
 .PHONY: fmt
 fmt: $(JSONNETFMT)
-	PATH=$$PATH:$$(pwd)/$(BIN_DIR) echo ${JSONNET_SRC} | xargs -n 1 -- $(JSONNETFMT_CMD) -i
+	echo ${JSONNET_SRC} | xargs -n 1 -- $(JSONNETFMT_CMD) -i
+
+.PHONY: lint
+lint: $(JSONNET_LINT) vendor
+	echo ${JSONNET_SRC} | xargs -n 1 -- $(JSONNET_LINT) -J vendor
 
 .PHONY: vendor
 vendor: | $(JB) jsonnetfile.json jsonnetfile.lock.json
