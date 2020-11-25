@@ -46,6 +46,7 @@ spec:
       - args:
         - store
         - --log.level=info
+        - --log.format=logfmt
         - --data-dir=/var/thanos/store
         - --grpc-address=0.0.0.0:10901
         - --http-address=0.0.0.0:10902

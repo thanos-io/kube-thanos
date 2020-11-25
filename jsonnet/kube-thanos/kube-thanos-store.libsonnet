@@ -54,6 +54,7 @@ function(params) {
       args: [
         'store',
         '--log.level=' + ts.config.logLevel,
+        '--log.format=' + ts.config.logFormat,
         '--data-dir=/var/thanos/store',
         '--grpc-address=0.0.0.0:%d' % ts.config.ports.grpc,
         '--http-address=0.0.0.0:%d' % ts.config.ports.http,

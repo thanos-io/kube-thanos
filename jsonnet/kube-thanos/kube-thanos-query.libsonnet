@@ -20,6 +20,7 @@ local defaults = {
   },
   serviceMonitor: false,
   logLevel: 'info',
+  logFormat: 'logfmt',
   tracing: {},
 
   commonLabels:: {
@@ -83,6 +84,7 @@ function(params) {
           '--grpc-address=0.0.0.0:%d' % tq.config.ports.grpc,
           '--http-address=0.0.0.0:%d' % tq.config.ports.http,
           '--log.level=' + tq.config.logLevel,
+          '--log.format=' + tq.config.logFormat,
         ] + [
           '--query.replica-label=%s' % labelName
           for labelName in tq.config.replicaLabels

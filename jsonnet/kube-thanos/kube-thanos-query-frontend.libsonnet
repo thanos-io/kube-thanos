@@ -22,6 +22,7 @@ local defaults = {
   queryRangeCache: {},
   labelsCache: {},
   logLevel: 'info',
+  logFormat: 'logfmt',
   resources: {},
   serviceMonitor: false,
   ports: {
@@ -124,6 +125,8 @@ function(params) {
       image: tqf.config.image,
       args: [
         'query-frontend',
+        '--log.level=' + tqf.config.logLevel,
+        '--log.format=' + tqf.config.logFormat,
         '--query-frontend.compress-responses',
         '--http-address=0.0.0.0:%d' % tqf.config.ports.http,
         '--query-frontend.downstream-url=%s' % tqf.config.downstreamURL,
