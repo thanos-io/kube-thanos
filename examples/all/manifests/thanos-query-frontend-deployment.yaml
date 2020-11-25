@@ -53,7 +53,7 @@ spec:
         - |-
           --query-range.response-cache-config="config":
             "addresses":
-            - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
+            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos.svc.cluster.local"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20
@@ -65,7 +65,7 @@ spec:
         - |-
           --labels.response-cache-config="config":
             "addresses":
-            - "dnssrv+_client._tcp.<MEMCACHED_SERCIVE>.thanos.svc.cluster.local"
+            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos.svc.cluster.local"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20
