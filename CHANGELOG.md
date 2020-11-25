@@ -24,7 +24,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Fixed
 
--
+- [#176](https://github.com/thanos-io/kube-thanos/pull/176) store: fix error when bucket cache not used
 
 ## [v0.16.0](https://github.com/thanos-io/kube-thanos/tree/v0.16.0) (2020-11-04)
 
