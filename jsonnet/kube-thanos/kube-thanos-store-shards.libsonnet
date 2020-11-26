@@ -5,7 +5,6 @@ local store = import 'kube-thanos/kube-thanos-store.libsonnet';
 // When calling the function to generate the component's manifest,
 // you can pass an object structured like the default to overwrite default values.
 local defaults = storeConfigDefaults {
-  local defaults = self,
   shards: 1,
 };
 

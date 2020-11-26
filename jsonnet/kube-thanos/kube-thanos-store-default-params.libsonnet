@@ -63,6 +63,6 @@
   podLabelSelector:: {
     [labelName]: defaults.commonLabels[labelName]
     for labelName in std.objectFields(defaults.commonLabels)
-    if !std.setMember(labelName, ['app.kubernetes.io/version'])
+    if labelName != 'app.kubernetes.io/version'
   },
 }
