@@ -15,6 +15,7 @@
   volumeClaimTemplate: {},
   retention: '15d',
   logLevel: 'info',
+  logFormat: 'logfmt',
   resources: {},
   serviceMonitor: false,
   ports: {

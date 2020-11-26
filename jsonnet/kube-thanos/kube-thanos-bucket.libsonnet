@@ -10,6 +10,7 @@ local defaults = {
   objectStorageConfig: error 'must provide objectStorageConfig',
   resources: {},
   logLevel: 'info',
+  logFormat: 'logfmt',
   ports: {
     http: 10902,
   },
@@ -71,6 +72,7 @@ function(params) {
         'bucket',
         'web',
         '--log.level=' + tb.config.logLevel,
+        '--log.format=' + tb.config.logFormat,
         '--objstore.config=$(OBJSTORE_CONFIG)',
       ] + (
         if std.length(tb.config.tracing) > 0 then [

@@ -49,6 +49,7 @@ function(params) {
       args: [
         'receive',
         '--log.level=' + tr.config.logLevel,
+        '--log.format=' + tr.config.logFormat,
         '--grpc-address=0.0.0.0:%d' % tr.config.ports.grpc,
         '--http-address=0.0.0.0:%d' % tr.config.ports.http,
         '--remote-write.address=0.0.0.0:%d' % tr.config.ports['remote-write'],

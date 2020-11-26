@@ -14,6 +14,7 @@ local defaults = {
   alertmanagersURLs: [],
   queriers: [],
   logLevel: 'info',
+  logFormat: 'logfmt',
   resources: {},
   serviceMonitor: false,
   ports: {
@@ -83,6 +84,7 @@ function(params) {
         [
           'rule',
           '--log.level=' + tr.config.logLevel,
+          '--log.format=' + tr.config.logFormat,
           '--grpc-address=0.0.0.0:%d' % tr.config.ports.grpc,
           '--http-address=0.0.0.0:%d' % tr.config.ports.http,
           '--objstore.config=$(OBJSTORE_CONFIG)',

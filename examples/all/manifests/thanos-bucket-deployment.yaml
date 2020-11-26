@@ -29,6 +29,7 @@ spec:
         - bucket
         - web
         - --log.level=info
+        - --log.format=logfmt
         - --objstore.config=$(OBJSTORE_CONFIG)
         - |-
           --tracing.config="config":

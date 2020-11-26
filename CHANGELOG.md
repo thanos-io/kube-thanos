@@ -21,6 +21,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#170](https://github.com/thanos-io/kube-thanos/pull/170) Add Store shard and Receive hashring helpers
 - [#173](https://github.com/thanos-io/kube-thanos/pull/173) Store, query, frontend: add log.format flag
+- [#178](https://github.com/thanos-io/kube-thanos/pull/178) compact, rule, tools: add log format flag
 
 ### Fixed
 
