@@ -66,7 +66,6 @@ function(params) {
         '--ignore-deletion-marks-delay=' + ts.config.ignoreDeletionMarksDelay,
       ] + (
         if std.length(ts.config.indexCache) > 0 then [
-          '--experimental.enable-index-cache-postings-compression',
           '--index-cache.config=' + std.manifestYamlDoc(ts.config.indexCache),
         ] else []
       ) + (
