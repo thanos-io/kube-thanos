@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 NOTE: As semantic versioning states all 0.y.z releases can contain breaking changes.
 
-> kube-thanos' major versions are in sync with upstream Thos project.
+> kube-thanos' major versions are in sync with upstream Thanos project.
 
 We use *breaking* word for marking changes that are not backward compatible (relates only to v0.y.z releases.)
 
@@ -19,6 +19,18 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Added
 
+-
+
+### Fixed
+
+-
+
+## [v0.17.2](https://github.com/thanos-io/kube-thanos/tree/v0.17.2) (2020-12-08)
+
+### Added
+
+- [#166](https://github.com/thanos-io/kube-thanos/pull/166) Add new flags and memcached support to query frontend
+- [#169](https://github.com/thanos-io/kube-thanos/pull/169) Add --tracing.config support to all components
 - [#170](https://github.com/thanos-io/kube-thanos/pull/170) Add Store shard and Receive hashring helpers
 - [#173](https://github.com/thanos-io/kube-thanos/pull/173) Store, query, frontend: add log.format flag
 - [#178](https://github.com/thanos-io/kube-thanos/pull/178) compact, rule, tools: add log format flag
@@ -26,6 +38,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 ### Fixed
 
 - [#176](https://github.com/thanos-io/kube-thanos/pull/176) store: fix error when bucket cache not used
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.16.0...v0.17.2)
 
 ## [v0.16.0](https://github.com/thanos-io/kube-thanos/tree/v0.16.0) (2020-11-04)
 
