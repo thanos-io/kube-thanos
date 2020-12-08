@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 NOTE: As semantic versioning states all 0.y.z releases can contain breaking changes.
 
-> kube-thanos' major versions are in sync with upstream Thanos project.
+> kube-thanos' major and minor versions are in sync with upstream Thanos project.
 
 We use *breaking* word for marking changes that are not backward compatible (relates only to v0.y.z releases.)
 
@@ -25,7 +25,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 -
 
-## [v0.17.2](https://github.com/thanos-io/kube-thanos/tree/v0.17.2) (2020-12-08)
+## [v0.17.0](https://github.com/thanos-io/kube-thanos/tree/v0.17.0) (2020-12-08)
 
 ### Added
 
@@ -39,7 +39,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#176](https://github.com/thanos-io/kube-thanos/pull/176) store: fix error when bucket cache not used
 
-[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.16.0...v0.17.2)
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.16.0...v0.17.0)
 
 ## [v0.16.0](https://github.com/thanos-io/kube-thanos/tree/v0.16.0) (2020-11-04)
 
