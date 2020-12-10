@@ -55,30 +55,10 @@ function(params) {
     local c = {
       name: 'thanos-store',
       image: ts.config.image,
-      args: [
-        'store',
-        '--log.level=' + ts.config.logLevel,
-        '--log.format=' + ts.config.logFormat,
-        '--data-dir=/var/thanos/store',
-        '--grpc-address=0.0.0.0:%d' % ts.config.ports.grpc,
-        '--http-address=0.0.0.0:%d' % ts.config.ports.http,
-        '--objstore.config=$(OBJSTORE_CONFIG)',
-        '--ignore-deletion-marks-delay=' + ts.config.ignoreDeletionMarksDelay,
-      ] + (
-        if std.length(ts.config.indexCache) > 0 then [
-          '--index-cache.config=' + std.manifestYamlDoc(ts.config.indexCache),
-        ] else []
-      ) + (
-        if std.length(ts.config.bucketCache) > 0 then [
-          '--store.caching-bucket.config=' + std.manifestYamlDoc(ts.config.bucketCache),
-        ] else []
-      ) + (
-        if std.length(ts.config.tracing) > 0 then [
-          '--tracing.config=' + std.manifestYamlDoc(
-            { config+: { service_name: defaults.name } } + ts.config.tracing
-          ),
-        ] else []
-      ),
+      args: ['store'] + [
+        '--%s=%s' % [key, ts.config.flags[key]]
+        for key in std.sort(std.objectFields(ts.config.flags))
+      ],
       env: [
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
           key: ts.config.objectStorageConfig.key,

@@ -23,6 +23,31 @@
   },
   tracing: {},
 
+  // Thanos container flags.
+  flags: {
+    'log.level': defaults.logLevel,
+    'log.format': defaults.logFormat,
+    'data-dir': '/var/thanos/store',
+    'grpc-address': '0.0.0.0:%d' % defaults.ports.grpc,
+    'http-address': '0.0.0.0:%d' % defaults.ports.http,
+    'objstore.config': '$(OBJSTORE_CONFIG)',
+    'ignore-deletion-marks-delay': defaults.ignoreDeletionMarksDelay,
+  } + (
+    if std.length(defaults.indexCache) > 0 then {
+      'index-cache.config': std.manifestYamlDoc(defaults.indexCache),
+    } else {}
+  ) + (
+    if std.length(defaults.bucketCache) > 0 then {
+      'store.caching-bucket.config': std.manifestYamlDoc(defaults.bucketCache),
+    } else {}
+  ) + (
+    if std.length(defaults.tracing) > 0 then {
+      'tracing.config': std.manifestYamlDoc(
+        { config+: { service_name: defaults.name } } + defaults.tracing
+      ),
+    } else {}
+  ),
+
   memcachedDefaults+:: {
     config+: {
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.

@@ -48,12 +48,9 @@ spec:
       containers:
       - args:
         - store
-        - --log.level=info
-        - --log.format=logfmt
         - --data-dir=/var/thanos/store
         - --grpc-address=0.0.0.0:10901
         - --http-address=0.0.0.0:10902
-        - --objstore.config=$(OBJSTORE_CONFIG)
         - --ignore-deletion-marks-delay=24h
         - |-
           --index-cache.config="config":
@@ -68,6 +65,9 @@ spec:
             "max_item_size": "1MiB"
             "timeout": "500ms"
           "type": "memcached"
+        - --log.format=logfmt
+        - --log.level=info
+        - --objstore.config=$(OBJSTORE_CONFIG)
         - |-
           --store.caching-bucket.config="blocks_iter_ttl": "5m"
           "chunk_object_attrs_ttl": "24h"
@@ -94,7 +94,7 @@ spec:
           --tracing.config="config":
             "sampler_param": 2
             "sampler_type": "ratelimiting"
-            "service_name": "thanos-store"
+            "service_name": "thanos-store-0"
           "type": "JAEGER"
         - |
           --selector.relabel-config=
