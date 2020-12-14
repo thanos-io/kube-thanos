@@ -9,13 +9,13 @@ function(params) {
     indexCache+:
       if std.objectHas(params, 'indexCache')
          && std.objectHas(params.indexCache, 'type')
-         && params.indexCache.type == 'memcached' then
+         && std.asciiUpper(params.indexCache.type) == 'MEMCACHED' then
         defaults.memcachedDefaults + defaults.indexCacheDefaults + params.indexCache
       else {},
     bucketCache+:
       if std.objectHas(params, 'bucketCache')
          && std.objectHas(params.bucketCache, 'type')
-         && params.bucketCache.type == 'memcached' then
+         && std.asciiUpper(params.bucketCache.type) == 'MEMCACHED' then
         defaults.memcachedDefaults + defaults.bucketCacheMemcachedDefaults + params.bucketCache
       else {},
   },
