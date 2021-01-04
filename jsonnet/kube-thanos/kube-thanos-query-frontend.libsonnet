@@ -67,24 +67,24 @@ function(params) {
     queryRangeCache+:
       if std.objectHas(params, 'queryRangeCache')
          && std.objectHas(params.queryRangeCache, 'type')
-         && params.queryRangeCache.type == 'memcached' then
+         && std.asciiUpper(params.queryRangeCache.type) == 'MEMCACHED' then
 
         defaults.memcachedDefaults + params.queryRangeCache
       else if std.objectHas(params, 'queryRangeCache')
               && std.objectHas(params.queryRangeCache, 'type')
-              && params.queryRangeCache.type == 'in-memory' then
+              && std.asciiUpper(params.queryRangeCache.type) == 'IN-MEMORY' then
 
         defaults.fifoCache + params.queryRangeCache
       else {},
     labelsCache+:
       if std.objectHas(params, 'labelsCache')
          && std.objectHas(params.labelsCache, 'type')
-         && params.labelsCache.type == 'memcached' then
+         && std.asciiUpper(params.labelsCache.type) == 'MEMCACHED' then
 
         defaults.memcachedDefaults + params.labelsCache
       else if std.objectHas(params, 'labelsCache')
               && std.objectHas(params.labelsCache, 'type')
-              && params.labelsCache.type == 'in-memory' then
+              && std.asciiUpper(params.labelsCache.type) == 'IN-MEMORY' then
 
         defaults.fifoCache + params.labelsCache
       else {},

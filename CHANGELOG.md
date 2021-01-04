@@ -23,7 +23,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Fixed
 
--
+- [#185](https://github.com/thanos-io/kube-thanos/pull/185)A query-frontend, store: make cache types case insensitive
 
 ## [v0.17.0](https://github.com/thanos-io/kube-thanos/tree/v0.17.0) (2020-12-08)
 
