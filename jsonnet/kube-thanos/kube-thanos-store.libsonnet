@@ -1,4 +1,5 @@
 local defaults = import 'kube-thanos/kube-thanos-store-default-params.libsonnet';
+local util = import 'kube-thanos/util.libsonnet';
 
 function(params) {
   local ts = self,
@@ -97,7 +98,11 @@ function(params) {
             { config+: { service_name: defaults.name } } + ts.config.tracing
           ),
         ] else []
-      ),
+      ) + util.withOptionalArgs(ts.config, {
+        'max-time': 'maxTime',
+        'min-time': 'minTime',
+        'store.grpc.series-sample-limit': 'storeGRPCSeriesSampleLimit',
+      }),
       env: [
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
           key: ts.config.objectStorageConfig.key,
