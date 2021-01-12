@@ -4,6 +4,6 @@ go 1.15
 
 require (
 	github.com/fatih/color v1.10.0 // indirect
-	github.com/google/go-jsonnet v0.17.0 // cmd/jsonnet
-	golang.org/x/sys v0.0.0-20201119102817-f84b799fce68 // indirect
+	github.com/google/go-jsonnet v0.17.1-0.20210101181740-31d71aaccda6 // cmd/jsonnet
+	golang.org/x/sys v0.0.0-20210112091331-59c308dcf3cc // indirect
 )
