@@ -19,7 +19,7 @@ generate: vendor ${MANIFESTS} **.md
 ${MANIFESTS}: $(JSONNET) $(GOJSONTOYAML) vendor example.jsonnet build.sh
 	@rm -rf ${MANIFESTS}
 	@mkdir -p ${MANIFESTS}
-	JSONNET=$(JSONNET) ./build.sh
+	JSONNET=$(JSONNET) GOJSONTOYAML=$(GOJSONTOYAML) ./build.sh
 
 .PHONY: fmt
 fmt: $(JSONNETFMT)
