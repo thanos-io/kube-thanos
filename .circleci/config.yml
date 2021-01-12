@@ -1,8 +1,18 @@
 jobs:
+  lint:
+    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    docker:
+      - image: circleci/golang:1.15
+    steps:
+      - checkout
+      - run: make vendor
+      - run: git diff --exit-code
+      - run: make --always-make fmt lint
+      - run: git diff --exit-code
   build:
     working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     docker:
-      - image: quay.io/coreos/jsonnet-ci
+      - image: circleci/golang:1.15
     steps:
       - checkout
       - run: make --always-make vendor generate validate
@@ -11,4 +21,5 @@ workflows:
   version: 2
   build_and_test:
     jobs:
+      - lint
       - build

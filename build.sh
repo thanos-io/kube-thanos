@@ -7,16 +7,21 @@ set -x
 # only exit with zero if all commands of the pipeline exit successfully
 set -o pipefail
 
+JSONNET=${JSONNET:-jsonnet}
+GOJSONTOYAML=${GOJSONTOYAML:-gojsontoyaml}
+
 # Make sure to start with a clean 'manifests' dir
 rm -rf manifests
 mkdir manifests
 
 # optional, but we would like to generate yaml, not json
-jsonnet -J vendor -m manifests "${1-example.jsonnet}" | xargs -I{} sh -c 'cat {} | gojsontoyaml > {}.yaml; rm -f {}' -- {}
+${JSONNET} -J vendor -m manifests "${1-example.jsonnet}" | xargs -I{} sh -c "cat {} | ${GOJSONTOYAML} > {}.yaml; rm -f {}" -- {}
+find manifests -type f ! -name '*.yaml' -delete
 
 # The following script generates all components, mostly used for testing
 
 rm -rf examples/all/manifests
 mkdir examples/all/manifests
 
-jsonnet -J vendor -m examples/all/manifests "${1-all.jsonnet}" | xargs -I{} sh -c 'cat {} | gojsontoyaml > {}.yaml; rm -f {}' -- {}
+${JSONNET} -J vendor -m examples/all/manifests "${1-all.jsonnet}" | xargs -I{} sh -c "cat {} | ${GOJSONTOYAML} > {}.yaml; rm -f {}" -- {}
+find examples/all/manifests -type f ! -name '*.yaml' -delete

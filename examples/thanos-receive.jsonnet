@@ -1,6 +1,6 @@
-local t = import 'kube-thanos/kube-thanos-receive.libsonnet';
+local receive = import 'kube-thanos/kube-thanos-receive.libsonnet';
 
-t.receive {
+receive({
   local tr = self,
   name:: 'thanos-receive',
   namespace:: 'observability',
@@ -15,4 +15,4 @@ t.receive {
   pvcTemplate+:: {
     size: '50G',
   },
-}
+})

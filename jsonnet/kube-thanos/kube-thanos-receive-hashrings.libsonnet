@@ -5,7 +5,6 @@ local receive = import 'kube-thanos/kube-thanos-receive.libsonnet';
 // When calling the function to generate the component's manifest,
 // you can pass an object structured like the default to overwrite default values.
 local defaults = receiveConfigDefaults {
-  local defaults = self,
   hashrings: [{
     hashring: 'default',
     tenants: [],
