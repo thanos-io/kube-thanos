@@ -3,11 +3,10 @@ kind: ServiceMonitor
 metadata:
   labels:
     app.kubernetes.io/component: object-store-gateway
-    app.kubernetes.io/instance: thanos-store-1
+    app.kubernetes.io/instance: thanos-store
     app.kubernetes.io/name: thanos-store
     app.kubernetes.io/version: v0.17.2
-    store.observatorium.io/shard: shard-1
-  name: thanos-store-1
+  name: thanos-store
   namespace: thanos
 spec:
   endpoints:
@@ -18,9 +17,12 @@ spec:
       - namespace
       - pod
       targetLabel: instance
+    - regex: shard\-(\d+)
+      replacement: $1
+      sourceLabels:
+      - __meta_kubernetes_service_label_store_observatorium_io_shard
+      targetLabel: shard
   selector:
     matchLabels:
       app.kubernetes.io/component: object-store-gateway
-      app.kubernetes.io/instance: thanos-store-1
       app.kubernetes.io/name: thanos-store
-      store.observatorium.io/shard: shard-1
