@@ -193,7 +193,7 @@ local finalQ = t.query(q.config {
     'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
     for service in [re.service, ru.service, s.service] +
                    [rcvs[hashring].service for hashring in std.objectFields(rcvs)] +
-                   [strs[shard].service for shard in std.objectFields(strs)]
+                   [strs.shards[shard].service for shard in std.objectFields(strs.shards)]
   ],
 });
 
@@ -211,8 +211,11 @@ local finalQ = t.query(q.config {
   if rcvs[hashring][name] != null
 } +
 {
-  ['store-' + shard + '-' + name]: strs[shard][name]
-  for shard in std.objectFields(strs)
-  for name in std.objectFields(strs[shard])
-  if strs[shard][name] != null
+  ['store-' + shard + '-' + name]: strs.shards[shard][name]
+  for shard in std.objectFields(strs.shards)
+  for name in std.objectFields(strs.shards[shard])
+  if strs.shards[shard][name] != null
+} +
+{
+  'store-shards-serviceMonitor': strs.serviceMonitor,
 }
