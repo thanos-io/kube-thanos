@@ -13,9 +13,13 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ## Unreleased
 
-### Changed
+### Breaking Changes
 
 - [#188](https://github.com/thanos-io/kube-thanos/pull/188) Single ServiceMonitor for store shards
+
+### Changed
+
+-
 
 ### Added
 
