@@ -94,7 +94,7 @@ spec:
       - args:
         - -webhook-url=http://localhost:10902/-/reload
         - -volume-dir=/etc/thanos/rules/test
-        image: quay.io/openshift/origin-configmap-reloader:4.5.0
+        image: jimmidyson/configmap-reload:v0.5.0
         name: configmap-reloader
         volumeMounts:
         - mountPath: /etc/thanos/rules/test
