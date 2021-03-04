@@ -56,10 +56,11 @@ function(params) {
         '--receive.replication-factor=%d' % tr.config.replicationFactor,
         '--objstore.config=$(OBJSTORE_CONFIG)',
         '--tsdb.path=/var/thanos/receive',
-        '--label=replica="$(NAME)"',
-        '--label=receive="true"',
         '--tsdb.retention=' + tr.config.retention,
         localEndpointFlag,
+      ] + [
+        '--label=%s' % label
+        for label in tr.config.labels
       ] + (
         if tr.config.hashringConfigMapName != '' then [
           '--receive.hashrings-file=/var/lib/thanos-receive/hashrings.json',

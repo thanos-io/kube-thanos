@@ -72,10 +72,10 @@ spec:
         - --receive.replication-factor=1
         - --objstore.config=$(OBJSTORE_CONFIG)
         - --tsdb.path=/var/thanos/receive
-        - --label=replica="$(NAME)"
-        - --label=receive="true"
         - --tsdb.retention=15d
         - --receive.local-endpoint=$(NAME).thanos-receive-region-1.$(NAMESPACE).svc.cluster.local:10901
+        - --label=replica="$(NAME)"
+        - --label=receive="true"
         - --receive.hashrings-file=/var/lib/thanos-receive/hashrings.json
         - |-
           --tracing.config="config":
