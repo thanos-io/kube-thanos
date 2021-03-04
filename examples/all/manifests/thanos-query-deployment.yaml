@@ -85,4 +85,5 @@ spec:
           periodSeconds: 5
         resources: {}
         terminationMessagePolicy: FallbackToLogsOnError
+      serviceAccountName: thanos-query
       terminationGracePeriodSeconds: 120

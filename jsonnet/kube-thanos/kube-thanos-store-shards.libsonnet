@@ -16,15 +16,29 @@ function(params)
   assert std.isNumber(config.shards) && config.shards >= 0 : 'thanos store shards has to be number >= 0';
 
   { config:: config } + {
+    local allShards = self,
+
+    serviceAccount: {
+      apiVersion: 'v1',
+      kind: 'ServiceAccount',
+      metadata: {
+        name: config.name,
+        namespace: config.namespace,
+        labels: config.commonLabels,
+      },
+    },
+
     shards: {
       ['shard' + i]: store(config {
         name+: '-%d' % i,
         commonLabels+:: { 'store.observatorium.io/shard': 'shard-' + i },
       }) {
+        serviceAccount: null,  // one service account for all stores
         statefulSet+: {
           spec+: {
             template+: {
               spec+: {
+                serviceAccountName: allShards.serviceAccount.metadata.name,
                 containers: [
                   if c.name == 'thanos-store' then c {
                     args+: [

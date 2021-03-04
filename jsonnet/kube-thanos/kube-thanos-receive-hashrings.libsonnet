@@ -19,36 +19,52 @@ function(params)
   assert std.isArray(config.hashrings) : 'thanos receive hashrings has to be an array';
 
   { config:: config } + {
-    [h.hashring]: receive(config {
-      name+: '-' + h.hashring,
-      commonLabels+:: {
-        'controller.receive.thanos.io/hashring': h.hashring,
+    local allHashrings = self,
+
+    serviceAccount: {
+      apiVersion: 'v1',
+      kind: 'ServiceAccount',
+      metadata: {
+        name: config.name,
+        namespace: config.namespace,
+        labels: config.commonLabels,
       },
-    }) {
-      local receiver = self,
-      podDisruptionBudget:: {},  // hide this object, we don't want it
-      statefulSet+: {
-        metadata+: {
-          labels+: {
-            'controller.receive.thanos.io': 'thanos-receive-controller',
-          },
+    },
+    hashrings: {
+      [h.hashring]: receive(config {
+        name+: '-' + h.hashring,
+        commonLabels+:: {
+          'controller.receive.thanos.io/hashring': h.hashring,
         },
-        spec+: {
-          template+: {
-            spec+: {
-              containers: [
-                if c.name == 'thanos-receive' then c {
-                  env+: if std.objectHas(receiver.config, 'debug') && receiver.config.debug != '' then [
-                    { name: 'DEBUG', value: receiver.config.debug },
-                  ] else [],
-                }
-                else c
-                for c in super.containers
-              ],
+      }) {
+        local receiver = self,
+
+        serviceAccount: null,  // one service account for all stores
+        podDisruptionBudget:: {},  // hide this object, we don't want it
+        statefulSet+: {
+          metadata+: {
+            labels+: {
+              'controller.receive.thanos.io': 'thanos-receive-controller',
+            },
+          },
+          spec+: {
+            template+: {
+              spec+: {
+                serviceAccountName: allHashrings.serviceAccount.metadata.name,
+                containers: [
+                  if c.name == 'thanos-receive' then c {
+                    env+: if std.objectHas(receiver.config, 'debug') && receiver.config.debug != '' then [
+                      { name: 'DEBUG', value: receiver.config.debug },
+                    ] else [],
+                  }
+                  else c
+                  for c in super.containers
+                ],
+              },
             },
           },
         },
-      },
-    }
-    for h in config.hashrings
+      }
+      for h in config.hashrings
+    },
   }

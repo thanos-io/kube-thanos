@@ -16,10 +16,11 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 ### Breaking Changes
 
 - [#188](https://github.com/thanos-io/kube-thanos/pull/188) Single ServiceMonitor for store shards
+- [#196](https://github.com/thanos-io/kube-thanos/pull/196) Single ServiceAccount for all hashrings, causing hashrings position in the object tree to change.
 
 ### Changed
 
--
+- [#196](https://github.com/thanos-io/kube-thanos/pull/196) Single ServiceAccount for each component.
 
 ### Added
 

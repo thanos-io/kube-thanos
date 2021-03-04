@@ -63,6 +63,16 @@ function(params) {
     },
   },
 
+  serviceAccount: {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: {
+      name: tb.config.name,
+      namespace: tb.config.namespace,
+      labels: tb.config.commonLabels,
+    },
+  },
+
   deployment:
     local container = {
       name: 'thanos-bucket',
@@ -119,6 +129,7 @@ function(params) {
         template: {
           metadata: { labels: tb.config.commonLabels },
           spec: {
+            serviceAccountName: tb.serviceAccount.metadata.name,
             containers: [container],
             terminationGracePeriodSeconds: 120,
           },

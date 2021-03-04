@@ -192,7 +192,7 @@ local finalQ = t.query(q.config {
   stores: [
     'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
     for service in [re.service, ru.service, s.service] +
-                   [rcvs[hashring].service for hashring in std.objectFields(rcvs)] +
+                   [rcvs.hashrings[hashring].service for hashring in std.objectFields(rcvs.hashrings)] +
                    [strs.shards[shard].service for shard in std.objectFields(strs.shards)]
   ],
 });
@@ -205,10 +205,10 @@ local finalQ = t.query(q.config {
 { ['thanos-query-' + name]: finalQ[name] for name in std.objectFields(finalQ) } +
 { ['thanos-query-frontend-' + name]: qf[name] for name in std.objectFields(qf) } +
 {
-  ['thanos-receive-' + hashring + '-' + name]: rcvs[hashring][name]
-  for hashring in std.objectFields(rcvs)
-  for name in std.objectFields(rcvs[hashring])
-  if rcvs[hashring][name] != null
+  ['thanos-receive-' + hashring + '-' + name]: rcvs.hashrings[hashring][name]
+  for hashring in std.objectFields(rcvs.hashrings)
+  for name in std.objectFields(rcvs.hashrings[hashring])
+  if rcvs.hashrings[hashring][name] != null
 } +
 {
   ['store-' + shard + '-' + name]: strs.shards[shard][name]
