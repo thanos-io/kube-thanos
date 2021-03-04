@@ -197,13 +197,13 @@ local finalQ = t.query(q.config {
   ],
 });
 
-{ ['thanos-bucket-' + name]: b[name] for name in std.objectFields(b) if b[name] != null} +
-{ ['thanos-compact-' + name]: c[name] for name in std.objectFields(c) if c[name] != null} +
-{ ['thanos-receive-' + name]: re[name] for name in std.objectFields(re) if re[name] != null} +
-{ ['thanos-rule-' + name]: finalRu[name] for name in std.objectFields(finalRu) if finalRu[name] != null} +
-{ ['thanos-store-' + name]: s[name] for name in std.objectFields(s) if s[name] != null} +
-{ ['thanos-query-' + name]: finalQ[name] for name in std.objectFields(finalQ) if finalQ[name] != null} +
-{ ['thanos-query-frontend-' + name]: qf[name] for name in std.objectFields(qf) if qf[name] != null} +
+{ ['thanos-bucket-' + name]: b[name] for name in std.objectFields(b) if b[name] != null } +
+{ ['thanos-compact-' + name]: c[name] for name in std.objectFields(c) if c[name] != null } +
+{ ['thanos-receive-' + name]: re[name] for name in std.objectFields(re) if re[name] != null } +
+{ ['thanos-rule-' + name]: finalRu[name] for name in std.objectFields(finalRu) if finalRu[name] != null } +
+{ ['thanos-store-' + name]: s[name] for name in std.objectFields(s) if s[name] != null } +
+{ ['thanos-query-' + name]: finalQ[name] for name in std.objectFields(finalQ) if finalQ[name] != null } +
+{ ['thanos-query-frontend-' + name]: qf[name] for name in std.objectFields(qf) if qf[name] != null } +
 {
   ['thanos-receive-' + hashring + '-' + name]: rcvs.hashrings[hashring][name]
   for hashring in std.objectFields(rcvs.hashrings)
