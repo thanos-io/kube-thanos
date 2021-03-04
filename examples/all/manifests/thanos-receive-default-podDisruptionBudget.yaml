@@ -4,7 +4,7 @@ metadata:
   name: thanos-receive-default
   namespace: thanos
 spec:
-  maxUnavailable: 0
+  maxUnavailable: 1
   selector:
     matchLabels:
       app.kubernetes.io/component: database-write-hashring
