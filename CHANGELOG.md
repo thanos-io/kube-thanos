@@ -23,7 +23,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Added
 
--
+- [#194](https://github.com/thanos-io/kube-thanos/pull/194) Allow configuring --label and --receive.tenant-label-name flags.
 
 ### Fixed
 
