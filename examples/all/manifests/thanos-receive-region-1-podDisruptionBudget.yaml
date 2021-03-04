@@ -1,0 +1,13 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: thanos-receive-region-1
+  namespace: thanos
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: database-write-hashring
+      app.kubernetes.io/instance: thanos-receive-region-1
+      app.kubernetes.io/name: thanos-receive
+      controller.receive.thanos.io/hashring: region-1

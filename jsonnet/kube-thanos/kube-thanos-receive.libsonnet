@@ -210,7 +210,7 @@ function(params) {
     },
   },
 
-  podDisruptionBudget: {
+  podDisruptionBudget: if tr.config.podDisruptionBudgetMaxUnavailable >= 1 then {
     apiVersion: 'policy/v1beta1',
     kind: 'PodDisruptionBudget',
     metadata: {
@@ -221,5 +221,5 @@ function(params) {
       maxUnavailable: tr.config.podDisruptionBudgetMaxUnavailable,
       selector: { matchLabels: tr.config.podLabelSelector },
     },
-  },
+  } else null,
 }
