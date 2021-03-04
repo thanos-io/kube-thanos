@@ -39,8 +39,7 @@ function(params)
       }) {
         local receiver = self,
 
-        serviceAccount: null,  // one service account for all stores
-        podDisruptionBudget:: {},  // hide this object, we don't want it
+        serviceAccount: null,  // one service account for all stores.
         statefulSet+: {
           metadata+: {
             labels+: {
