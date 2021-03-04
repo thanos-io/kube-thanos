@@ -24,6 +24,11 @@
     'remote-write': 19291,
   },
   tracing: {},
+  labels: [
+    'replica="$(NAME)"',
+    'receive="true"',
+  ],
+  tenantLabelName: null,
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-receive',
