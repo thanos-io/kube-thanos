@@ -76,6 +76,16 @@ function(params) {
     },
   },
 
+  serviceAccount: {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: {
+      name: tr.config.name,
+      namespace: tr.config.namespace,
+      labels: tr.config.commonLabels,
+    },
+  },
+
   statefulSet:
     local c = {
       name: 'thanos-rule',
@@ -161,6 +171,7 @@ function(params) {
             labels: tr.config.commonLabels,
           },
           spec: {
+            serviceAccountName: tr.serviceAccount.metadata.name,
             containers: [c],
             volumes: [
               { name: ruleConfig.name, configMap: { name: ruleConfig.name } }

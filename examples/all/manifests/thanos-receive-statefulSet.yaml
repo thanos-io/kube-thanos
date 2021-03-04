@@ -130,6 +130,7 @@ spec:
           readOnly: false
         - mountPath: /var/lib/thanos-receive
           name: hashring-config
+      serviceAccountName: thanos-receive
       terminationGracePeriodSeconds: 900
       volumes:
       - configMap:

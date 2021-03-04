@@ -90,6 +90,7 @@ spec:
           readOnly: false
         - mountPath: /etc/thanos/rules/test
           name: test
+      serviceAccountName: thanos-rule
       volumes:
       - configMap:
           name: test

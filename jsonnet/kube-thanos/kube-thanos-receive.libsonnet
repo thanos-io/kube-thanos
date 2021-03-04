@@ -37,6 +37,16 @@ function(params) {
     },
   },
 
+  serviceAccount: {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: {
+      name: tr.config.name,
+      namespace: tr.config.namespace,
+      labels: tr.config.commonLabels,
+    },
+  },
+
   statefulSet:
     local localEndpointFlag = '--receive.local-endpoint=$(NAME).%s.$(NAMESPACE).svc.cluster.local:%d' % [
       tr.config.name,
@@ -128,6 +138,7 @@ function(params) {
             labels: tr.config.commonLabels,
           },
           spec: {
+            serviceAccountName: tr.serviceAccount.metadata.name,
             containers: [c],
             volumes: if tr.config.hashringConfigMapName != '' then [{
               name: 'hashring-config',

@@ -119,6 +119,16 @@ function(params) {
     },
   },
 
+  serviceAccount: {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: {
+      name: tqf.config.name,
+      namespace: tqf.config.namespace,
+      labels: tqf.config.commonLabels,
+    },
+  },
+
   deployment:
     local c = {
       name: 'thanos-query-frontend',
@@ -187,6 +197,7 @@ function(params) {
           metadata: { labels: tqf.config.commonLabels },
           spec: {
             containers: [c],
+            serviceAccountName: tqf.serviceAccount.metadata.name,
             terminationGracePeriodSeconds: 120,
             affinity: { podAntiAffinity: {
               preferredDuringSchedulingIgnoredDuringExecution: [{

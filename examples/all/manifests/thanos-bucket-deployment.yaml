@@ -70,4 +70,5 @@ spec:
             cpu: 0.123
             memory: 123Mi
         terminationMessagePolicy: FallbackToLogsOnError
+      serviceAccountName: thanos-bucket
       terminationGracePeriodSeconds: 120

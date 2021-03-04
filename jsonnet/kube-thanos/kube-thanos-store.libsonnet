@@ -51,6 +51,16 @@ function(params) {
     },
   },
 
+  serviceAccount: {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: {
+      name: ts.config.name,
+      namespace: ts.config.namespace,
+      labels: ts.config.commonLabels,
+    },
+  },
+
   statefulSet:
     local c = {
       name: 'thanos-store',
@@ -125,6 +135,7 @@ function(params) {
             labels: ts.config.commonLabels,
           },
           spec: {
+            serviceAccountName: ts.serviceAccount.metadata.name,
             containers: [c],
             volumes: [],
             terminationGracePeriodSeconds: 120,
