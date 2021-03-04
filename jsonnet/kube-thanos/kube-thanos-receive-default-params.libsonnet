@@ -28,6 +28,7 @@
     'replica="$(NAME)"',
     'receive="true"',
   ],
+  tenantLabelName: null,
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-receive',

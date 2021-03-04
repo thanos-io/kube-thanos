@@ -62,6 +62,10 @@ function(params) {
         '--label=%s' % label
         for label in tr.config.labels
       ] + (
+        if tr.config.tenantLabelName != null then [
+          '--receive.tenant-label-name=%s' % tr.config.tenantLabelName,
+        ] else []
+      ) + (
         if tr.config.hashringConfigMapName != '' then [
           '--receive.hashrings-file=/var/lib/thanos-receive/hashrings.json',
         ] else []
