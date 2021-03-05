@@ -31,7 +31,7 @@ function(params)
     shards: {
       ['shard' + i]: store(config {
         name+: '-%d' % i,
-        commonLabels+:: { 'store.observatorium.io/shard': 'shard-' + i },
+        commonLabels+:: { 'store.thanos.io/shard': 'shard-' + i },
       }) {
         serviceAccount: null,  // one service account for all stores
         statefulSet+: {
@@ -92,7 +92,7 @@ function(params)
                 targetLabel: 'instance',
               },
               {
-                sourceLabels: ['__meta_kubernetes_service_label_store_observatorium_io_shard'],
+                sourceLabels: ['__meta_kubernetes_service_label_store_thanos_io_shard'],
                 regex: 'shard\\-(\\d+)',
                 replacement: '$1',
                 targetLabel: 'shard',
