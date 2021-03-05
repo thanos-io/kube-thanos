@@ -123,6 +123,9 @@ function(params) {
             ),
           ] else []
         ),
+      securityContext: {
+        runAsUser: 65534,
+      },
       ports: [
         { name: port.name, containerPort: port.port }
         for port in tq.service.spec.ports

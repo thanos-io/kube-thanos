@@ -80,6 +80,8 @@ spec:
             scheme: HTTP
           periodSeconds: 5
         resources: {}
+        securityContext:
+          runAsUser: 65534
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /var/thanos/store

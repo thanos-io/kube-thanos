@@ -84,6 +84,8 @@ spec:
             scheme: HTTP
           periodSeconds: 5
         resources: {}
+        securityContext:
+          runAsUser: 65534
         terminationMessagePolicy: FallbackToLogsOnError
       serviceAccountName: thanos-query
       terminationGracePeriodSeconds: 120
