@@ -86,6 +86,9 @@ function(params) {
           ),
         ] else []
       ),
+      securityContext: {
+        runAsUser: 65534,
+      },
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
         { name: 'NAMESPACE', valueFrom: { fieldRef: { fieldPath: 'metadata.namespace' } } },

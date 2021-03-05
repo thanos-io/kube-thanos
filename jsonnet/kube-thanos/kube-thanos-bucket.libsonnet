@@ -91,6 +91,9 @@ function(params) {
           ),
         ] else []
       ),
+      securityContext: {
+        runAsUser: 65534,
+      },
       env: [
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
           key: tb.config.objectStorageConfig.key,

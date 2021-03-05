@@ -118,6 +118,9 @@ function(params) {
             ),
           ] else []
         ),
+      securityContext: {
+        runAsUser: 65534,
+      },
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {

@@ -106,6 +106,8 @@ spec:
           requests:
             cpu: 0.123
             memory: 123Mi
+        securityContext:
+          runAsUser: 65534
         terminationMessagePolicy: FallbackToLogsOnError
       serviceAccountName: thanos-query-frontend
       terminationGracePeriodSeconds: 120
