@@ -161,7 +161,7 @@ function(params) {
       args:
         [
           '-webhook-url=http://localhost:' + tr.service.spec.ports[1].port + '/-/reload',
-        ] + 
+        ] +
         (['-volume-dir=/etc/thanos/rules/' + ruleConfig.name for ruleConfig in tr.config.rulesConfig]),
       volumeMounts: [
         { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name }
@@ -187,8 +187,8 @@ function(params) {
           },
           spec: {
             serviceAccountName: tr.serviceAccount.metadata.name,
-            containers: [c] + 
-              (if std.length(tr.config.rulesConfig) > 0 then [reloadContainer] else []),
+            containers: [c] +
+                        (if std.length(tr.config.rulesConfig) > 0 then [reloadContainer] else []),
             volumes: [
               { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
               for ruleConfig in tr.config.rulesConfig

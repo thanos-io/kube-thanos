@@ -90,7 +90,6 @@ spec:
           readOnly: false
         - mountPath: /etc/thanos/rules/test
           name: test
-      serviceAccountName: thanos-rule
       - args:
         - -webhook-url=http://localhost:10902/-/reload
         - -volume-dir=/etc/thanos/rules/test
@@ -99,6 +98,7 @@ spec:
         volumeMounts:
         - mountPath: /etc/thanos/rules/test
           name: test
+      serviceAccountName: thanos-rule
       volumes:
       - configMap:
           name: test
