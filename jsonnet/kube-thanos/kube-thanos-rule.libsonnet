@@ -8,6 +8,7 @@ local defaults = {
   version: error 'must provide version',
   image: error 'must provide image',
   replicas: error 'must provide replicas',
+  reloaderImage: error 'must provide reloader image',
   objectStorageConfig: error 'must provide objectStorageConfig',
   ruleFiles: [],
   rulesConfig: [],
@@ -154,6 +155,20 @@ function(params) {
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
+    local reloadContainer = {
+      name: 'configmap-reloader',
+      image: tr.config.reloaderImage,
+      args:
+        [
+          '-webhook-url=http://localhost:' + tr.service.spec.ports[1].port + '/-/reload',
+        ] +
+        (['-volume-dir=/etc/thanos/rules/' + ruleConfig.name for ruleConfig in tr.config.rulesConfig]),
+      volumeMounts: [
+        { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name }
+        for ruleConfig in tr.config.rulesConfig
+      ],
+    };
+
     {
       apiVersion: 'apps/v1',
       kind: 'StatefulSet',
@@ -172,7 +187,8 @@ function(params) {
           },
           spec: {
             serviceAccountName: tr.serviceAccount.metadata.name,
-            containers: [c],
+            containers: [c] +
+                        (if std.length(tr.config.rulesConfig) > 0 then [reloadContainer] else []),
             volumes: [
               { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
               for ruleConfig in tr.config.rulesConfig

@@ -62,11 +62,11 @@ local re = t.receive(commonConfig {
   hashringConfigMapName: 'hashring',
 });
 
-
 local ru = t.rule(commonConfig {
   replicas: 1,
   rulesConfig: [{ name: 'test', key: 'test' }],
   alertmanagersURLs: ['alertmanager:9093'],
+  reloaderImage: 'jimmidyson/configmap-reload:v0.5.0',
   serviceMonitor: true,
 });
 
