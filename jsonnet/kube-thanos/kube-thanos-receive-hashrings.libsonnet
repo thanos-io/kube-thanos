@@ -39,7 +39,7 @@ function(params)
       }) {
         local receiver = self,
 
-        serviceAccount: null,  // one service account for all stores.
+        serviceAccount: null,  // one service account for all receivers.
         statefulSet+: {
           metadata+: {
             labels+: {
@@ -65,5 +65,40 @@ function(params)
         },
       }
       for h in config.hashrings
+    },
+  } + {
+    serviceMonitor: if config.serviceMonitor == true then {
+      apiVersion: 'monitoring.coreos.com/v1',
+      kind: 'ServiceMonitor',
+      metadata+: {
+        name: config.name,
+        namespace: config.namespace,
+        labels: config.commonLabels,
+      },
+      spec: {
+        selector: {
+          matchLabels: {
+            [key]: config.podLabelSelector[key]
+            for key in std.objectFields(config.podLabelSelector)
+            if key != 'app.kubernetes.io/instance'
+          },
+        },
+        endpoints: [
+          {
+            port: 'http',
+            relabelings: [
+              {
+                sourceLabels: ['namespace', 'pod'],
+                separator: '/',
+                targetLabel: 'instance',
+              },
+              {
+                sourceLabels: ['__meta_kubernetes_service_label_controller_receive_thanos_io_shard'],
+                targetLabel: 'hashring',
+              },
+            ],
+          },
+        ],
+      },
     },
   }
