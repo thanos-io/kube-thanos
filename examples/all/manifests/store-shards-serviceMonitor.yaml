@@ -20,7 +20,7 @@ spec:
     - regex: shard\-(\d+)
       replacement: $1
       sourceLabels:
-      - __meta_kubernetes_service_label_store_observatorium_io_shard
+      - __meta_kubernetes_service_label_store_thanos_io_shard
       targetLabel: shard
   selector:
     matchLabels:

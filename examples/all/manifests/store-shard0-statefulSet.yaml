@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/instance: thanos-store-0
     app.kubernetes.io/name: thanos-store
     app.kubernetes.io/version: v0.17.2
-    store.observatorium.io/shard: shard-0
+    store.thanos.io/shard: shard-0
   name: thanos-store-0
   namespace: thanos
 spec:
@@ -16,7 +16,7 @@ spec:
       app.kubernetes.io/component: object-store-gateway
       app.kubernetes.io/instance: thanos-store-0
       app.kubernetes.io/name: thanos-store
-      store.observatorium.io/shard: shard-0
+      store.thanos.io/shard: shard-0
   serviceName: thanos-store-0
   template:
     metadata:
@@ -25,7 +25,7 @@ spec:
         app.kubernetes.io/instance: thanos-store-0
         app.kubernetes.io/name: thanos-store
         app.kubernetes.io/version: v0.17.2
-        store.observatorium.io/shard: shard-0
+        store.thanos.io/shard: shard-0
     spec:
       affinity:
         podAntiAffinity:
@@ -153,7 +153,7 @@ spec:
         app.kubernetes.io/component: object-store-gateway
         app.kubernetes.io/instance: thanos-store-0
         app.kubernetes.io/name: thanos-store
-        store.observatorium.io/shard: shard-0
+        store.thanos.io/shard: shard-0
       name: data
     spec:
       accessModes:
