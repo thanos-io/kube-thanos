@@ -218,4 +218,5 @@ local finalQ = t.query(q.config {
 } +
 {
   'store-shards-serviceMonitor': strs.serviceMonitor,
+  'receive-hashrings-serviceMonitor': rcvs.serviceMonitor,
 }
