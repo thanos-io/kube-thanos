@@ -116,6 +116,7 @@ function(params) {
         ] else []
       ),
       securityContext: {
+        fsGroup: 65534,
         runAsUser: 65534,
       },
       env: [
