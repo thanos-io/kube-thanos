@@ -39,7 +39,9 @@ function(params)
       }) {
         local receiver = self,
 
-        serviceAccount: null,  // one service account for all receivers.
+        serviceAccount: null,  // one service account for all receivers
+        serviceMonitor: null,  // one service monitor for all receivers
+
         statefulSet+: {
           metadata+: {
             labels+: {
