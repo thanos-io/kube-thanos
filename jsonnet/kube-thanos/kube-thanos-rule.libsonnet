@@ -120,7 +120,6 @@ function(params) {
           ] else []
         ),
       securityContext: {
-        fsGroup: 65534,
         runAsUser: 65534,
       },
       env: [
@@ -191,6 +190,9 @@ function(params) {
           },
           spec: {
             serviceAccountName: tr.serviceAccount.metadata.name,
+            securityContext: {
+              fsGroup: 65534,
+            },
             containers: [c] +
                         (if std.length(tr.config.rulesConfig) > 0 then [reloadContainer] else []),
             volumes: [

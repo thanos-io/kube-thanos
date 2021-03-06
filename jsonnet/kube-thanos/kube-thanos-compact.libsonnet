@@ -116,7 +116,6 @@ function(params) {
         ] else []
       ),
       securityContext: {
-        fsGroup: 65534,
         runAsUser: 65534,
       },
       env: [
@@ -166,6 +165,9 @@ function(params) {
           },
           spec: {
             serviceAccountName: tc.serviceAccount.metadata.name,
+            securityContext: {
+              fsGroup: 65534,
+            },
             containers: [c],
             volumes: [],
             terminationGracePeriodSeconds: 120,

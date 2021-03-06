@@ -124,7 +124,6 @@ spec:
             cpu: 0.123
             memory: 123Mi
         securityContext:
-          fsGroup: 65534
           runAsUser: 65534
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
@@ -133,6 +132,8 @@ spec:
           readOnly: false
         - mountPath: /var/lib/thanos-receive
           name: hashring-config
+      securityContext:
+        fsGroup: 65534
       serviceAccountName: thanos-receive
       terminationGracePeriodSeconds: 900
       volumes:

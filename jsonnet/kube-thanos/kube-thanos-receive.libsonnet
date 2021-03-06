@@ -87,7 +87,6 @@ function(params) {
         ] else []
       ),
       securityContext: {
-        fsGroup: 65534,
         runAsUser: 65534,
       },
       env: [
@@ -143,6 +142,9 @@ function(params) {
           },
           spec: {
             serviceAccountName: tr.serviceAccount.metadata.name,
+            securityContext: {
+              fsGroup: 65534,
+            },
             containers: [c],
             volumes: if tr.config.hashringConfigMapName != '' then [{
               name: 'hashring-config',
