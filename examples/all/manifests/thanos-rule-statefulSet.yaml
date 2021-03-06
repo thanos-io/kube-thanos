@@ -84,7 +84,6 @@ spec:
             cpu: 0.123
             memory: 123Mi
         securityContext:
-          fsGroup: 65534
           runAsUser: 65534
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
@@ -101,6 +100,8 @@ spec:
         volumeMounts:
         - mountPath: /etc/thanos/rules/test
           name: test
+      securityContext:
+        fsGroup: 65534
       serviceAccountName: thanos-rule
       volumes:
       - configMap:
