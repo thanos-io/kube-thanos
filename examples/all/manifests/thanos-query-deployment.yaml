@@ -85,6 +85,7 @@ spec:
           periodSeconds: 5
         resources: {}
         securityContext:
+          fsGroup: 65534
           runAsUser: 65534
         terminationMessagePolicy: FallbackToLogsOnError
       serviceAccountName: thanos-query

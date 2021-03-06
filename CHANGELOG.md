@@ -21,7 +21,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 ### Changed
 
 - [#196](https://github.com/thanos-io/kube-thanos/pull/196) Single ServiceAccount for each component.
-- [#200](https://github.com/thanos-io/kube-thanos/pull/200) Run all components as non-root.
+- [#200](https://github.com/thanos-io/kube-thanos/pull/200) [#202](https://github.com/thanos-io/kube-thanos/pull/200) Run all components as non-root.
 
 ### Added
 
