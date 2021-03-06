@@ -92,7 +92,6 @@ function(params) {
         ] else []
       ),
       securityContext: {
-        fsGroup: 65534,
         runAsUser: 65534,
       },
       env: [
@@ -134,6 +133,9 @@ function(params) {
           metadata: { labels: tb.config.commonLabels },
           spec: {
             serviceAccountName: tb.serviceAccount.metadata.name,
+            securityContext: {
+              fsGroup: 65534,
+            },
             containers: [container],
             terminationGracePeriodSeconds: 120,
           },

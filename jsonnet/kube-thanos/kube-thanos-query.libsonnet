@@ -124,7 +124,6 @@ function(params) {
           ] else []
         ),
       securityContext: {
-        fsGroup: 65534,
         runAsUser: 65534,
       },
       ports: [
@@ -162,6 +161,9 @@ function(params) {
           },
           spec: {
             containers: [c],
+            securityContext: {
+              fsGroup: 65534,
+            },
             serviceAccountName: tq.serviceAccount.metadata.name,
             terminationGracePeriodSeconds: 120,
             affinity: { podAntiAffinity: {
