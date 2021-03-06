@@ -34,6 +34,8 @@ function(params)
         commonLabels+:: { 'store.thanos.io/shard': 'shard-' + i },
       }) {
         serviceAccount: null,  // one service account for all stores
+        serviceMonitor: null,  // one service monitor foal all stores
+
         statefulSet+: {
           spec+: {
             template+: {
@@ -60,8 +62,6 @@ function(params)
             },
           },
         },
-
-        serviceMonitor: null,
       }
       for i in std.range(0, config.shards - 1)
     },
