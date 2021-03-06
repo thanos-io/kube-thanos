@@ -70,6 +70,17 @@ local ru = t.rule(commonConfig {
   serviceMonitor: true,
 });
 
+local sc = t.sidecar(commonConfig {
+  // namespace: 'monitoring',
+  serviceMonitor: true,
+  // Labels of the Prometheus pods with a Thanos Sidecar container
+  podLabelSelector: {
+    // Here it is the default label given by the prometheus-operator
+    // to all Prometheus pods
+    app: 'prometheus',
+  },
+});
+
 local s = t.store(commonConfig {
   replicas: 1,
   serviceMonitor: true,
@@ -96,10 +107,6 @@ local s = t.store(commonConfig {
 local q = t.query(commonConfig {
   name: 'thanos-query',
   replicas: 1,
-  stores: [
-    'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
-    for service in [re.service, ru.service, s.service]
-  ],
   externalPrefix: '',
   resources: {},
   queryTimeout: '5m',
@@ -191,7 +198,7 @@ local strs = t.storeShards(commonConfig {
 local finalQ = t.query(q.config {
   stores: [
     'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
-    for service in [re.service, ru.service, s.service] +
+    for service in [re.service, ru.service, sc.service, s.service] +
                    [rcvs.hashrings[hashring].service for hashring in std.objectFields(rcvs.hashrings)] +
                    [strs.shards[shard].service for shard in std.objectFields(strs.shards)]
   ],
@@ -201,6 +208,7 @@ local finalQ = t.query(q.config {
 { ['thanos-compact-' + name]: c[name] for name in std.objectFields(c) if c[name] != null } +
 { ['thanos-receive-' + name]: re[name] for name in std.objectFields(re) if re[name] != null } +
 { ['thanos-rule-' + name]: finalRu[name] for name in std.objectFields(finalRu) if finalRu[name] != null } +
+{ ['thanos-sidecar-' + name]: sc[name] for name in std.objectFields(sc) if sc[name] != null } +
 { ['thanos-store-' + name]: s[name] for name in std.objectFields(s) if s[name] != null } +
 { ['thanos-query-' + name]: finalQ[name] for name in std.objectFields(finalQ) if finalQ[name] != null } +
 { ['thanos-query-frontend-' + name]: qf[name] for name in std.objectFields(qf) if qf[name] != null } +
