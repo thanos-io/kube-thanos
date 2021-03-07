@@ -52,9 +52,9 @@ $(JSONNETFMT): .bingo/jsonnetfmt.mod
 	@echo "(re)installing $(GOBIN)/jsonnetfmt-v0.17.1-0.20210101181740-31d71aaccda6"
 	@cd .bingo && $(GO) build -mod=mod -modfile=jsonnetfmt.mod -o=$(GOBIN)/jsonnetfmt-v0.17.1-0.20210101181740-31d71aaccda6 "github.com/google/go-jsonnet/cmd/jsonnetfmt"
 
-KUBEVAL := $(GOBIN)/kubeval-v0.0.0-20201005082916-38668c6c5b23
-$(KUBEVAL): .bingo/kubeval.mod
+KUBECONFORM := $(GOBIN)/kubeconform-v0.4.4
+$(KUBECONFORM): .bingo/kubeconform.mod
 	@# Install binary/ries using Go 1.14+ build command. This is using bwplotka/bingo-controlled, separate go module with pinned dependencies.
-	@echo "(re)installing $(GOBIN)/kubeval-v0.0.0-20201005082916-38668c6c5b23"
-	@cd .bingo && $(GO) build -mod=mod -modfile=kubeval.mod -o=$(GOBIN)/kubeval-v0.0.0-20201005082916-38668c6c5b23 "github.com/instrumenta/kubeval"
+	@echo "(re)installing $(GOBIN)/kubeconform-v0.4.4"
+	@cd .bingo && $(GO) build -mod=mod -modfile=kubeconform.mod -o=$(GOBIN)/kubeconform-v0.4.4 "github.com/yannh/kubeconform/cmd/kubeconform"
 

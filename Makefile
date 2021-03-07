@@ -6,6 +6,7 @@ JSONNETFMT_CMD := $(JSONNETFMT) -n 2 --max-blank-lines 2 --string-style s --comm
 
 EXAMPLES := examples
 MANIFESTS := manifests
+CRDSCHEMAS := .crdschemas
 TMP := tmp
 
 K8S_VERSION := 1.20.4
@@ -46,22 +47,22 @@ clean:
 	-rm -rf tmp/bin
 	rm -rf manifests/
 
-${TMP}/openapi2jsonschema.py:
+${TMP}/bin/openapi2jsonschema.py:
 	@$(PIP) show pyyaml >/dev/null
 	@mkdir -p $(TMP)
 	@curl -sSfo $@ https://raw.githubusercontent.com/yannh/kubeconform/v0.4.4/scripts/openapi2jsonschema.py
 	@chmod +x $@
 
-.kubeval/v${K8S_VERSION}-standalone-strict: $(TMP)/openapi2jsonschema.py
-	@rm -rf .kubeval
+${CRDSCHEMAS}: $(TMP)/bin/openapi2jsonschema.py
+	@rm -rf $@
 	@mkdir -p $@
 	@cd $@ && for crd in $(CRDS); do \
-	  FILENAME_FORMAT='{kind}-{group}-{version}' ../../$(TMP)/openapi2jsonschema.py "$${crd}"; \
+	  FILENAME_FORMAT='{kind}-{group}-{version}' $(CURDIR)/$(TMP)/bin/openapi2jsonschema.py "$${crd}"; \
 	done
 
 .PHONY: validate
-validate: $(KUBEVAL) $(MANIFESTS) $(EXAMPLES)/all/manifests
-	$(KUBEVAL) --force-color --strict --kubernetes-version $(K8S_VERSION) \
-		--schema-location https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master \
-		--additional-schema-locations "file://$(CURDIR)/.kubeval" \
-		$(MANIFESTS)/*.yaml $(EXAMPLES)/all/manifests/*.yaml
+validate: $(KUBECONFORM) $(MANIFESTS) $(EXAMPLES)/all/manifests
+	$(KUBECONFORM) -strict -kubernetes-version $(K8S_VERSION) -output tap \
+		-schema-location 'https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master' \
+		-schema-location '$(CRDSCHEMAS)/{{ .ResourceKind }}{{ .KindSuffix }}.json' \
+		$(MANIFESTS) $(EXAMPLES)/all/manifests
