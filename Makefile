@@ -16,7 +16,7 @@ generate: vendor ${MANIFESTS} **.md
 	$(EMBEDMD) -w `find . -name "*.md" | grep -v vendor`
 
 .PHONY: ${MANIFESTS}
-${MANIFESTS}: $(JSONNET) $(GOJSONTOYAML) vendor example.jsonnet build.sh
+${MANIFESTS}: $(JSONNET) $(GOJSONTOYAML) vendor example.jsonnet all.jsonnet build.sh
 	@rm -rf ${MANIFESTS}
 	@mkdir -p ${MANIFESTS}
 	JSONNET=$(JSONNET) GOJSONTOYAML=$(GOJSONTOYAML) ./build.sh
@@ -39,5 +39,5 @@ clean:
 	rm -rf manifests/
 
 .PHONY: validate
-validate: $(KUBEVAL) $(MANIFESTS)
-	$(KUBEVAL) --ignore-missing-schemas $(MANIFESTS)/*.yaml
+validate: $(KUBEVAL) $(MANIFESTS) $(EXAMPLES)/all/manifests
+	$(KUBEVAL) --strict --ignore-missing-schemas $(MANIFESTS)/*.yaml $(EXAMPLES)/all/manifests/*.yaml
