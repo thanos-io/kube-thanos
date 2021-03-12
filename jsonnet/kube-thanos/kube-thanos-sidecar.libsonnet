@@ -69,14 +69,14 @@ function(params) {
       selector: {
         matchLabels: tsc.config.serviceLabelSelector,
       },
-      relabelings: [{
-        sourceLabels: ['namespace', 'pod'],
-        separator: '/',
-        targetLabel: 'instance',
+      endpoints: [{
+        port: 'http',
+        relabelings: [{
+          sourceLabels: ['namespace', 'pod'],
+          separator: '/',
+          targetLabel: 'instance',
+        }],
       }],
-      endpoints: [
-        { port: 'http' },
-      ],
     },
   },
 }
