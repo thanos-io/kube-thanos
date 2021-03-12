@@ -40,6 +40,7 @@ local commonConfig = {
 local b = t.bucket(commonConfig {
   replicas: 1,
   label: 'cluster_name',
+  refresh: '5m',
   // Example on how to overwrite the tracing config on a per component basis
   // tracing+: {
   //   config+: {

@@ -94,6 +94,10 @@ function(params) {
         if std.objectHas(tb.config, 'label') then [
           '--label=' + tb.config.label,
         ] else []
+      ) + (
+        if std.objectHas(tb.config, 'refresh') then [
+          '--refresh=' + tb.config.refresh,
+        ] else []
       ),
       securityContext: {
         runAsUser: 65534,

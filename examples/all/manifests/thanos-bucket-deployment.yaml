@@ -38,6 +38,7 @@ spec:
             "service_name": "thanos-bucket"
           "type": "JAEGER"
         - --label=cluster_name
+        - --refresh=5m
         env:
         - name: OBJSTORE_CONFIG
           valueFrom:
