@@ -90,6 +90,10 @@ function(params) {
             { config+: { service_name: defaults.name } } + tb.config.tracing
           ),
         ] else []
+      ) + (
+        if std.objectHas(tb.config, 'label') then [
+          '--label=' + tb.config.label,
+        ] else []
       ),
       securityContext: {
         runAsUser: 65534,
