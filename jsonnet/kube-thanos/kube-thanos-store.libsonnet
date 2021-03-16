@@ -25,7 +25,7 @@ function(params) {
   assert std.isObject(ts.config.resources),
   assert std.isBoolean(ts.config.serviceMonitor),
   assert std.isObject(ts.config.volumeClaimTemplate),
-  assert std.assertEqual(ts.config.volumeClaimTemplate.spec.accessModes, ["ReadWriteOnce"]): 'thanos store PVC accessMode can only be ReadWriteOnce',
+  assert std.assertEqual(ts.config.volumeClaimTemplate.spec.accessModes, ['ReadWriteOnce']) : 'thanos store PVC accessMode can only be ReadWriteOnce',
 
   service: {
     apiVersion: 'v1',
