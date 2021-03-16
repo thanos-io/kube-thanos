@@ -47,6 +47,7 @@ function(params) {
   assert std.isNumber(tc.config.replicas) && (tc.config.replicas == 0 || tc.config.replicas == 1) : 'thanos compact replicas can only be 0 or 1',
   assert std.isObject(tc.config.resources),
   assert std.isObject(tc.config.volumeClaimTemplate),
+  assert std.assertEqual(tc.config.volumeClaimTemplate.spec.accessModes, ["ReadWriteOnce"]) : 'thanos compact PVC accessMode can only be ReadWriteOnce',
   assert std.isBoolean(tc.config.serviceMonitor),
   assert std.isArray(tc.config.deduplicationReplicaLabels),
 
