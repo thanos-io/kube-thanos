@@ -86,9 +86,6 @@ function(params) {
           ),
         ] else []
       ),
-      securityContext: {
-        runAsUser: 65534,
-      },
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
         { name: 'NAMESPACE', valueFrom: { fieldRef: { fieldPath: 'metadata.namespace' } } },
@@ -142,9 +139,7 @@ function(params) {
           },
           spec: {
             serviceAccountName: tr.serviceAccount.metadata.name,
-            securityContext: {
-              fsGroup: 65534,
-            },
+            securityContext: tr.config.securityContext,
             containers: [c],
             volumes: if tr.config.hashringConfigMapName != '' then [{
               name: 'hashring-config',

@@ -89,9 +89,6 @@ function(params) {
           ),
         ] else []
       ),
-      securityContext: {
-        runAsUser: 65534,
-      },
       env: [
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
           key: ts.config.objectStorageConfig.key,
@@ -139,9 +136,7 @@ function(params) {
           },
           spec: {
             serviceAccountName: ts.serviceAccount.metadata.name,
-            securityContext: {
-              fsGroup: 65534,
-            },
+            securityContext: ts.config.securityContext,
             containers: [c],
             volumes: [],
             terminationGracePeriodSeconds: 120,
