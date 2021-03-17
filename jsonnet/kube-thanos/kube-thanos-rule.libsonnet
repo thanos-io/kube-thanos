@@ -56,6 +56,8 @@ function(params) {
   assert std.isObject(tr.config.resources),
   assert std.isBoolean(tr.config.serviceMonitor),
   assert std.isObject(tr.config.volumeClaimTemplate),
+  assert !std.objectHas(tr.config.volumeClaimTemplate, 'spec') || std.assertEqual(tr.config.volumeClaimTemplate.spec.accessModes, ['ReadWriteOnce']) : 'thanos rule PVC accessMode can only be ReadWriteOnce',
+
 
   service: {
     apiVersion: 'v1',
