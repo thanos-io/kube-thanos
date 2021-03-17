@@ -65,4 +65,9 @@
     for labelName in std.objectFields(defaults.commonLabels)
     if labelName != 'app.kubernetes.io/version'
   },
+
+  securityContext:: {
+    fsGroup: 65534,
+    runAsUser: 65534,
+  },
 }

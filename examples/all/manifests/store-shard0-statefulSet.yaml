@@ -139,8 +139,6 @@ spec:
           requests:
             cpu: 0.123
             memory: 123Mi
-        securityContext:
-          runAsUser: 65534
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /var/thanos/store
@@ -148,6 +146,7 @@ spec:
           readOnly: false
       securityContext:
         fsGroup: 65534
+        runAsUser: 65534
       serviceAccountName: thanos-store
       terminationGracePeriodSeconds: 120
       volumes: []

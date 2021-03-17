@@ -36,6 +36,11 @@ local defaults = {
     for labelName in std.objectFields(defaults.commonLabels)
     if labelName != 'app.kubernetes.io/version'
   },
+
+  securityContext:: {
+    fsGroup: 65534,
+    runAsUser: 65534,
+  },
 };
 
 function(params) {
@@ -119,9 +124,6 @@ function(params) {
             ),
           ] else []
         ),
-      securityContext: {
-        runAsUser: 65534,
-      },
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
@@ -190,9 +192,7 @@ function(params) {
           },
           spec: {
             serviceAccountName: tr.serviceAccount.metadata.name,
-            securityContext: {
-              fsGroup: 65534,
-            },
+            securityContext: tr.config.securityContext,
             containers: [c] +
                         (if std.length(tr.config.rulesConfig) > 0 then [reloadContainer] else []),
             volumes: [

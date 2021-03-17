@@ -36,6 +36,11 @@ local defaults = {
     for labelName in std.objectFields(defaults.commonLabels)
     if labelName != 'app.kubernetes.io/version'
   },
+
+  securityContext:: {
+    fsGroup: 65534,
+    runAsUser: 65534,
+  },
 };
 
 function(params) {
@@ -115,9 +120,6 @@ function(params) {
           ),
         ] else []
       ),
-      securityContext: {
-        runAsUser: 65534,
-      },
       env: [
         { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
           key: tc.config.objectStorageConfig.key,
@@ -165,9 +167,7 @@ function(params) {
           },
           spec: {
             serviceAccountName: tc.serviceAccount.metadata.name,
-            securityContext: {
-              fsGroup: 65534,
-            },
+            securityContext: tc.config.securityContext,
             containers: [c],
             volumes: [],
             terminationGracePeriodSeconds: 120,

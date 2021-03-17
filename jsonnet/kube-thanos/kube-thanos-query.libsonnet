@@ -35,6 +35,11 @@ local defaults = {
     for labelName in std.objectFields(defaults.commonLabels)
     if labelName != 'app.kubernetes.io/version'
   },
+
+  securityContext:: {
+    fsGroup: 65534,
+    runAsUser: 65534,
+  },
 };
 
 function(params) {
@@ -123,9 +128,6 @@ function(params) {
             ),
           ] else []
         ),
-      securityContext: {
-        runAsUser: 65534,
-      },
       ports: [
         { name: port.name, containerPort: port.port }
         for port in tq.service.spec.ports
@@ -161,9 +163,7 @@ function(params) {
           },
           spec: {
             containers: [c],
-            securityContext: {
-              fsGroup: 65534,
-            },
+            securityContext: tq.config.securityContext,
             serviceAccountName: tq.serviceAccount.metadata.name,
             terminationGracePeriodSeconds: 120,
             affinity: { podAntiAffinity: {
