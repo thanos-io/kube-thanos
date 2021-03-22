@@ -84,6 +84,14 @@ function(params) {
           '--store.caching-bucket.config=' + std.manifestYamlDoc(ts.config.bucketCache),
         ] else []
       ) + (
+        if std.length(ts.config.minTime) > 0 then [
+          '--min-time=' + ts.config.minTime,
+        ] else []
+      ) + (
+        if std.length(ts.config.maxTime) > 0 then [
+          '--max-time=' + ts.config.maxTime,
+        ] else []
+      ) + (
         if std.length(ts.config.tracing) > 0 then [
           '--tracing.config=' + std.manifestYamlDoc(
             { config+: { service_name: defaults.name } } + ts.config.tracing
