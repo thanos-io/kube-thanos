@@ -22,6 +22,8 @@
     http: 10902,
   },
   tracing: {},
+  minTime: '',
+  maxTime: '',
 
   memcachedDefaults+:: {
     config+: {

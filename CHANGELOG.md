@@ -29,6 +29,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#192](https://github.com/thanos-io/kube-thanos/pull/192) sidecar: Add pod discovery
 - [#194](https://github.com/thanos-io/kube-thanos/pull/194) Allow configuring --label and --receive.tenant-label-name flags.
 - [#209](https://github.com/thanos-io/kube-thanos/pull/209) Allow configuring --label and --refresh flags of bucket web.
+- [#213](https://github.com/thanos-io/kube-thanos/pull/213) Allow configuring `--min-time` and `--max-time` of store.
 
 ### Fixed
 
