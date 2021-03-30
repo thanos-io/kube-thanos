@@ -142,6 +142,7 @@ function(params) {
         template: {
           metadata: {
             labels: ts.config.commonLabels,
+            annotations: ts.config.podAnnotations,
           },
           spec: {
             serviceAccountName: ts.serviceAccount.metadata.name,

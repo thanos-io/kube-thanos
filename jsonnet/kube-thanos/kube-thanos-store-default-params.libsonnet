@@ -68,6 +68,8 @@
     if labelName != 'app.kubernetes.io/version'
   },
 
+  podAnnotations:: {},
+
   securityContext:: {
     fsGroup: 65534,
     runAsUser: 65534,
