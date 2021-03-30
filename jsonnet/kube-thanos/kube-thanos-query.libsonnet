@@ -35,7 +35,9 @@ local defaults = {
     for labelName in std.objectFields(defaults.commonLabels)
     if labelName != 'app.kubernetes.io/version'
   },
-
+  
+  podAnnotations:: {},
+  
   securityContext:: {
     fsGroup: 65534,
     runAsUser: 65534,
@@ -160,6 +162,7 @@ function(params) {
         template: {
           metadata: {
             labels: tq.config.commonLabels,
+            annotations: tq.config.podAnnotations,
           },
           spec: {
             containers: [c],
