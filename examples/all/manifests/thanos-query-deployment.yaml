@@ -63,6 +63,7 @@ spec:
             "sampler_type": "ratelimiting"
             "service_name": "thanos-query"
           "type": "JAEGER"
+        - --query.auto-downsampling
         image: quay.io/thanos/thanos:v0.17.2
         livenessProbe:
           failureThreshold: 4
