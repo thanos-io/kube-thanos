@@ -111,6 +111,7 @@ local q = t.query(commonConfig {
   externalPrefix: '',
   resources: {},
   queryTimeout: '5m',
+  autoDownsampling: true,
   lookbackDelta: '15m',
   ports: {
     grpc: 10901,

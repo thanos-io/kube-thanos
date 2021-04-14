@@ -47,6 +47,7 @@ spec:
         - --query.replica-label=prometheus_replica
         - --query.replica-label=rule_replica
         - --store=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local
+        - --query.auto-downsampling
         image: quay.io/thanos/thanos:v0.17.2
         livenessProbe:
           failureThreshold: 4
