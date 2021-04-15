@@ -94,6 +94,15 @@ function(params) {
           key: tr.config.objectStorageConfig.key,
           name: tr.config.objectStorageConfig.name,
         } } },
+        {
+          // Inject the host IP to make configuring tracing convenient.
+          name: 'HOST_IP_ADDRESS',
+          valueFrom: {
+            fieldRef: {
+              fieldPath: 'status.hostIP',
+            },
+          },
+        },
       ],
       ports: [
         { name: name, containerPort: tr.config.ports[name] }

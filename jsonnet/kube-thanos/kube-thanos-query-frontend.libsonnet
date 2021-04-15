@@ -169,6 +169,17 @@ function(params) {
           ),
         ] else []
       ),
+      env: [
+        {
+          // Inject the host IP to make configuring tracing convenient.
+          name: 'HOST_IP_ADDRESS',
+          valueFrom: {
+            fieldRef: {
+              fieldPath: 'status.hostIP',
+            },
+          },
+        },
+      ],
       ports: [
         { name: name, containerPort: tqf.config.ports[name] }
         for name in std.objectFields(tqf.config.ports)

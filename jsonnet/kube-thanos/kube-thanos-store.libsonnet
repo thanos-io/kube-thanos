@@ -103,6 +103,15 @@ function(params) {
           key: ts.config.objectStorageConfig.key,
           name: ts.config.objectStorageConfig.name,
         } } },
+        {
+          // Inject the host IP to make configuring tracing convenient.
+          name: 'HOST_IP_ADDRESS',
+          valueFrom: {
+            fieldRef: {
+              fieldPath: 'status.hostIP',
+            },
+          },
+        },
       ],
       ports: [
         { name: name, containerPort: ts.config.ports[name] }

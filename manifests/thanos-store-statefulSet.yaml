@@ -58,6 +58,10 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
+        - name: HOST_IP_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         image: quay.io/thanos/thanos:v0.17.2
         livenessProbe:
           failureThreshold: 8

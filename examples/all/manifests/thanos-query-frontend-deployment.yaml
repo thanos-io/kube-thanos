@@ -80,6 +80,11 @@ spec:
             "sampler_type": "ratelimiting"
             "service_name": "thanos-query-frontend"
           "type": "JAEGER"
+        env:
+        - name: HOST_IP_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         image: quay.io/thanos/thanos:v0.17.2
         livenessProbe:
           failureThreshold: 4
