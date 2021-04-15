@@ -134,6 +134,17 @@ function(params) {
             '--query.auto-downsampling',
           ] else []
         ),
+      env: [
+        {
+          // Inject the host IP to make configuring tracing convenient.
+          name: 'HOST_IP_ADDRESS',
+          valueFrom: {
+            fieldRef: {
+              fieldPath: 'status.hostIP',
+            },
+          },
+        },
+      ],
       ports: [
         { name: port.name, containerPort: port.port }
         for port in tq.service.spec.ports

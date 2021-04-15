@@ -64,6 +64,11 @@ spec:
             "service_name": "thanos-query"
           "type": "JAEGER"
         - --query.auto-downsampling
+        env:
+        - name: HOST_IP_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         image: quay.io/thanos/thanos:v0.17.2
         livenessProbe:
           failureThreshold: 4

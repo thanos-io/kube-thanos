@@ -109,6 +109,15 @@ function(params) {
           key: tb.config.objectStorageConfig.key,
           name: tb.config.objectStorageConfig.name,
         } } },
+        {
+          // Inject the host IP to make configuring tracing convenient.
+          name: 'HOST_IP_ADDRESS',
+          valueFrom: {
+            fieldRef: {
+              fieldPath: 'status.hostIP',
+            },
+          },
+        },
       ],
       ports: [
         { name: name, containerPort: tb.config.ports[name] }
