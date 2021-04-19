@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: object-store-gateway
     app.kubernetes.io/instance: thanos-store
     app.kubernetes.io/name: thanos-store
-    app.kubernetes.io/version: v0.17.2
+    app.kubernetes.io/version: v0.18.0
   name: thanos-store
   namespace: thanos
 spec:
@@ -22,7 +22,7 @@ spec:
         app.kubernetes.io/component: object-store-gateway
         app.kubernetes.io/instance: thanos-store
         app.kubernetes.io/name: thanos-store
-        app.kubernetes.io/version: v0.17.2
+        app.kubernetes.io/version: v0.18.0
     spec:
       affinity:
         podAntiAffinity:
@@ -58,7 +58,7 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:v0.17.2
+        image: quay.io/thanos/thanos:v0.18.0
         livenessProbe:
           failureThreshold: 8
           httpGet:
