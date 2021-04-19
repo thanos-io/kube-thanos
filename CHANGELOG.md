@@ -15,19 +15,23 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Breaking Changes
 
-- [#188](https://github.com/thanos-io/kube-thanos/pull/188) Single ServiceMonitor for store shards
-
 ### Changed
-
--
 
 ### Added
 
--
+### Fixed
+
+## [v0.18.0](https://github.com/thanos-io/kube-thanos/tree/v0.18.0) (2020-04-19)
+
+### Breaking Changes
+
+- [#188](https://github.com/thanos-io/kube-thanos/pull/188) Single ServiceMonitor for store shards
 
 ### Fixed
 
 - [#185](https://github.com/thanos-io/kube-thanos/pull/185) query-frontend, store: make cache types case insensitive
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.17.0...v0.18.0)
 
 ## [v0.17.0](https://github.com/thanos-io/kube-thanos/tree/v0.17.0) (2020-12-08)
 
