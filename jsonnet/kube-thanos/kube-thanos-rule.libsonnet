@@ -17,6 +17,8 @@ local defaults = {
   logLevel: 'info',
   logFormat: 'logfmt',
   resources: {},
+  retention: '48h',
+  blockDuration: '2h',
   serviceMonitor: false,
   ports: {
     grpc: 10901,
@@ -109,6 +111,8 @@ function(params) {
           '--data-dir=/var/thanos/rule',
           '--label=rule_replica="$(NAME)"',
           '--alert.label-drop=rule_replica',
+          '--tsdb.retention=' + tr.config.retention,
+          '--tsdb.block-duration=' + tr.config.blockDuration,
         ] +
         (['--query=%s' % querier for querier in tr.config.queriers]) +
         (['--rule-file=%s' % path for path in tr.config.ruleFiles]) +

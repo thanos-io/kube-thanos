@@ -35,6 +35,8 @@ spec:
         - --data-dir=/var/thanos/rule
         - --label=rule_replica="$(NAME)"
         - --alert.label-drop=rule_replica
+        - --tsdb.retention=48h
+        - --tsdb.block-duration=2h
         - --query=dnssrv+_http._tcp.thanos-query.thanos.svc.cluster.local
         - --alertmanagers.url=alertmanager:9093
         - --rule-file=/etc/thanos/rules/test/test
