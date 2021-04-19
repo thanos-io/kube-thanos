@@ -15,7 +15,6 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Breaking Changes
 
-- [#188](https://github.com/thanos-io/kube-thanos/pull/188) Single ServiceMonitor for store shards
 - [#196](https://github.com/thanos-io/kube-thanos/pull/196) Single ServiceAccount for all hashrings, causing hashrings position in the object tree to change.
 
 ### Changed
@@ -32,6 +31,14 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#213](https://github.com/thanos-io/kube-thanos/pull/213) Allow configuring `--min-time` and `--max-time` of store.
 - [#218](https://github.com/thanos-io/kube-thanos/pull/218) Enable `--query.auto-downsampling` for query by default.
 - [#221](https://github.com/thanos-io/kube-thanos/pull/221) Allow configuring `--tsdb.retention` and `--tsdb.block-duration` for rule.
+
+### Fixed
+
+## [v0.18.0](https://github.com/thanos-io/kube-thanos/tree/v0.18.0) (2020-04-19)
+
+### Breaking Changes
+
+- [#188](https://github.com/thanos-io/kube-thanos/pull/188) Single ServiceMonitor for store shards
 
 ### Fixed
 
