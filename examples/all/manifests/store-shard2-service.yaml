@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: object-store-gateway
     app.kubernetes.io/instance: thanos-store-2
     app.kubernetes.io/name: thanos-store
-    app.kubernetes.io/version: v0.17.2
+    app.kubernetes.io/version: v0.19.0
     store.thanos.io/shard: shard-2
   name: thanos-store-2
   namespace: thanos

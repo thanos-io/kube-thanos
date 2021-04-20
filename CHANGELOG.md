@@ -15,6 +15,16 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Breaking Changes
 
+### Changed
+
+### Added
+
+### Fixed
+
+## [v0.19.0](https://github.com/thanos-io/kube-thanos/tree/v0.19.0) (2020-04-19)
+
+### Breaking Changes
+
 - [#196](https://github.com/thanos-io/kube-thanos/pull/196) Single ServiceAccount for all hashrings, causing hashrings position in the object tree to change.
 
 ### Changed
@@ -32,7 +42,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#218](https://github.com/thanos-io/kube-thanos/pull/218) Enable `--query.auto-downsampling` for query by default.
 - [#221](https://github.com/thanos-io/kube-thanos/pull/221) Allow configuring `--tsdb.retention` and `--tsdb.block-duration` for rule.
 
-### Fixed
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.18.0...v0.19.0)
 
 ## [v0.18.0](https://github.com/thanos-io/kube-thanos/tree/v0.18.0) (2020-04-19)
 
@@ -43,6 +53,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 ### Fixed
 
 - [#185](https://github.com/thanos-io/kube-thanos/pull/185) query-frontend, store: make cache types case insensitive
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.17.0...v0.18.0)
 
 ## [v0.17.0](https://github.com/thanos-io/kube-thanos/tree/v0.17.0) (2020-12-08)
 
