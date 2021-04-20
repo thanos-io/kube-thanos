@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: database-write-hashring
     app.kubernetes.io/instance: thanos-receive-region-1
     app.kubernetes.io/name: thanos-receive
-    app.kubernetes.io/version: v0.17.2
+    app.kubernetes.io/version: v0.18.0
     controller.receive.thanos.io: thanos-receive-controller
     controller.receive.thanos.io/hashring: region-1
   name: thanos-receive-region-1
@@ -25,7 +25,7 @@ spec:
         app.kubernetes.io/component: database-write-hashring
         app.kubernetes.io/instance: thanos-receive-region-1
         app.kubernetes.io/name: thanos-receive
-        app.kubernetes.io/version: v0.17.2
+        app.kubernetes.io/version: v0.18.0
         controller.receive.thanos.io/hashring: region-1
     spec:
       affinity:
@@ -97,7 +97,7 @@ spec:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        image: quay.io/thanos/thanos:v0.17.2
+        image: quay.io/thanos/thanos:v0.18.0
         livenessProbe:
           failureThreshold: 8
           httpGet:
