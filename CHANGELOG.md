@@ -16,6 +16,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 ### Breaking Changes
 
 ### Changed
+- [226](https://github.com/thanos-io/kube-thanos/pull/226) Only schedule thanos components on linux nodes.
 
 ### Added
 

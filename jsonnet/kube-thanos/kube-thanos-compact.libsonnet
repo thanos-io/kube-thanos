@@ -181,6 +181,9 @@ function(params) {
             containers: [c],
             volumes: [],
             terminationGracePeriodSeconds: 120,
+            nodeSelector: {
+              'beta.kubernetes.io/os': 'linux',
+            },
           },
         },
         volumeClaimTemplates: if std.length(tc.config.volumeClaimTemplate) > 0 then [tc.config.volumeClaimTemplate {
