@@ -115,6 +115,11 @@ function(params) {
           ] else []
         ) +
         (
+          if std.objectHas(tq.config, 'grpcClientTlsSecure') then [
+            '--grpc-client-tls-secure',
+          ] else []
+        ) +
+        (
           if tq.config.queryTimeout != '' then [
             '--query.timeout=' + tq.config.queryTimeout,
           ] else []
