@@ -18,6 +18,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 ### Changed
 
 ### Added
+- [#227](https://github.com/thanos-io/kube-thanos/pull/227) Added support for --grpc-client-tls-secure in query
 
 ### Fixed
 
