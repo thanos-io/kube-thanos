@@ -156,6 +156,9 @@ function(params) {
               configMap: { name: tr.config.hashringConfigMapName },
             }] else [],
             terminationGracePeriodSeconds: 900,
+            nodeSelector: {
+              'beta.kubernetes.io/os': 'linux',
+            },
             affinity: { podAntiAffinity: {
               local labelSelector = { matchExpressions: [{
                 key: 'app.kubernetes.io/name',

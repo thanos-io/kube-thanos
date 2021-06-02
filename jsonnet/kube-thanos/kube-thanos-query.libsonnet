@@ -183,6 +183,9 @@ function(params) {
             securityContext: tq.config.securityContext,
             serviceAccountName: tq.serviceAccount.metadata.name,
             terminationGracePeriodSeconds: 120,
+            nodeSelector: {
+              'beta.kubernetes.io/os': 'linux',
+            },
             affinity: { podAntiAffinity: {
               preferredDuringSchedulingIgnoredDuringExecution: [{
                 podAffinityTerm: {

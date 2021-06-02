@@ -214,6 +214,9 @@ function(params) {
               { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
               for ruleConfig in tr.config.rulesConfig
             ],
+            nodeSelector: {
+              'beta.kubernetes.io/os': 'linux',
+            },
           },
         },
         volumeClaimTemplates: if std.length(tr.config.volumeClaimTemplate) > 0 then [tr.config.volumeClaimTemplate {

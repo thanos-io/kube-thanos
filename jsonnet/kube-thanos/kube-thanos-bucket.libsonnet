@@ -155,6 +155,9 @@ function(params) {
             securityContext: tb.config.securityContext,
             containers: [container],
             terminationGracePeriodSeconds: 120,
+            nodeSelector: {
+              'beta.kubernetes.io/os': 'linux',
+            },
           },
         },
       },

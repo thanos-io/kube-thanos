@@ -104,6 +104,8 @@ spec:
         volumeMounts:
         - mountPath: /etc/thanos/rules/test
           name: test
+      nodeSelector:
+        beta.kubernetes.io/os: linux
       securityContext:
         fsGroup: 65534
         runAsUser: 65534
