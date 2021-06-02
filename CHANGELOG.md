@@ -19,6 +19,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [226](https://github.com/thanos-io/kube-thanos/pull/226) Only schedule thanos components on linux nodes.
 
 ### Added
+- [#227](https://github.com/thanos-io/kube-thanos/pull/227) query: Added support for --grpc-client-tls-secure 
 
 ### Fixed
 
