@@ -11,6 +11,7 @@ local defaults = {
   replicaLabels: error 'must provide replicaLabels',
   stores: ['dnssrv+_grpc._tcp.thanos-store.%s.svc.cluster.local' % defaults.namespace],
   externalPrefix: '',
+  prefixHeader: '',
   autoDownsampling: true,
   resources: {},
   queryTimeout: '',
@@ -112,6 +113,11 @@ function(params) {
         (
           if tq.config.externalPrefix != '' then [
             '--web.external-prefix=' + tq.config.externalPrefix,
+          ] else []
+        ) +
+        (
+          if tq.config.prefixHeader != '' then [
+            '--web.prefix-header=' + tq.config.prefixHeader,
           ] else []
         ) +
         (
