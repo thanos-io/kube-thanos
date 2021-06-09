@@ -13,6 +13,7 @@ local defaults = {
   externalPrefix: '',
   autoDownsampling: true,
   resources: {},
+  grpcClientTlsSecure: false,
   queryTimeout: '',
   lookbackDelta: '',
   ports: {
@@ -115,7 +116,7 @@ function(params) {
           ] else []
         ) +
         (
-          if std.objectHas(tq.config, 'grpcClientTlsSecure') then [
+          if tq.config.grpcClientTlsSecure then [
             '--grpc-client-tls-secure',
           ] else []
         ) +
