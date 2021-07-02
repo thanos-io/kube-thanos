@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app.kubernetes.io/component: database-compactor
+    app.kubernetes.io/instance: thanos-compact-1
+    app.kubernetes.io/name: thanos-compact
+    app.kubernetes.io/version: v0.19.0
+    compact.thanos.io/shard: shard-1
+  name: thanos-compact-1
+  namespace: thanos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: database-compactor
+      app.kubernetes.io/instance: thanos-compact-1
+      app.kubernetes.io/name: thanos-compact
+      compact.thanos.io/shard: shard-1
+  serviceName: thanos-compact-1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: database-compactor
+        app.kubernetes.io/instance: thanos-compact-1
+        app.kubernetes.io/name: thanos-compact
+        app.kubernetes.io/version: v0.19.0
+        compact.thanos.io/shard: shard-1
+    spec:
+      containers:
+      - args:
+        - compact
+        - --wait
+        - --log.level=info
+        - --log.format=logfmt
+        - --objstore.config=$(OBJSTORE_CONFIG)
+        - --data-dir=/var/thanos/compact
+        - --debug.accept-malformed-index
+        - --retention.resolution-raw=0d
+        - --retention.resolution-5m=0d
+        - --retention.resolution-1h=0d
+        - --delete-delay=48h
+        - --downsampling.disable
+        - |-
+          --tracing.config="config":
+            "sampler_param": 2
+            "sampler_type": "ratelimiting"
+            "service_name": "thanos-compact"
+          "type": "JAEGER"
+        - |
+          --selector.relabel-config=
+            - action: hashmod
+              source_labels: ["cluster"]
+              target_label: shard
+              modulus: 3
+            - action: keep
+              source_labels: ["shard"]
+              regex: 1
+        env:
+        - name: OBJSTORE_CONFIG
+          valueFrom:
+            secretKeyRef:
+              key: thanos.yaml
+              name: thanos-objectstorage
+        - name: HOST_IP_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        image: quay.io/thanos/thanos:v0.19.0
+        livenessProbe:
+          failureThreshold: 4
+          httpGet:
+            path: /-/healthy
+            port: 10902
+            scheme: HTTP
+          periodSeconds: 30
+        name: thanos-compact
+        ports:
+        - containerPort: 10902
+          name: http
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /-/ready
+            port: 10902
+            scheme: HTTP
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 0.42
+            memory: 420Mi
+          requests:
+            cpu: 0.123
+            memory: 123Mi
+        terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts:
+        - mountPath: /var/thanos/compact
+          name: data
+          readOnly: false
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+      securityContext:
+        fsGroup: 65534
+        runAsUser: 65534
+      serviceAccountName: thanos-compact
+      terminationGracePeriodSeconds: 120
+      volumes: []
+  volumeClaimTemplates:
+  - metadata:
+      labels:
+        app.kubernetes.io/component: database-compactor
+        app.kubernetes.io/instance: thanos-compact-1
+        app.kubernetes.io/name: thanos-compact
+        compact.thanos.io/shard: shard-1
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi

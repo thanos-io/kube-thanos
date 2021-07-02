@@ -1,0 +1,28 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app.kubernetes.io/component: database-compactor
+    app.kubernetes.io/instance: thanos-compact
+    app.kubernetes.io/name: thanos-compact
+    app.kubernetes.io/version: v0.19.0
+  name: thanos-compact
+  namespace: thanos
+spec:
+  endpoints:
+  - port: http
+    relabelings:
+    - separator: /
+      sourceLabels:
+      - namespace
+      - pod
+      targetLabel: instance
+    - regex: shard\-(\d+)
+      replacement: $1
+      sourceLabels:
+      - __meta_kubernetes_service_label_compact_thanos_io_shard
+      targetLabel: shard
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: database-compactor
+      app.kubernetes.io/name: thanos-compact

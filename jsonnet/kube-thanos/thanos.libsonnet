@@ -1,6 +1,7 @@
 {
   bucket: (import 'kube-thanos-bucket.libsonnet'),
   compact: (import 'kube-thanos-compact.libsonnet'),
+  compactShards: (import 'kube-thanos-compact-shards.libsonnet'),
   query: (import 'kube-thanos-query.libsonnet'),
   receive: (import 'kube-thanos-receive.libsonnet'),
   receiveHashrings: (import 'kube-thanos-receive-hashrings.libsonnet'),
