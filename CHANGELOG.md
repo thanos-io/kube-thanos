@@ -20,6 +20,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Added
 - [#228](https://github.com/thanos-io/kube-thanos/pull/228) Allow configuring `--web.prefix-header` of query.
+
+- [#232](https://github.com/thanos-io/kube-thanos/pull/232) Support compactor hash sharding.
 ### Fixed
 
 ## [v0.19.0](https://github.com/thanos-io/kube-thanos/tree/v0.19.0) (2020-04-19)
