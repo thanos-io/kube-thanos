@@ -141,6 +141,24 @@ function(params) {
             nodeSelector: {
               'beta.kubernetes.io/os': 'linux',
             },
+            affinity: { podAntiAffinity: {
+              preferredDuringSchedulingIgnoredDuringExecution: [{
+                podAffinityTerm: {
+                  namespaces: [tc.config.namespace],
+                  topologyKey: 'kubernetes.io/hostname',
+                  labelSelector: { matchExpressions: [{
+                    key: 'app.kubernetes.io/name',
+                    operator: 'In',
+                    values: [tc.statefulSet.metadata.labels['app.kubernetes.io/name']],
+                  }, {
+                    key: 'app.kubernetes.io/instance',
+                    operator: 'In',
+                    values: [tc.statefulSet.metadata.labels['app.kubernetes.io/instance']],
+                  }] },
+                },
+                weight: 100,
+              }],
+            } },
           },
         },
         volumeClaimTemplates: if std.length(tc.config.volumeClaimTemplate) > 0 then [tc.config.volumeClaimTemplate {

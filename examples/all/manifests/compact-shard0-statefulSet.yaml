@@ -27,6 +27,24 @@ spec:
         app.kubernetes.io/version: v0.19.0
         compact.thanos.io/shard: shard-0
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - thanos-compact
+                - key: app.kubernetes.io/instance
+                  operator: In
+                  values:
+                  - thanos-compact-0
+              namespaces:
+              - thanos
+              topologyKey: kubernetes.io/hostname
+            weight: 100
       containers:
       - args:
         - compact
