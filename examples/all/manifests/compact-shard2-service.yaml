@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: database-compactor
+    app.kubernetes.io/instance: thanos-compact-2
+    app.kubernetes.io/name: thanos-compact
+    app.kubernetes.io/version: v0.19.0
+    compact.thanos.io/shard: shard-2
+  name: thanos-compact-2
+  namespace: thanos
+spec:
+  ports:
+  - name: http
+    port: 10902
+    targetPort: 10902
+  selector:
+    app.kubernetes.io/component: database-compactor
+    app.kubernetes.io/instance: thanos-compact-2
+    app.kubernetes.io/name: thanos-compact
+    compact.thanos.io/shard: shard-2
