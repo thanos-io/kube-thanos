@@ -17,6 +17,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Changed
 - [#226](https://github.com/thanos-io/kube-thanos/pull/226) Only schedule thanos components on linux nodes.
+- [#234](https://github.com/thanos-io/kube-thanos/pull/234) receive-hashrings/store-shards: Hide non-resource fields (`hashrings`/`shards`)
 
 ### Added
 - [#228](https://github.com/thanos-io/kube-thanos/pull/228) Allow configuring `--web.prefix-header` of query.
