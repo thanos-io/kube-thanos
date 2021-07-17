@@ -30,7 +30,7 @@ function(params)
         labels: config.commonLabels,
       },
     },
-    hashrings: {
+    hashrings:: {
       [h.hashring]: receive(config {
         name+: '-' + h.hashring,
         commonLabels+:: {
