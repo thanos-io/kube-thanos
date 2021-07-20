@@ -226,5 +226,5 @@ local finalQ = t.query(q.config {
   for name in std.objectFields(strs.shards[shard])
   if strs.shards[shard][name] != null
 } +
-{ ['thanos-receive-hashrings-' + name]: rcvs[name] for name in std.objectFields(rcvs) if rcvs[name] != null } +
-{ ['thanos-store-shards-' + name]: strs[name] for name in std.objectFields(strs) if strs[name] != null }
+{ ['thanos-receive-hashrings-' + name]: rcvs[name] for name in std.objectFields(rcvs) if name != 'hashrings' && rcvs[name] != null } +
+{ ['thanos-store-shards-' + name]: strs[name] for name in std.objectFields(strs) if name != 'shards' && strs[name] != null }
