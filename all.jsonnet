@@ -221,12 +221,10 @@ local finalQ = t.query(q.config {
   if rcvs.hashrings[hashring][name] != null
 } +
 {
-  ['store-' + shard + '-' + name]: strs.shards[shard][name]
+  ['thanos-store-' + shard + '-' + name]: strs.shards[shard][name]
   for shard in std.objectFields(strs.shards)
   for name in std.objectFields(strs.shards[shard])
   if strs.shards[shard][name] != null
 } +
-{
-  'store-shards-serviceMonitor': strs.serviceMonitor,
-  'receive-hashrings-serviceMonitor': rcvs.serviceMonitor,
-}
+{ ['thanos-receive-hashrings-' + name]: rcvs[name] for name in std.objectFields(rcvs) if name != 'hashrings' && rcvs[name] != null } +
+{ ['thanos-store-shards-' + name]: strs[name] for name in std.objectFields(strs) if name != 'shards' && strs[name] != null }
