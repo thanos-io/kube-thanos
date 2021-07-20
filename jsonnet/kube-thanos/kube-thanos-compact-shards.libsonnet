@@ -29,7 +29,7 @@ function(params)
       },
     },
 
-    shards:: {
+    shards: {
       ['shard' + i]: compact(config {
         name+: '-%d' % i,
         commonLabels+:: { 'compact.thanos.io/shard': 'shard-' + i },

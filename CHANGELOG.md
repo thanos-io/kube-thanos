@@ -19,7 +19,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Changed
 
-- [#234](https://github.com/thanos-io/kube-thanos/pull/234) (compact|store)-shards/receive-hashrings: Hide non-resource fields (`hashrings`/`shards`)
+-
 
 ### Added
 

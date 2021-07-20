@@ -28,7 +28,7 @@ function(params)
       },
     },
 
-    shards:: {
+    shards: {
       ['shard' + i]: store(config {
         name+: '-%d' % i,
         commonLabels+:: { 'store.thanos.io/shard': 'shard-' + i },
