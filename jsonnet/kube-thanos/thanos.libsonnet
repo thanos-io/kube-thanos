@@ -1,5 +1,6 @@
 {
   bucket: (import 'kube-thanos-bucket.libsonnet'),
+  bucketReplicate: (import 'kube-thanos-bucket-replicate.libsonnet'),
   compact: (import 'kube-thanos-compact.libsonnet'),
   compactShards: (import 'kube-thanos-compact-shards.libsonnet'),
   query: (import 'kube-thanos-query.libsonnet'),
