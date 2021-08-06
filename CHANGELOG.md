@@ -19,7 +19,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Changed
 
--
+- [#238](https://github.com/thanos-io/kube-thanos/pull/238) Use relative Jsonnet imports internally
 
 ### Added
 

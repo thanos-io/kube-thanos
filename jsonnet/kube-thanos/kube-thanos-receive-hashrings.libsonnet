@@ -1,5 +1,5 @@
-local receiveConfigDefaults = import 'kube-thanos/kube-thanos-receive-default-params.libsonnet';
-local receive = import 'kube-thanos/kube-thanos-receive.libsonnet';
+local receiveConfigDefaults = import './kube-thanos-receive-default-params.libsonnet';
+local receive = import './kube-thanos-receive.libsonnet';
 
 // These are the defaults for this components configuration.
 // When calling the function to generate the component's manifest,

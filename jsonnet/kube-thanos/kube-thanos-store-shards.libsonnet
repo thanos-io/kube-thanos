@@ -1,5 +1,5 @@
-local storeConfigDefaults = import 'kube-thanos/kube-thanos-store-default-params.libsonnet';
-local store = import 'kube-thanos/kube-thanos-store.libsonnet';
+local storeConfigDefaults = import './kube-thanos-store-default-params.libsonnet';
+local store = import './kube-thanos-store.libsonnet';
 
 // These are the defaults for this components configuration.
 // When calling the function to generate the component's manifest,
