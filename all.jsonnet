@@ -56,6 +56,14 @@ local c = t.compact(commonConfig {
   deduplicationReplicaLabels: super.replicaLabels,  // reuse same labels for deduplication
 });
 
+local cs = t.compactShards(commonConfig {
+  shards: 3,
+  sourceLabels: ['cluster'],
+  replicas: 1,
+  serviceMonitor: true,
+  disableDownsampling: true,
+});
+
 local re = t.receive(commonConfig {
   replicas: 1,
   replicationFactor: 1,
@@ -208,6 +216,12 @@ local finalQ = t.query(q.config {
 
 { ['thanos-bucket-' + name]: b[name] for name in std.objectFields(b) if b[name] != null } +
 { ['thanos-compact-' + name]: c[name] for name in std.objectFields(c) if c[name] != null } +
+{
+  ['compact-' + shard + '-' + name]: cs.shards[shard][name]
+  for shard in std.objectFields(cs.shards)
+  for name in std.objectFields(cs.shards[shard])
+  if cs.shards[shard][name] != null
+} +
 { ['thanos-receive-' + name]: re[name] for name in std.objectFields(re) if re[name] != null } +
 { ['thanos-rule-' + name]: finalRu[name] for name in std.objectFields(finalRu) if finalRu[name] != null } +
 { ['thanos-sidecar-' + name]: sc[name] for name in std.objectFields(sc) if sc[name] != null } +
@@ -227,6 +241,7 @@ local finalQ = t.query(q.config {
   if strs.shards[shard][name] != null
 } +
 {
+  'compact-shards-serviceMonitor': cs.serviceMonitor,
   'store-shards-serviceMonitor': strs.serviceMonitor,
   'receive-hashrings-serviceMonitor': rcvs.serviceMonitor,
 }
