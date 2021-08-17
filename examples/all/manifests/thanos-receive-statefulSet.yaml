@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: database-write-hashring
     app.kubernetes.io/instance: thanos-receive
     app.kubernetes.io/name: thanos-receive
-    app.kubernetes.io/version: v0.19.0
+    app.kubernetes.io/version: v0.22.0
   name: thanos-receive
   namespace: thanos
 spec:
@@ -22,7 +22,7 @@ spec:
         app.kubernetes.io/component: database-write-hashring
         app.kubernetes.io/instance: thanos-receive
         app.kubernetes.io/name: thanos-receive
-        app.kubernetes.io/version: v0.19.0
+        app.kubernetes.io/version: v0.22.0
     spec:
       affinity:
         podAntiAffinity:
@@ -97,7 +97,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: quay.io/thanos/thanos:v0.19.0
+        image: quay.io/thanos/thanos:v0.22.0
         livenessProbe:
           failureThreshold: 8
           httpGet:
