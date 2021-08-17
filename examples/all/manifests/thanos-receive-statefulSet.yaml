@@ -66,12 +66,12 @@ spec:
         - --http-address=0.0.0.0:10902
         - --remote-write.address=0.0.0.0:19291
         - --receive.replication-factor=1
-        - --objstore.config=$(OBJSTORE_CONFIG)
         - --tsdb.path=/var/thanos/receive
         - --tsdb.retention=15d
-        - --receive.local-endpoint=$(NAME).thanos-receive.$(NAMESPACE).svc.cluster.local:10901
         - --label=replica="$(NAME)"
         - --label=receive="true"
+        - --objstore.config=$(OBJSTORE_CONFIG)
+        - --receive.local-endpoint=$(NAME).thanos-receive.$(NAMESPACE).svc.cluster.local:10901
         - --receive.hashrings-file=/var/lib/thanos-receive/hashrings.json
         - |-
           --tracing.config="config":
@@ -88,15 +88,15 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: HOST_IP_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         - name: OBJSTORE_CONFIG
           valueFrom:
             secretKeyRef:
               key: thanos.yaml
               name: thanos-objectstorage
-        - name: HOST_IP_ADDRESS
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
         image: quay.io/thanos/thanos:v0.22.0
         livenessProbe:
           failureThreshold: 8

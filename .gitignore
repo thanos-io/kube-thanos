@@ -1,3 +1,4 @@
 tmp
 vendor/
 jsonnet/kube-thanos/jsonnetfile.lock.json
+.idea/
