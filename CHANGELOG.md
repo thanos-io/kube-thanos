@@ -15,14 +15,37 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Breaking Changes
 
+-
+
 ### Changed
+
+-
+
+### Added
+
+-
+
+### Fixed
+
+-
+
+## [v0.21.0](https://github.com/thanos-io/kube-thanos/tree/v0.21.0) (2021-08-17)
+
+### Changed
+
 - [#226](https://github.com/thanos-io/kube-thanos/pull/226) Only schedule thanos components on linux nodes.
 
 ### Added
-- [#228](https://github.com/thanos-io/kube-thanos/pull/228) Allow configuring `--web.prefix-header` of query.
-### Fixed
 
-## [v0.19.0](https://github.com/thanos-io/kube-thanos/tree/v0.19.0) (2020-04-19)
+- [#228](https://github.com/thanos-io/kube-thanos/pull/228) Allow configuring `--web.prefix-header` of query.
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.20.0...v0.21.0)
+
+## [v0.20.0](https://github.com/thanos-io/kube-thanos/tree/v0.20.0) (2021-04-28)
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.19.0...v0.20.0)
+
+## [v0.19.0](https://github.com/thanos-io/kube-thanos/tree/v0.19.0) (2021-04-19)
 
 ### Breaking Changes
 
@@ -45,7 +68,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 [Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.18.0...v0.19.0)
 
-## [v0.18.0](https://github.com/thanos-io/kube-thanos/tree/v0.18.0) (2020-04-19)
+## [v0.18.0](https://github.com/thanos-io/kube-thanos/tree/v0.18.0) (2021-04-19)
 
 ### Breaking Changes
 

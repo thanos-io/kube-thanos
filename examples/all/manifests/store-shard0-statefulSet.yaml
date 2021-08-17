@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: object-store-gateway
     app.kubernetes.io/instance: thanos-store-0
     app.kubernetes.io/name: thanos-store
-    app.kubernetes.io/version: v0.19.0
+    app.kubernetes.io/version: v0.21.1
     store.thanos.io/shard: shard-0
   name: thanos-store-0
   namespace: thanos
@@ -24,7 +24,7 @@ spec:
         app.kubernetes.io/component: object-store-gateway
         app.kubernetes.io/instance: thanos-store-0
         app.kubernetes.io/name: thanos-store
-        app.kubernetes.io/version: v0.19.0
+        app.kubernetes.io/version: v0.21.1
         store.thanos.io/shard: shard-0
     spec:
       affinity:
@@ -115,7 +115,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: quay.io/thanos/thanos:v0.19.0
+        image: quay.io/thanos/thanos:v0.21.1
         livenessProbe:
           failureThreshold: 8
           httpGet:
