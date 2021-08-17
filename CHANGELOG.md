@@ -15,14 +15,43 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Breaking Changes
 
+-
+
 ### Changed
+
+-
+
+### Added
+
+-
+
+### Fixed
+
+-
+
+## [v0.22.0](https://github.com/thanos-io/kube-thanos/tree/v0.22.0) (2021-08-17)
+
+### Added
+
+- [#232](https://github.com/thanos-io/kube-thanos/pull/232) Support compactor hash sharding.
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.21.0...v0.22.0)
+
+## [v0.21.0](https://github.com/thanos-io/kube-thanos/tree/v0.21.0) (2021-08-17)
+
+### Changed
+
 - [#226](https://github.com/thanos-io/kube-thanos/pull/226) Only schedule thanos components on linux nodes.
 
 ### Added
-- [#228](https://github.com/thanos-io/kube-thanos/pull/228) Allow configuring `--web.prefix-header` of query.
-- [#232](https://github.com/thanos-io/kube-thanos/pull/232) Support compactor hash sharding.
 
-### Fixed
+- [#228](https://github.com/thanos-io/kube-thanos/pull/228) Allow configuring `--web.prefix-header` of query.
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.20.0...v0.21.0)
+
+## [v0.20.0](https://github.com/thanos-io/kube-thanos/tree/v0.20.0) (2021-04-28)
+
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.19.0...v0.20.0)
 
 ## [v0.19.0](https://github.com/thanos-io/kube-thanos/tree/v0.19.0) (2020-04-19)
 
