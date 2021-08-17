@@ -68,11 +68,14 @@ function(params) {
         '--objstore.config=$(OBJSTORE_CONFIG)',
         '--tsdb.path=/var/thanos/receive',
         '--tsdb.retention=' + tr.config.retention,
-        localEndpointFlag,
       ] + [
         '--label=%s' % label
         for label in tr.config.labels
       ] + (
+        if tr.config.enableLocalEndpoint then [
+          localEndpointFlag,
+        ] else []
+      ) + (
         if tr.config.tenantLabelName != null then [
           '--receive.tenant-label-name=%s' % tr.config.tenantLabelName,
         ] else []

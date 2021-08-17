@@ -5,6 +5,7 @@
   compactShards: (import 'kube-thanos-compact-shards.libsonnet'),
   query: (import 'kube-thanos-query.libsonnet'),
   receive: (import 'kube-thanos-receive.libsonnet'),
+  receiveSplit: (import 'kube-thanos-receive-split.libsonnet'),
   receiveHashrings: (import 'kube-thanos-receive-hashrings.libsonnet'),
   rule: (import 'kube-thanos-rule.libsonnet'),
   sidecar: (import 'kube-thanos-sidecar.libsonnet'),

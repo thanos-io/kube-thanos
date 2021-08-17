@@ -36,5 +36,13 @@ local q = t.query(commonConfig.config {
   serviceMonitor: true,
 });
 
+local split = t.receiveSplit(commonConfig.config {
+  replicas: 1,
+  replicaLabels: ['receive_replica'],
+  replicationFactor: 1,
+});
+
 { ['thanos-store-' + name]: s[name] for name in std.objectFields(s) } +
-{ ['thanos-query-' + name]: q[name] for name in std.objectFields(q) }
+{ ['thanos-query-' + name]: q[name] for name in std.objectFields(q) } +
+{ ['thanos-receive-ingestor-' + name]: split.ingestor[name] for name in std.objectFields(split.ingestor) } +
+{ ['thanos-receive-router-' + name]: split.router[name] for name in std.objectFields(split.router) }
