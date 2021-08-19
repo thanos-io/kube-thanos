@@ -8,7 +8,7 @@ local defaults = {
   version: error 'must provide version',
   image: error 'must provide image',
   objectStorageConfig: error 'must provide objectStorageConfig',
-  objectStorageToConfig: error 'must provide objectStorageToConfig', // Destination object store configuration.
+  objectStorageToConfig: error 'must provide objectStorageToConfig',  // Destination object store configuration.
   resources: {},
   logLevel: 'info',
   logFormat: 'logfmt',
