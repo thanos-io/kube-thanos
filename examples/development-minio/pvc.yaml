@@ -5,7 +5,6 @@ metadata:
   labels:
     app.kubernetes.io/name: minio
 spec:
-  storageClassName: local-storage
   accessModes:
     - ReadWriteOnce
   resources:
