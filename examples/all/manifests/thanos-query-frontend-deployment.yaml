@@ -113,7 +113,7 @@ spec:
             memory: 123Mi
         terminationMessagePolicy: FallbackToLogsOnError
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       securityContext:
         fsGroup: 65534
         runAsUser: 65534

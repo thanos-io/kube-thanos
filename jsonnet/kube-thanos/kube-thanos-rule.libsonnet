@@ -215,7 +215,7 @@ function(params) {
               for ruleConfig in tr.config.rulesConfig
             ],
             nodeSelector: {
-              'beta.kubernetes.io/os': 'linux',
+              'kubernetes.io/os': 'linux',
             },
           },
         },

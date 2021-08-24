@@ -159,7 +159,7 @@ function(params) {
             volumes: [],
             terminationGracePeriodSeconds: 120,
             nodeSelector: {
-              'beta.kubernetes.io/os': 'linux',
+              'kubernetes.io/os': 'linux',
             },
             affinity: { podAntiAffinity: {
               preferredDuringSchedulingIgnoredDuringExecution: [{
