@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: object-store-bucket-replicate
+    app.kubernetes.io/instance: thanos-bucket-replicate
+    app.kubernetes.io/name: thanos-bucket-replicate
+    app.kubernetes.io/version: v0.22.0
+  name: thanos-bucket-replicate
+  namespace: thanos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: object-store-bucket-replicate
+      app.kubernetes.io/instance: thanos-bucket-replicate
+      app.kubernetes.io/name: thanos-bucket-replicate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: object-store-bucket-replicate
+        app.kubernetes.io/instance: thanos-bucket-replicate
+        app.kubernetes.io/name: thanos-bucket-replicate
+        app.kubernetes.io/version: v0.22.0
+    spec:
+      containers:
+      - args:
+        - tools
+        - bucket
+        - replicate
+        - --log.level=info
+        - --log.format=logfmt
+        - --objstore.config=$(OBJSTORE_CONFIG)
+        - --objstore-to.config=$(OBJSTORE_TO_CONFIG)
+        - |-
+          --tracing.config="config":
+            "sampler_param": 2
+            "sampler_type": "ratelimiting"
+            "service_name": "thanos-bucket-replicate"
+          "type": "JAEGER"
+        - --compaction=1
+        - --compaction=2
+        - --compaction=3
+        - --resolution=0s
+        env:
+        - name: OBJSTORE_CONFIG
+          valueFrom:
+            secretKeyRef:
+              key: thanos.yaml
+              name: thanos-objectstorage
+        - name: OBJSTORE_TO_CONFIG
+          valueFrom:
+            secretKeyRef:
+              key: thanos.yaml
+              name: thanos-objectstorage
+        - name: HOST_IP_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        image: quay.io/thanos/thanos:v0.22.0
+        livenessProbe:
+          failureThreshold: 4
+          httpGet:
+            path: /-/healthy
+            port: 10902
+            scheme: HTTP
+          periodSeconds: 30
+        name: thanos-bucket-replicate
+        ports:
+        - containerPort: 10902
+          name: http
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /-/ready
+            port: 10902
+            scheme: HTTP
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: 0.42
+            memory: 420Mi
+          requests:
+            cpu: 0.123
+            memory: 123Mi
+        terminationMessagePolicy: FallbackToLogsOnError
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+      securityContext:
+        fsGroup: 65534
+        runAsUser: 65534
+      serviceAccountName: thanos-bucket-replicate
+      terminationGracePeriodSeconds: 120

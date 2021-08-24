@@ -49,6 +49,18 @@ local b = t.bucket(commonConfig {
   // },
 });
 
+local br = t.bucketReplicate(commonConfig {
+  replicas: 1,
+  // Use the same object storage secret as an example.
+  // Need to use another one in real cases.
+  objectStorageToConfig: {
+    name: 'thanos-objectstorage',
+    key: 'thanos.yaml',
+  },
+  compactionLevels: [1, 2, 3],
+  resolutions: ['0s'],
+});
+
 local c = t.compact(commonConfig {
   replicas: 1,
   serviceMonitor: true,
@@ -215,6 +227,7 @@ local finalQ = t.query(q.config {
 });
 
 { ['thanos-bucket-' + name]: b[name] for name in std.objectFields(b) if b[name] != null } +
+{ ['thanos-bucket-replicate-' + name]: br[name] for name in std.objectFields(br) if br[name] != null } +
 { ['thanos-compact-' + name]: c[name] for name in std.objectFields(c) if c[name] != null } +
 {
   ['compact-' + shard + '-' + name]: cs.shards[shard][name]
