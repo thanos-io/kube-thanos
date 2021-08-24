@@ -157,7 +157,7 @@ function(params) {
             }] else [],
             terminationGracePeriodSeconds: 900,
             nodeSelector: {
-              'beta.kubernetes.io/os': 'linux',
+              'kubernetes.io/os': 'linux',
             },
             affinity: { podAntiAffinity: {
               local labelSelector = { matchExpressions: [{

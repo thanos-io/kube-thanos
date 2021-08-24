@@ -217,7 +217,7 @@ function(params) {
             securityContext: tqf.config.securityContext,
             terminationGracePeriodSeconds: 120,
             nodeSelector: {
-              'beta.kubernetes.io/os': 'linux',
+              'kubernetes.io/os': 'linux',
             },
             affinity: { podAntiAffinity: {
               preferredDuringSchedulingIgnoredDuringExecution: [{
