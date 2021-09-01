@@ -65,14 +65,20 @@ function(params) {
         '--http-address=0.0.0.0:%d' % tr.config.ports.http,
         '--remote-write.address=0.0.0.0:%d' % tr.config.ports['remote-write'],
         '--receive.replication-factor=%d' % tr.config.replicationFactor,
-        '--objstore.config=$(OBJSTORE_CONFIG)',
         '--tsdb.path=/var/thanos/receive',
         '--tsdb.retention=' + tr.config.retention,
-        localEndpointFlag,
       ] + [
         '--label=%s' % label
         for label in tr.config.labels
       ] + (
+        if tr.config.objectStorageConfig != null then [
+          '--objstore.config=$(OBJSTORE_CONFIG)',
+        ] else []
+      ) + (
+        if tr.config.enableLocalEndpoint then [
+          localEndpointFlag,
+        ] else []
+      ) + (
         if tr.config.tenantLabelName != null then [
           '--receive.tenant-label-name=%s' % tr.config.tenantLabelName,
         ] else []
@@ -90,10 +96,6 @@ function(params) {
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
         { name: 'NAMESPACE', valueFrom: { fieldRef: { fieldPath: 'metadata.namespace' } } },
-        { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
-          key: tr.config.objectStorageConfig.key,
-          name: tr.config.objectStorageConfig.name,
-        } } },
         {
           // Inject the host IP to make configuring tracing convenient.
           name: 'HOST_IP_ADDRESS',
@@ -103,7 +105,15 @@ function(params) {
             },
           },
         },
-      ],
+      ] + (
+        if tr.config.objectStorageConfig != null then [{
+          name: 'OBJSTORE_CONFIG',
+          valueFrom: { secretKeyRef: {
+            key: tr.config.objectStorageConfig.key,
+            name: tr.config.objectStorageConfig.name,
+          } },
+        }] else []
+      ),
       ports: [
         { name: name, containerPort: tr.config.ports[name] }
         for name in std.objectFields(tr.config.ports)

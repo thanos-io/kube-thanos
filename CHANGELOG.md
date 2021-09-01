@@ -44,7 +44,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#226](https://github.com/thanos-io/kube-thanos/pull/226) Only schedule thanos components on linux nodes.
 
 ### Added
-
+- [#244](https://github.com/thanos-io/kube-thanos/pull/244) Add functions to implement Thanos Receive split functionality.
 - [#228](https://github.com/thanos-io/kube-thanos/pull/228) Allow configuring `--web.prefix-header` of query.
 
 [Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.20.0...v0.21.0)

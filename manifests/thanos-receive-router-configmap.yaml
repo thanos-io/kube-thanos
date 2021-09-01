@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  hashrings.json: '[{"endpoints": ["thanos-receive-ingestor-default-0.thanos-receive-ingestor-default.thanos.svc.cluster.local:10901"], "hashring": "default", "tenants": [ ]}]'
+kind: ConfigMap
+metadata:
+  name: hashring-config
+  namespace: thanos

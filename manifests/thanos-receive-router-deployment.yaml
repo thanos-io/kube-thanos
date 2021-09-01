@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: thanos-receive-router
+    app.kubernetes.io/instance: thanos-receive
+    app.kubernetes.io/name: thanos-receive
+    app.kubernetes.io/version: v0.22.0
+  name: thanos-receive-router
+  namespace: thanos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: thanos-receive-router
+      app.kubernetes.io/instance: thanos-receive
+      app.kubernetes.io/name: thanos-receive
+      app.kubernetes.io/version: v0.22.0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: thanos-receive-router
+        app.kubernetes.io/instance: thanos-receive
+        app.kubernetes.io/name: thanos-receive
+        app.kubernetes.io/version: v0.22.0
+    spec:
+      containers:
+      - args:
+        - receive
+        - --log.level=info
+        - --log.format=logfmt
+        - --grpc-address=0.0.0.0:10901
+        - --http-address=0.0.0.0:10902
+        - --remote-write.address=0.0.0.0:19291
+        - --receive.replication-factor=1
+        - --receive.hashrings-file=/var/lib/thanos-receive/hashrings.json
+        - --label=replica="$(NAME)"
+        - --label=receive="true"
+        env:
+        - name: NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: HOST_IP_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        image: quay.io/thanos/thanos:v0.22.0
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /-/healthy
+            port: 10902
+            scheme: HTTP
+          periodSeconds: 30
+        name: thanos-receive
+        ports:
+        - containerPort: 10901
+          name: grpc
+        - containerPort: 10902
+          name: http
+        - containerPort: 19291
+          name: remote-write
+        readinessProbe:
+          failureThreshold: 20
+          httpGet:
+            path: /-/ready
+            port: 10902
+            scheme: HTTP
+          periodSeconds: 5
+        resources: {}
+        terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts:
+        - mountPath: /var/lib/thanos-receive
+          name: hashring-config
+      nodeSelector:
+        beta.kubernetes.io/os: linux
+      securityContext:
+        fsGroup: 65534
+        runAsUser: 65534
+      serviceAccountName: thanos-receive-router
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          name: hashring-config
+        name: hashring-config

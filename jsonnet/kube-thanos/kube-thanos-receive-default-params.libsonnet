@@ -12,6 +12,7 @@
   objectStorageConfig: error 'must provide objectStorageConfig',
   podDisruptionBudgetMaxUnavailable: (std.floor(defaults.replicationFactor / 2)),
   hashringConfigMapName: '',
+  enableLocalEndpoint: true,
   volumeClaimTemplate: {},
   retention: '15d',
   logLevel: 'info',
