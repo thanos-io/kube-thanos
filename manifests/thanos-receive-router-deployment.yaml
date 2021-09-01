@@ -82,9 +82,9 @@ spec:
       securityContext:
         fsGroup: 65534
         runAsUser: 65534
-      serviceAccountName: thanos-receive-ingestor
+      serviceAccountName: thanos-receive-router
       terminationGracePeriodSeconds: 30
       volumes:
       - configMap:
-          name: ""
+          name: hashring-config
         name: hashring-config

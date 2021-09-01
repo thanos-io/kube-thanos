@@ -75,6 +75,7 @@ spec:
         - --label=replica="$(NAME)"
         - --label=receive="true"
         - --receive.local-endpoint=$(NAME).thanos-receive-ingestor-default.$(NAMESPACE).svc.cluster.local:10901
+        - --receive.hashrings-file=/var/lib/thanos-receive/hashrings.json
         env:
         - name: NAME
           valueFrom:
@@ -117,6 +118,8 @@ spec:
         - mountPath: /var/thanos/receive
           name: data
           readOnly: false
+        - mountPath: /var/lib/thanos-receive
+          name: hashring-config
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
@@ -124,7 +127,10 @@ spec:
         runAsUser: 65534
       serviceAccountName: thanos-receive-ingestor
       terminationGracePeriodSeconds: 900
-      volumes: []
+      volumes:
+      - configMap:
+          name: hashring-config
+        name: hashring-config
   volumeClaimTemplates:
   - metadata:
       labels:

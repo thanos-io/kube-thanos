@@ -8,6 +8,7 @@ local defaults = receiveConfigDefaults {
   }],
   hashringConfigmapName: 'hashring-config',
   routerReplicas: 1,
+  endpoints: error 'must provide ingestor endpoints object',
 };
 
 function(params) {
@@ -15,38 +16,11 @@ function(params) {
   // Combine the defaults and the passed params to make the component's config.
   config:: defaults + params,
 
-  local ingestors = receiveHashring(tr.config { name: tr.config.name + '-ingestor' }),
-
-  ingestors: {
-    ['ingestor-' + name]: ingestors.hashrings[name]
-    for name in std.objectFields(ingestors.hashrings)
-  },
-
-  ingestorStores:: [
-    'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local:%d' % [ingestors.hashrings[name.hashring].service.metadata.name, tr.config.namespace, tr.config.ports.grpc]
-    for name in tr.config.hashrings
-  ],
-
-  ingestorEndpoints:: {
-    [name.hashring]: [
-      '%s-%d.%s.%s.svc.cluster.local:%d' % [
-        ingestors.hashrings[name.hashring].service.metadata.name,
-        i,
-        ingestors.hashrings[name.hashring].service.metadata.name,
-        tr.config.namespace,
-        tr.config.ports.grpc,
-      ]
-      // Replica specification is 1-based, but statefulSets are named 0-based.
-      for i in std.range(0, tr.config.replicas - 1)
-    ]
-    for name in tr.config.hashrings
-  },
-
   routerLabels:: tr.config.commonLabels {
     'app.kubernetes.io/component': tr.config.name + '-router',
   },
 
-  'router-service': {
+  service: {
     apiVersion: 'v1',
     kind: 'Service',
     metadata: {
@@ -59,20 +33,30 @@ function(params) {
     },
   },
 
-  'router-configmap': {
+  serviceAccount: {
+    apiVersion: 'v1',
+    kind: 'ServiceAccount',
+    metadata: {
+      name: tr.config.name + '-router',
+      namespace: tr.config.namespace,
+      labels: tr.routerLabels,
+    },
+  },
+
+  configmap: {
     apiVersion: 'v1',
     kind: 'ConfigMap',
     metadata: {
-      name: tr.config.hashringConfigMapName,
+      name: tr.config.hashringConfigmapName,
       namespace: tr.config.namespace,
     },
     data: {
-      'hashrings.json': std.toString([hashring { endpoints: tr.ingestorEndpoints[hashring.hashring] } for hashring in tr.config.hashrings]),
+      'hashrings.json': std.toString([hashring { endpoints: tr.config.endpoints[hashring.hashring] } for hashring in tr.config.hashrings]),
     },
   },
 
   // Create the deployment that acts as a router to the ingestor backends
-  'router-deployment': {
+  deployment: {
     apiVersion: 'apps/v1',
     kind: 'Deployment',
     metadata: {
@@ -88,7 +72,7 @@ function(params) {
           labels: tr.routerLabels,
         },
         spec: {
-          serviceAccountName: ingestors.serviceAccount.metadata.name,
+          serviceAccountName: tr.serviceAccount.metadata.name,
           securityContext: tr.config.securityContext,
           containers: [{
             name: 'thanos-receive',
@@ -156,5 +140,4 @@ function(params) {
       },
     },
   },
-  serviceAccount: ingestors.serviceAccount,
 }
