@@ -74,6 +74,8 @@ spec:
           name: grpc
         - containerPort: 10902
           name: http
+        - containerPort: 9533
+          name: reloader
         readinessProbe:
           failureThreshold: 18
           httpGet:

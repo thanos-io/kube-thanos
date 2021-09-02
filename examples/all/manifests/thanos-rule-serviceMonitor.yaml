@@ -17,6 +17,7 @@ spec:
       - namespace
       - pod
       targetLabel: instance
+  - port: reloader
   selector:
     matchLabels:
       app.kubernetes.io/component: rule-evaluation-engine
