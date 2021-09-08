@@ -9,6 +9,7 @@ metadata:
   name: thanos-compact
   namespace: thanos
 spec:
+  clusterIP: None
   ports:
   - name: http
     port: 10902
