@@ -17,6 +17,9 @@ spec:
   - name: http
     port: 10902
     targetPort: 10902
+  - name: reloader
+    port: 9533
+    targetPort: 9533
   selector:
     app.kubernetes.io/component: rule-evaluation-engine
     app.kubernetes.io/instance: thanos-rule

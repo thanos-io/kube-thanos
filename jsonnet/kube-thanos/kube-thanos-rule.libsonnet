@@ -23,6 +23,7 @@ local defaults = {
   ports: {
     grpc: 10901,
     http: 10902,
+    reloader: 9533,
   },
   tracing: {},
 
@@ -249,6 +250,7 @@ function(params) {
             targetLabel: 'instance',
           }],
         },
+        { port: 'reloader' },
       ],
     },
   },
