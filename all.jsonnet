@@ -230,7 +230,7 @@ local finalQ = t.query(q.config {
 { ['thanos-bucket-replicate-' + name]: br[name] for name in std.objectFields(br) if br[name] != null } +
 { ['thanos-compact-' + name]: c[name] for name in std.objectFields(c) if c[name] != null } +
 {
-  ['compact-' + shard + '-' + name]: cs.shards[shard][name]
+  ['thanos-compact-' + shard + '-' + name]: cs.shards[shard][name]
   for shard in std.objectFields(cs.shards)
   for name in std.objectFields(cs.shards[shard])
   if cs.shards[shard][name] != null
@@ -248,13 +248,11 @@ local finalQ = t.query(q.config {
   if rcvs.hashrings[hashring][name] != null
 } +
 {
-  ['store-' + shard + '-' + name]: strs.shards[shard][name]
+  ['thanos-store-' + shard + '-' + name]: strs.shards[shard][name]
   for shard in std.objectFields(strs.shards)
   for name in std.objectFields(strs.shards[shard])
   if strs.shards[shard][name] != null
 } +
-{
-  'compact-shards-serviceMonitor': cs.serviceMonitor,
-  'store-shards-serviceMonitor': strs.serviceMonitor,
-  'receive-hashrings-serviceMonitor': rcvs.serviceMonitor,
-}
+{ ['thanos-compact-shards-' + name]: cs[name] for name in std.objectFields(cs) if name != 'shards' && cs[name] != null } +
+{ ['thanos-receive-hashrings-' + name]: rcvs[name] for name in std.objectFields(rcvs) if name != 'hashrings' && rcvs[name] != null } +
+{ ['thanos-store-shards-' + name]: strs[name] for name in std.objectFields(strs) if name != 'shards' && strs[name] != null }
