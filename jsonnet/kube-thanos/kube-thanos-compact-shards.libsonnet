@@ -1,5 +1,5 @@
-local compactConfigDefaults = import 'kube-thanos/kube-thanos-compact-default-params.libsonnet';
-local compact = import 'kube-thanos/kube-thanos-compact.libsonnet';
+local compactConfigDefaults = import './kube-thanos-compact-default-params.libsonnet';
+local compact = import './kube-thanos-compact.libsonnet';
 
 // These are the defaults for this components configuration.
 // When calling the function to generate the component's manifest,
