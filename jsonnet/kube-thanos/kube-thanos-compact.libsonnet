@@ -22,6 +22,7 @@ function(params) {
       labels: tc.config.commonLabels,
     },
     spec: {
+      clusterIP: 'None',
       selector: tc.config.podLabelSelector,
       ports: [
         {
