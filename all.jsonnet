@@ -110,7 +110,7 @@ local s = t.store(commonConfig {
     config+: {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
       addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
     },
   },
@@ -119,7 +119,7 @@ local s = t.store(commonConfig {
     config+: {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
       addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
     },
   },
@@ -161,7 +161,7 @@ local qf = t.queryFrontend(commonConfig {
     config+: {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
       addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
     },
   },
@@ -170,7 +170,7 @@ local qf = t.queryFrontend(commonConfig {
     config+: {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
       addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
     },
   },
@@ -202,7 +202,7 @@ local strs = t.storeShards(commonConfig {
     config+: {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
       addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
     },
   },
@@ -211,7 +211,7 @@ local strs = t.storeShards(commonConfig {
     config+: {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
-      // For DNS service discovery reference https://thanos.io/service-discovery.md/#dns-service-discovery
+      // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
       addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
     },
   },
