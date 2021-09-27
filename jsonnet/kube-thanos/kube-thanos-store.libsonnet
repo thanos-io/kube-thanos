@@ -99,10 +99,15 @@ function(params) {
         ] else []
       ),
       env: [
-        { name: 'OBJSTORE_CONFIG', valueFrom: { secretKeyRef: {
-          key: ts.config.objectStorageConfig.key,
-          name: ts.config.objectStorageConfig.name,
-        } } },
+        {
+          name: 'OBJSTORE_CONFIG',
+          valueFrom: {
+            secretKeyRef: {
+              key: ts.config.objectStorageConfig.key,
+              name: ts.config.objectStorageConfig.name,
+            },
+          },
+        },
         {
           // Inject the host IP to make configuring tracing convenient.
           name: 'HOST_IP_ADDRESS',
