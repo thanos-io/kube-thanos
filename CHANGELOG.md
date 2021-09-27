@@ -25,6 +25,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#237](https://github.com/thanos-io/kube-thanos/pull/237) Add new bucket replicate component.
 - [#245](https://github.com/thanos-io/kube-thanos/pull/245) Support scraping config reloader sidecar for ruler.
+- [#251](https://github.com/thanos-io/kube-thanos/pull/251) Add support for extraEnv (custom environment variables) to all components.
 
 ### Fixed
 
