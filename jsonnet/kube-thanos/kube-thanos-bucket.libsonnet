@@ -120,9 +120,7 @@ function(params) {
           },
         },
       ] + (
-        if std.length(tb.config.extraEnv) > 0 then [
-          tb.config.extraEnv,
-        ] else []
+        if std.length(tb.config.extraEnv) > 0 then tb.config.extraEnv else []
       ),
       ports: [
         { name: name, containerPort: tb.config.ports[name] }

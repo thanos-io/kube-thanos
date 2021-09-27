@@ -118,9 +118,7 @@ function(params) {
           },
         },
       ] + (
-        if std.length(ts.config.extraEnv) > 0 then [
-          ts.config.extraEnv,
-        ] else []
+        if std.length(ts.config.extraEnv) > 0 then ts.config.extraEnv else []
       ),
       ports: [
         { name: name, containerPort: ts.config.ports[name] }

@@ -140,9 +140,7 @@ function(params) {
           },
         },
       ] + (
-        if std.length(tbr.config.extraEnv) > 0 then [
-          tbr.config.extraEnv,
-        ] else []
+        if std.length(tbr.config.extraEnv) > 0 then tbr.config.extraEnv else []
       ),
       ports: [
         { name: name, containerPort: tbr.config.ports[name] }

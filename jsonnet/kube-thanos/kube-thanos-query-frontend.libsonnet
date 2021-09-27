@@ -181,9 +181,7 @@ function(params) {
           },
         },
       ] + (
-        if std.length(tqf.config.extraEnv) > 0 then [
-          tqf.config.extraEnv,
-        ] else []
+        if std.length(tqf.config.extraEnv) > 0 then tqf.config.extraEnv else []
       ),
       ports: [
         { name: name, containerPort: tqf.config.ports[name] }

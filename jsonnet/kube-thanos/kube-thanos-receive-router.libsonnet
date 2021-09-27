@@ -112,9 +112,7 @@ function(params) {
                 },
               },
             ] + (
-              if std.length(tr.config.extraEnv) > 0 then [
-                tr.config.extraEnv,
-              ] else []
+              if std.length(tr.config.extraEnv) > 0 then tr.config.extraEnv else []
             ),
             ports: [{ name: name, containerPort: tr.config.ports[name] } for name in std.objectFields(tr.config.ports)],
             volumeMounts: [{ name: 'hashring-config', mountPath: '/var/lib/thanos-receive' }],
