@@ -23,6 +23,7 @@
     http: 10902,
   },
   tracing: {},
+  extraEnv: [],
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-compact',

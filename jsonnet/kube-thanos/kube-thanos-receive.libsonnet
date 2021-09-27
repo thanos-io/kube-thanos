@@ -113,6 +113,10 @@ function(params) {
             name: tr.config.objectStorageConfig.name,
           } },
         }] else []
+      ) + (
+        if std.length(tr.config.extraEnv) > 0 then [
+          tr.config.extraEnv,
+        ] else []
       ),
       ports: [
         { name: name, containerPort: tr.config.ports[name] }
