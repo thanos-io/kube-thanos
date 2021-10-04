@@ -29,6 +29,7 @@ local defaults = {
     http: 9090,
   },
   tracing: {},
+  extraEnv: [],
 
   memcachedDefaults+:: {
     config+: {
@@ -179,7 +180,9 @@ function(params) {
             },
           },
         },
-      ],
+      ] + (
+        if std.length(tqf.config.extraEnv) > 0 then tqf.config.extraEnv else []
+      ),
       ports: [
         { name: name, containerPort: tqf.config.ports[name] }
         for name in std.objectFields(tqf.config.ports)

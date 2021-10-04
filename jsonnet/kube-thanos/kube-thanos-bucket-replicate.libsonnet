@@ -20,6 +20,7 @@ local defaults = {
   maxTime: '',
   compactionLevels: [],
   resolutions: [],
+  extraEnv: [],
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-bucket-replicate',
@@ -138,7 +139,9 @@ function(params) {
             },
           },
         },
-      ],
+      ] + (
+        if std.length(tbr.config.extraEnv) > 0 then tbr.config.extraEnv else []
+      ),
       ports: [
         { name: name, containerPort: tbr.config.ports[name] }
         for name in std.objectFields(tbr.config.ports)

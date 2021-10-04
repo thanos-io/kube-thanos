@@ -24,6 +24,7 @@ local defaults = {
   logLevel: 'info',
   logFormat: 'logfmt',
   tracing: {},
+  extraEnv: [],
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-query',
@@ -150,7 +151,9 @@ function(params) {
             },
           },
         },
-      ],
+      ] + (
+        if std.length(tq.config.extraEnv) > 0 then tq.config.extraEnv else []
+      ),
       ports: [
         { name: port.name, containerPort: port.port }
         for port in tq.service.spec.ports

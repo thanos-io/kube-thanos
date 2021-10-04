@@ -26,6 +26,7 @@ local defaults = {
     reloader: 9533,
   },
   tracing: {},
+  extraEnv: [],
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-rule',
@@ -146,7 +147,9 @@ function(params) {
             },
           },
         },
-      ],
+      ] + (
+        if std.length(tr.config.extraEnv) > 0 then tr.config.extraEnv else []
+      ),
       ports: [
         { name: name, containerPort: tr.config.ports[name] }
         for name in std.objectFields(tr.config.ports)

@@ -93,7 +93,9 @@ function(params) {
             },
           },
         },
-      ],
+      ] + (
+        if std.length(tc.config.extraEnv) > 0 then tc.config.extraEnv else []
+      ),
       ports: [
         { name: name, containerPort: tc.config.ports[name] }
         for name in std.objectFields(tc.config.ports)

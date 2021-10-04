@@ -15,6 +15,7 @@ local defaults = {
     http: 10902,
   },
   tracing: {},
+  extraEnv: [],
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-bucket',
@@ -118,7 +119,9 @@ function(params) {
             },
           },
         },
-      ],
+      ] + (
+        if std.length(tb.config.extraEnv) > 0 then tb.config.extraEnv else []
+      ),
       ports: [
         { name: name, containerPort: tb.config.ports[name] }
         for name in std.objectFields(tb.config.ports)

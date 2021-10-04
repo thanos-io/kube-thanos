@@ -24,6 +24,7 @@
   tracing: {},
   minTime: '',
   maxTime: '',
+  extraEnv: [],
 
   memcachedDefaults+:: {
     config+: {
