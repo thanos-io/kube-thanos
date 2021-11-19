@@ -18,7 +18,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 -
 
 ### Changed
-
+- [#254](https://github.com/thanos-io/kube-thanos/pull/254) Add support for tenant header configuration to receiver.
 - [#247](https://github.com/thanos-io/kube-thanos/pull/247) Make Compact service headless.
 
 ### Added
