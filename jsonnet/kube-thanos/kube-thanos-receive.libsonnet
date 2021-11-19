@@ -84,6 +84,10 @@ function(params) {
           '--receive.tenant-label-name=%s' % tr.config.tenantLabelName,
         ] else []
       ) + (
+        if tr.config.tenantHeader != null then [
+          '--receive.tenant-header=%s' % tr.config.tenantHeader,
+        ] else []
+      ) + (
         if tr.config.hashringConfigMapName != '' then [
           '--receive.hashrings-file=/var/lib/thanos-receive/hashrings.json',
         ] else []

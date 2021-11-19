@@ -30,6 +30,7 @@
     'receive="true"',
   ],
   tenantLabelName: null,
+  tenantHeader: null,
   clusterDomain: 'cluster.local',
   extraEnv: [],
 
