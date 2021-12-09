@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: Vendor
+      run: make vendor
+    - name: Vendor Diff
+      run: git diff --exit-code
+    - name: Format
+      run: make --always-make fmt lint
+    - name: Format Diff
+      run: git diff --exit-code
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: Generate
+      run: make --always-make vendor generate validate
+    - name: Generate Diff
+      run: git diff --exit-code
