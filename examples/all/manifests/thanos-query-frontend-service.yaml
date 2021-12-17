@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: query-cache
     app.kubernetes.io/instance: thanos-query-frontend
     app.kubernetes.io/name: thanos-query-frontend
-    app.kubernetes.io/version: v0.22.0
+    app.kubernetes.io/version: v0.24.0
   name: thanos-query-frontend
   namespace: thanos
 spec:

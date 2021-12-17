@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: database-compactor
     app.kubernetes.io/instance: thanos-compact
     app.kubernetes.io/name: thanos-compact
-    app.kubernetes.io/version: v0.22.0
+    app.kubernetes.io/version: v0.24.0
   name: thanos-compact
   namespace: thanos
 spec:
