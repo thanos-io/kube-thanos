@@ -12,6 +12,8 @@ local commonConfig = {
   objectStorageConfig: {
     name: 'thanos-objectstorage',
     key: 'thanos.yaml',
+    tlsSecretName: '',
+    tlsSecretMountPath: '',
   },
   resources: {
     requests: { cpu: 0.123, memory: '123Mi' },

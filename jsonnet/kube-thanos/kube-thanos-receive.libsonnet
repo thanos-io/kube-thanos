@@ -133,6 +133,10 @@ function(params) {
         if tr.config.hashringConfigMapName != '' then [
           { name: 'hashring-config', mountPath: '/var/lib/thanos-receive' },
         ] else []
+      ) + (
+        if tr.config.objectStorageConfig != null && std.objectHas(tr.config.objectStorageConfig, 'tlsSecretName') && std.length(tr.config.objectStorageConfig.tlsSecretName) > 0 then [
+          { name: 'tls-secret', mountPath: tr.config.objectStorageConfig.tlsSecretMountPath }
+        ] else []
       ),
       livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
@@ -168,10 +172,17 @@ function(params) {
             serviceAccountName: tr.serviceAccount.metadata.name,
             securityContext: tr.config.securityContext,
             containers: [c],
-            volumes: if tr.config.hashringConfigMapName != '' then [{
-              name: 'hashring-config',
-              configMap: { name: tr.config.hashringConfigMapName },
-            }] else [],
+            volumes: (
+              if tr.config.hashringConfigMapName != '' then [{
+                name: 'hashring-config',
+                configMap: { name: tr.config.hashringConfigMapName },
+              }] else []
+            ) + ( 
+              if tr.config.objectStorageConfig != null && std.objectHas(tr.config.objectStorageConfig, 'tlsSecretName') && std.length(tr.config.objectStorageConfig.tlsSecretName) > 0 then [{
+                name: 'tls-secret',
+                secret: { secretName: tr.config.objectStorageConfig.tlsSecretName },
+              }] else [] 
+            ),
             terminationGracePeriodSeconds: 900,
             nodeSelector: {
               'kubernetes.io/os': 'linux',

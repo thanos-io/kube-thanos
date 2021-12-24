@@ -158,6 +158,9 @@ function(params) {
       } },
       resources: if tbr.config.resources != {} then tbr.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
+      volumeMounts: if std.objectHas(tbr.config.objectStorageConfig, 'tlsSecretName') && std.length(tbr.config.objectStorageConfig.tlsSecretName) > 0 then [
+        { name: 'tls-secret', mountPath: tbr.config.objectStorageConfig.tlsSecretMountPath }
+      ] else [],
     };
 
     {
@@ -177,6 +180,10 @@ function(params) {
             serviceAccountName: tbr.serviceAccount.metadata.name,
             securityContext: tbr.config.securityContext,
             containers: [container],
+            volumes: if std.objectHas(tbr.config.objectStorageConfig, 'tlsSecretName') && std.length(tbr.config.objectStorageConfig.tlsSecretName) > 0 then [{
+              name: 'tls-secret',
+              secret: { secretName: tbr.config.objectStorageConfig.tlsSecretName },
+            }] else [],
             terminationGracePeriodSeconds: 120,
             nodeSelector: {
               'beta.kubernetes.io/os': 'linux',

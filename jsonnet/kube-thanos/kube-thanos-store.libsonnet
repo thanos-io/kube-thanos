@@ -128,7 +128,11 @@ function(params) {
         name: 'data',
         mountPath: '/var/thanos/store',
         readOnly: false,
-      }],
+      }] + (
+        if std.objectHas(ts.config.objectStorageConfig, 'tlsSecretName') && std.length(ts.config.objectStorageConfig.tlsSecretName) > 0 then [
+          { name: 'tls-secret', mountPath: ts.config.objectStorageConfig.tlsSecretMountPath }
+        ] else []
+      ),
       livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
         port: ts.config.ports.http,
@@ -163,7 +167,10 @@ function(params) {
             serviceAccountName: ts.serviceAccount.metadata.name,
             securityContext: ts.config.securityContext,
             containers: [c],
-            volumes: [],
+            volumes: if std.objectHas(ts.config.objectStorageConfig, 'tlsSecretName') && std.length(ts.config.objectStorageConfig.tlsSecretName) > 0 then [{
+              name: 'tls-secret',
+              secret: { secretName: ts.config.objectStorageConfig.tlsSecretName },
+            }] else [],
             terminationGracePeriodSeconds: 120,
             nodeSelector: {
               'kubernetes.io/os': 'linux',

@@ -84,6 +84,7 @@ spec:
             cpu: 0.123
             memory: 123Mi
         terminationMessagePolicy: FallbackToLogsOnError
+        volumeMounts: []
       nodeSelector:
         beta.kubernetes.io/os: linux
       securityContext:
@@ -91,3 +92,4 @@ spec:
         runAsUser: 65534
       serviceAccountName: thanos-bucket-replicate
       terminationGracePeriodSeconds: 120
+      volumes: []

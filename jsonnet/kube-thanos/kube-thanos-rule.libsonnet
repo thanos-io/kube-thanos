@@ -180,6 +180,9 @@ function(params) {
         if std.length(tr.config.extraVolumeMounts) > 0 then [
           { name: volumeMount.name, mountPath: volumeMount.mountPath }
           for volumeMount in tr.config.extraVolumeMounts
+      ) + (
+        if tr.config.objectStorageConfig != null && std.objectHas(tr.config.objectStorageConfig, 'tlsSecretName') && std.length(tr.config.objectStorageConfig.tlsSecretName) > 0 then [
+          { name: 'tls-secret', mountPath: tr.config.objectStorageConfig.tlsSecretMountPath },
         ] else []
       ),
       livenessProbe: { failureThreshold: 24, periodSeconds: 5, httpGet: {
@@ -254,34 +257,40 @@ function(params) {
             serviceAccountName: tr.serviceAccount.metadata.name,
             securityContext: tr.config.securityContext,
             containers: [c] +
-                        (if std.length(tr.config.rulesConfig) > 0 || std.length(tr.config.extraVolumeMounts) > 0 || tr.config.alertmanagerConfigFile != {} then [
-                           reloadContainer,
-                         ] else []),
-            volumes: [] +
-                     (
-                       if std.length(tr.config.rulesConfig) > 0 then [
-                         { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
-                         for ruleConfig in tr.config.rulesConfig
-                       ] else []
-                     ) + (
-              if tr.config.alertmanagerConfigFile != {} then [{
-                name: tr.config.alertmanagerConfigFile.name,
-                configMap: { name: tr.config.alertmanagerConfigFile.name },
-              }] else []
-            ) + (
-              if std.length(tr.config.extraVolumeMounts) > 0 then [
-                { name: volumeMount.name } +
-                (
-                  if volumeMount.type == 'configMap' then {
-                    configMap: { name: volumeMount.name },
-                  }
-                  else {
-                    secret: { name: volumeMount.name },
-                  }
-                )
-                for volumeMount in tr.config.extraVolumeMounts
-              ] else []
-            ),
+              (if std.length(tr.config.rulesConfig) > 0 || std.length(tr.config.extraVolumeMounts) > 0 || tr.config.alertmanagerConfigFile != {} then [
+                  reloadContainer,
+                ] else []),
+            volumes: 
+              [] +
+              (
+                if std.length(tr.config.rulesConfig) > 0 then [
+                  { name: ruleConfig.name, configMap: { name: ruleConfig.name } }
+                  for ruleConfig in tr.config.rulesConfig
+                ] else []
+              ) + (
+                if tr.config.alertmanagerConfigFile != {} then [{
+                  name: tr.config.alertmanagerConfigFile.name,
+                  configMap: { name: tr.config.alertmanagerConfigFile.name },
+                }] else []
+              ) + (
+                if std.length(tr.config.extraVolumeMounts) > 0 then [
+                  { name: volumeMount.name } +
+                  (
+                    if volumeMount.type == 'configMap' then {
+                      configMap: { name: volumeMount.name },
+                    }
+                    else {
+                      secret: { name: volumeMount.name },
+                    }
+                  )
+                  for volumeMount in tr.config.extraVolumeMounts
+                ] else []
+              ) + (
+                if tr.config.objectStorageConfig != null && std.objectHas(tr.config.objectStorageConfig, 'tlsSecretName') && std.length(tr.config.objectStorageConfig.tlsSecretName) > 0 then [{
+                  name: 'tls-secret',
+                  secret: { secretName: tr.config.objectStorageConfig.tlsSecretName },
+                }] else []
+              ),
             nodeSelector: {
               'kubernetes.io/os': 'linux',
             },
