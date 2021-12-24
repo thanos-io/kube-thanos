@@ -159,7 +159,7 @@ function(params) {
       resources: if tbr.config.resources != {} then tbr.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
       volumeMounts: if std.objectHas(tbr.config.objectStorageConfig, 'tlsSecretName') && std.length(tbr.config.objectStorageConfig.tlsSecretName) > 0 then [
-        { name: 'tls-secret', mountPath: tbr.config.objectStorageConfig.tlsSecretMountPath }
+        { name: 'tls-secret', mountPath: tbr.config.objectStorageConfig.tlsSecretMountPath },
       ] else [],
     };
 

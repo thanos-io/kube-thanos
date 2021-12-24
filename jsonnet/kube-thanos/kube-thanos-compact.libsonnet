@@ -116,7 +116,7 @@ function(params) {
         readOnly: false,
       }] + (
         if std.objectHas(tc.config.objectStorageConfig, 'tlsSecretName') && std.length(tc.config.objectStorageConfig.tlsSecretName) > 0 then [
-          { name: 'tls-secret', mountPath: tc.config.objectStorageConfig.tlsSecretMountPath }
+          { name: 'tls-secret', mountPath: tc.config.objectStorageConfig.tlsSecretMountPath },
         ] else []
       ),
       resources: if tc.config.resources != {} then tc.config.resources else {},

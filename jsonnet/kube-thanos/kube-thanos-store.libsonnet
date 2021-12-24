@@ -130,7 +130,7 @@ function(params) {
         readOnly: false,
       }] + (
         if std.objectHas(ts.config.objectStorageConfig, 'tlsSecretName') && std.length(ts.config.objectStorageConfig.tlsSecretName) > 0 then [
-          { name: 'tls-secret', mountPath: ts.config.objectStorageConfig.tlsSecretMountPath }
+          { name: 'tls-secret', mountPath: ts.config.objectStorageConfig.tlsSecretMountPath },
         ] else []
       ),
       livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
