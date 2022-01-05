@@ -114,7 +114,11 @@ function(params) {
         name: 'data',
         mountPath: '/var/thanos/compact',
         readOnly: false,
-      }],
+      }] + (
+        if std.objectHas(tc.config.objectStorageConfig, 'tlsSecretName') && std.length(tc.config.objectStorageConfig.tlsSecretName) > 0 then [
+          { name: 'tls-secret', mountPath: tc.config.objectStorageConfig.tlsSecretMountPath },
+        ] else []
+      ),
       resources: if tc.config.resources != {} then tc.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
@@ -139,7 +143,10 @@ function(params) {
             serviceAccountName: tc.serviceAccount.metadata.name,
             securityContext: tc.config.securityContext,
             containers: [c],
-            volumes: [],
+            volumes: if std.objectHas(tc.config.objectStorageConfig, 'tlsSecretName') && std.length(tc.config.objectStorageConfig.tlsSecretName) > 0 then [{
+              name: 'tls-secret',
+              secret: { secretName: tc.config.objectStorageConfig.tlsSecretName },
+            }] else [],
             terminationGracePeriodSeconds: 120,
             nodeSelector: {
               'kubernetes.io/os': 'linux',
