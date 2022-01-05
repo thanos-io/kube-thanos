@@ -39,6 +39,7 @@ spec:
         - --tsdb.block-duration=2h
         - --query=dnssrv+_http._tcp.thanos-query.thanos.svc.cluster.local
         - --alertmanagers.url=alertmanager:9093
+        - --alertmanagers.config-file=/etc/thanos/config/thanos-ruler-config/config.yaml
         - --rule-file=/etc/thanos/rules/test/test
         - |-
           --tracing.config="config":
@@ -98,14 +99,20 @@ spec:
           readOnly: false
         - mountPath: /etc/thanos/rules/test
           name: test
+        - mountPath: /etc/thanos/config/thanos-ruler-config
+          name: thanos-ruler-config
+          readOnly: true
       - args:
         - -webhook-url=http://localhost:10902/-/reload
         - -volume-dir=/etc/thanos/rules/test
+        - -volume-dir=/etc/thanos/config/thanos-ruler-config
         image: jimmidyson/configmap-reload:v0.5.0
         name: configmap-reloader
         volumeMounts:
         - mountPath: /etc/thanos/rules/test
           name: test
+        - mountPath: /etc/thanos/config/thanos-ruler-config
+          name: thanos-ruler-config
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
@@ -116,6 +123,9 @@ spec:
       - configMap:
           name: test
         name: test
+      - configMap:
+          name: thanos-ruler-config
+        name: thanos-ruler-config
   volumeClaimTemplates:
   - metadata:
       labels:

@@ -75,6 +75,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#213](https://github.com/thanos-io/kube-thanos/pull/213) Allow configuring `--min-time` and `--max-time` of store.
 - [#218](https://github.com/thanos-io/kube-thanos/pull/218) Enable `--query.auto-downsampling` for query by default.
 - [#221](https://github.com/thanos-io/kube-thanos/pull/221) Allow configuring `--tsdb.retention` and `--tsdb.block-duration` for rule.
+- [#225](https://github.com/thanos-io/kube-thanos/pull/225) Add support for alertmanager configuration and extra volumes for rule.
 
 [Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.18.0...v0.19.0)
 

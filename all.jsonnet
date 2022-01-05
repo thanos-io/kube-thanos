@@ -87,6 +87,10 @@ local ru = t.rule(commonConfig {
   replicas: 1,
   rulesConfig: [{ name: 'test', key: 'test' }],
   alertmanagersURLs: ['alertmanager:9093'],
+  alertmanagerConfigFile: {
+    name: 'thanos-ruler-config',
+    key: 'config.yaml',
+  },
   reloaderImage: 'jimmidyson/configmap-reload:v0.5.0',
   serviceMonitor: true,
 });
