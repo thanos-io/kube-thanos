@@ -7,6 +7,7 @@ local defaults = {
   namespace: error 'must provide namespace',
   version: error 'must provide version',
   image: error 'must provide image',
+  imagePullPolicy: 'IfNotPresent',
   replicas: error 'must provide replicas',
   replicaLabels: error 'must provide replicaLabels',
   stores: ['dnssrv+_grpc._tcp.thanos-store.%s.svc.cluster.local' % defaults.namespace],
@@ -97,6 +98,7 @@ function(params) {
     local c = {
       name: 'thanos-query',
       image: tq.config.image,
+      imagePullPolicy: tq.config.imagePullPolicy,
       args:
         [
           'query',

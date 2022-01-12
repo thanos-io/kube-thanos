@@ -7,6 +7,7 @@ local defaults = {
   namespace: error 'must provide namespace',
   version: error 'must provide version',
   image: error 'must provide image',
+  imagePullPolicy: 'IfNotPresent',
   objectStorageConfig: error 'must provide objectStorageConfig',
   objectStorageToConfig: error 'must provide objectStorageToConfig',  // Destination object store configuration.
   resources: {},
@@ -88,6 +89,7 @@ function(params) {
     local container = {
       name: 'thanos-bucket-replicate',
       image: tbr.config.image,
+      imagePullPolicy: tbr.config.imagePullPolicy,
       args: [
         'tools',
         'bucket',

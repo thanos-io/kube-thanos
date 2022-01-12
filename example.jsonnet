@@ -8,6 +8,7 @@ local commonConfig = {
     namespace: 'thanos',
     version: 'v0.22.0',
     image: 'quay.io/thanos/thanos:' + cfg.version,
+    imagePullPolicy: 'IfNotPresent',
     objectStorageConfig: {
       name: 'thanos-objectstorage',
       key: 'thanos.yaml',
