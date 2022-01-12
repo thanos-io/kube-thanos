@@ -27,6 +27,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#245](https://github.com/thanos-io/kube-thanos/pull/245) Support scraping config reloader sidecar for ruler.
 - [#251](https://github.com/thanos-io/kube-thanos/pull/251) Add support for extraEnv (custom environment variables) to all components.
 - [#260](https://github.com/thanos-io/kube-thanos/pull/260) Add support custom certificate for the object store by configuring `tlsSecretName` and `tlsSecretMountPath` in `objectStorageConfig`.
+- [#261](https://github.com/thanos-io/kube-thanos/pull/261) Add support for imagePullPolicy to all components.
 
 ### Fixed
 
