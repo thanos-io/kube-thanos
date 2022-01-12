@@ -58,6 +58,7 @@ function(params) {
     local c = {
       name: 'thanos-receive',
       image: tr.config.image,
+      imagePullPolicy: tr.config.imagePullPolicy,
       args: [
         'receive',
         '--log.level=' + tr.config.logLevel,

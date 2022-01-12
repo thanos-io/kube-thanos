@@ -62,6 +62,7 @@ spec:
             fieldRef:
               fieldPath: status.hostIP
         image: quay.io/thanos/thanos:v0.22.0
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 24
           httpGet:
@@ -107,6 +108,7 @@ spec:
         - -volume-dir=/etc/thanos/rules/test
         - -volume-dir=/etc/thanos/config/thanos-ruler-config
         image: jimmidyson/configmap-reload:v0.5.0
+        imagePullPolicy: IfNotPresent
         name: configmap-reloader
         volumeMounts:
         - mountPath: /etc/thanos/rules/test

@@ -7,6 +7,7 @@ local defaults = {
   namespace: error 'must provide namespace',
   version: error 'must provide version',
   image: error 'must provide image',
+  imagePullPolicy: 'IfNotPresent',
   objectStorageConfig: error 'must provide objectStorageConfig',
   resources: {},
   logLevel: 'info',
@@ -83,6 +84,7 @@ function(params) {
     local container = {
       name: 'thanos-bucket',
       image: tb.config.image,
+      imagePullPolicy: tb.config.imagePullPolicy,
       args: [
         'tools',
         'bucket',

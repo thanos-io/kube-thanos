@@ -66,6 +66,7 @@ function(params) {
     local c = {
       name: 'thanos-store',
       image: ts.config.image,
+      imagePullPolicy: ts.config.imagePullPolicy,
       args: [
         'store',
         '--log.level=' + ts.config.logLevel,

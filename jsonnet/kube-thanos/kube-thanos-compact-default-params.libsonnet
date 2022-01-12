@@ -7,6 +7,7 @@
   namespace: error 'must provide namespace',
   version: error 'must provide version',
   image: error 'must provide image',
+  imagePullPolicy: 'IfNotPresent',
   objectStorageConfig: error 'must provide objectStorageConfig',
   resources: {},
   logLevel: 'info',

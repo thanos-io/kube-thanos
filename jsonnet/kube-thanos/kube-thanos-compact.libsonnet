@@ -52,6 +52,7 @@ function(params) {
     local c = {
       name: 'thanos-compact',
       image: tc.config.image,
+      imagePullPolicy: tc.config.imagePullPolicy,
       args: [
         'compact',
         '--wait',
