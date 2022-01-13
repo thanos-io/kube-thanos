@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: database-compactor
     app.kubernetes.io/instance: thanos-compact-0
     app.kubernetes.io/name: thanos-compact
-    app.kubernetes.io/version: v0.22.0
+    app.kubernetes.io/version: v0.24.0
     compact.thanos.io/shard: shard-0
   name: thanos-compact-0
   namespace: thanos
@@ -24,7 +24,7 @@ spec:
         app.kubernetes.io/component: database-compactor
         app.kubernetes.io/instance: thanos-compact-0
         app.kubernetes.io/name: thanos-compact
-        app.kubernetes.io/version: v0.22.0
+        app.kubernetes.io/version: v0.24.0
         compact.thanos.io/shard: shard-0
     spec:
       affinity:
@@ -84,8 +84,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: quay.io/thanos/thanos:v0.22.0
-        imagePullPolicy: IfNotPresent
+        image: quay.io/thanos/thanos:v0.24.0
         livenessProbe:
           failureThreshold: 4
           httpGet:

@@ -15,9 +15,18 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Breaking Changes
 
+### Changed
+
+### Added
+
+### Fixed
+
 -
 
+## [v0.24.0](https://github.com/thanos-io/kube-thanos/tree/v0.24.0) (2021-12-17)
+
 ### Changed
+
 - [#254](https://github.com/thanos-io/kube-thanos/pull/254) Add support for tenant header configuration to receiver.
 - [#247](https://github.com/thanos-io/kube-thanos/pull/247) Make Compact service headless.
 
@@ -29,7 +38,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#260](https://github.com/thanos-io/kube-thanos/pull/260) Add support custom certificate for the object store by configuring `tlsSecretName` and `tlsSecretMountPath` in `objectStorageConfig`.
 - [#261](https://github.com/thanos-io/kube-thanos/pull/261) Add support for imagePullPolicy to all components.
 
-### Fixed
+[Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.22.0...v0.24.0)
 
 -
 
