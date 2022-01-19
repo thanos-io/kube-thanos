@@ -98,6 +98,7 @@ spec:
               key: thanos.yaml
               name: thanos-objectstorage
         image: quay.io/thanos/thanos:v0.24.0
+        imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 8
           httpGet:
