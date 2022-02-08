@@ -14,6 +14,7 @@ local defaults = {
   objectStorageConfig: error 'must provide objectStorageConfig',
   ruleFiles: [],
   rulesConfig: [],
+  remoteWriteConfigFile: {},
   alertmanagersURLs: [],
   alertmanagerConfigFile: {},
   extraVolumeMounts: [],
@@ -60,6 +61,7 @@ function(params) {
   assert std.isNumber(tr.config.replicas) && tr.config.replicas >= 0 : 'thanos rule replicas has to be number >= 0',
   assert std.isArray(tr.config.ruleFiles),
   assert std.isArray(tr.config.rulesConfig),
+  assert std.isObject(tr.config.remoteWriteConfigFile),
   assert std.isArray(tr.config.alertmanagersURLs),
   assert std.isObject(tr.config.alertmanagerConfigFile),
   assert std.isArray(tr.config.extraVolumeMounts),
@@ -143,6 +145,11 @@ function(params) {
               { config+: { service_name: defaults.name } } + tr.config.tracing
             ),
           ] else []
+        ) + (
+          if tr.config.remoteWriteConfigFile != {} then [
+            '--remote-write.config-file=/etc/thanos/config/' + tr.config.remoteWriteConfigFile.name + '/' + tr.config.remoteWriteConfigFile.key,
+          ]
+          else []
         ),
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
@@ -188,6 +195,10 @@ function(params) {
         if tr.config.objectStorageConfig != null && std.objectHas(tr.config.objectStorageConfig, 'tlsSecretName') && std.length(tr.config.objectStorageConfig.tlsSecretName) > 0 then [
           { name: 'tls-secret', mountPath: tr.config.objectStorageConfig.tlsSecretMountPath },
         ] else []
+      ) + (
+        if tr.config.remoteWriteConfigFile != {} then [
+          { name: tr.config.remoteWriteConfigFile.name, mountPath: '/etc/thanos/config/' + tr.config.remoteWriteConfigFile.name, readOnly: true },
+        ] else []
       ),
       livenessProbe: { failureThreshold: 24, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
@@ -226,6 +237,10 @@ function(params) {
             '-volume-dir=' + volumeMount.mountPath
             for volumeMount in tr.config.extraVolumeMounts
           ] else []
+        ) + (
+          if tr.config.remoteWriteConfigFile != {} then [
+            '-volume-dir=/etc/thanos/config/' + tr.config.remoteWriteConfigFile.name,
+          ] else []
         ),
       volumeMounts: [
         { name: ruleConfig.name, mountPath: '/etc/thanos/rules/' + ruleConfig.name }
@@ -238,6 +253,10 @@ function(params) {
         if std.length(tr.config.extraVolumeMounts) > 0 then [
           { name: volumeMount.name, mountPath: volumeMount.mountPath }
           for volumeMount in tr.config.extraVolumeMounts
+        ] else []
+      ) + (
+        if tr.config.remoteWriteConfigFile != {} then [
+          { name: tr.config.remoteWriteConfigFile.name, mountPath: '/etc/thanos/config/' + tr.config.remoteWriteConfigFile.name },
         ] else []
       ),
     };
@@ -263,7 +282,7 @@ function(params) {
             securityContext: tr.config.securityContext,
             containers: [c] +
                         (
-                          if std.length(tr.config.rulesConfig) > 0 || std.length(tr.config.extraVolumeMounts) > 0 || tr.config.alertmanagerConfigFile != {} then [
+                          if std.length(tr.config.rulesConfig) > 0 || std.length(tr.config.extraVolumeMounts) > 0 || tr.config.alertmanagerConfigFile != {} || tr.config.remoteWriteConfigFile != {} then [
                             reloadContainer,
                           ] else []
                         ),
@@ -278,6 +297,11 @@ function(params) {
                 if tr.config.alertmanagerConfigFile != {} then [{
                   name: tr.config.alertmanagerConfigFile.name,
                   configMap: { name: tr.config.alertmanagerConfigFile.name },
+                }] else []
+              ) + (
+                if tr.config.remoteWriteConfigFile != {} then [{
+                  name: tr.config.remoteWriteConfigFile.name,
+                  configMap: { name: tr.config.remoteWriteConfigFile.name },
                 }] else []
               ) + (
                 if std.length(tr.config.extraVolumeMounts) > 0 then [
