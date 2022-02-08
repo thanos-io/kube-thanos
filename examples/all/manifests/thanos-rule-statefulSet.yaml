@@ -47,6 +47,7 @@ spec:
             "sampler_type": "ratelimiting"
             "service_name": "thanos-rule"
           "type": "JAEGER"
+        - --remote-write.config-file=/etc/thanos/config/thanos-stateless-ruler-config/rw-config.yaml
         env:
         - name: NAME
           valueFrom:
@@ -103,10 +104,14 @@ spec:
         - mountPath: /etc/thanos/config/thanos-ruler-config
           name: thanos-ruler-config
           readOnly: true
+        - mountPath: /etc/thanos/config/thanos-stateless-ruler-config
+          name: thanos-stateless-ruler-config
+          readOnly: true
       - args:
         - -webhook-url=http://localhost:10902/-/reload
         - -volume-dir=/etc/thanos/rules/test
         - -volume-dir=/etc/thanos/config/thanos-ruler-config
+        - -volume-dir=/etc/thanos/config/thanos-stateless-ruler-config
         image: jimmidyson/configmap-reload:v0.5.0
         imagePullPolicy: IfNotPresent
         name: configmap-reloader
@@ -115,6 +120,8 @@ spec:
           name: test
         - mountPath: /etc/thanos/config/thanos-ruler-config
           name: thanos-ruler-config
+        - mountPath: /etc/thanos/config/thanos-stateless-ruler-config
+          name: thanos-stateless-ruler-config
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
@@ -128,6 +135,9 @@ spec:
       - configMap:
           name: thanos-ruler-config
         name: thanos-ruler-config
+      - configMap:
+          name: thanos-stateless-ruler-config
+        name: thanos-stateless-ruler-config
   volumeClaimTemplates:
   - metadata:
       labels:

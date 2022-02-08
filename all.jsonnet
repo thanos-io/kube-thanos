@@ -93,6 +93,10 @@ local ru = t.rule(commonConfig {
     name: 'thanos-ruler-config',
     key: 'config.yaml',
   },
+  remoteWriteConfigFile: {
+    name: 'thanos-stateless-ruler-config',
+    key: 'rw-config.yaml',
+  },
   reloaderImage: 'jimmidyson/configmap-reload:v0.5.0',
   serviceMonitor: true,
 });
