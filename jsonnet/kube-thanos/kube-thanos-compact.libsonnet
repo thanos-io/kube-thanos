@@ -68,7 +68,7 @@ function(params) {
         '--retention.resolution-1h=' + tc.config.retentionResolution1h,
         '--delete-delay=' + tc.config.deleteDelay,
         '--compact.concurrency=' + tc.config.compactConcurrency,
-        '--downsample.concurrency=' + tc.config.downsampleConcurrency
+        '--downsample.concurrency=' + tc.config.downsampleConcurrency,
       ] + (
         if tc.config.disableDownsampling then ['--downsampling.disable'] else []
       ) + (
