@@ -58,6 +58,8 @@ spec:
         - --retention.resolution-5m=0d
         - --retention.resolution-1h=0d
         - --delete-delay=48h
+        - --compact.concurrency=1
+        - --downsample.concurrency=1
         - --downsampling.disable
         - |-
           --tracing.config="config":

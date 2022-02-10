@@ -6,6 +6,8 @@ function(params) {
   // Combine the defaults and the passed params to make the component's config.
   config:: defaults + params,
   // Safety checks for combined config of defaults and params
+  assert std.isNumber(tc.config.compactConcurrency),
+  assert std.isNumber(tc.config.downsampleConcurrency),
   assert std.isNumber(tc.config.replicas) && (tc.config.replicas == 0 || tc.config.replicas == 1) : 'thanos compact replicas can only be 0 or 1',
   assert std.isObject(tc.config.resources),
   assert std.isObject(tc.config.volumeClaimTemplate),
@@ -65,6 +67,8 @@ function(params) {
         '--retention.resolution-5m=' + tc.config.retentionResolution5m,
         '--retention.resolution-1h=' + tc.config.retentionResolution1h,
         '--delete-delay=' + tc.config.deleteDelay,
+        '--compact.concurrency=' + tc.config.compactConcurrency,
+        '--downsample.concurrency=' + tc.config.downsampleConcurrency,
       ] + (
         if tc.config.disableDownsampling then ['--downsampling.disable'] else []
       ) + (
