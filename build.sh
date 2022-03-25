@@ -25,3 +25,9 @@ mkdir examples/all/manifests
 
 ${JSONNET} -J vendor -m examples/all/manifests "${1-all.jsonnet}" | xargs -I{} sh -c "cat {} | ${GOJSONTOYAML} > {}.yaml; rm -f {}" -- {}
 find examples/all/manifests -type f ! -name '*.yaml' -delete
+
+## Apply the kube-thanos stack
+# The previous steps (compilation) has created a bunch of manifest files in the manifest/ folder. 
+# Now simply use kubectl to install Thanos as per your configuration:
+cd manifests
+ls -C1 | xargs -I{} sh -c "kubectl apply -f {}"
