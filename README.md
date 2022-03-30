@@ -181,7 +181,8 @@ The previous steps (compilation) has created a bunch of manifest files in the ma
 Now simply use `kubectl` to install Thanos as per your configuration:
 
 ```shell
-$ kubectl apply -f manifests/
+cd manifests
+ls -C1 | xargs -I{} sh -c "kubectl apply -f {}"
 ```
 
 Check the monitoring namespace (or the namespace you have specific in `namespace: `) and make sure the pods are running.
