@@ -47,6 +47,7 @@ function(params) {
       name: tc.config.name,
       namespace: tc.config.namespace,
       labels: tc.config.commonLabels,
+      annotations: tc.config.serviceAccountAnnotations,
     },
   },
 

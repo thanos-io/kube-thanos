@@ -74,4 +74,6 @@
     fsGroup: 65534,
     runAsUser: 65534,
   },
+
+  serviceAccountAnnotations:: {}
 }

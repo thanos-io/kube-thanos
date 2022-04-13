@@ -44,6 +44,7 @@ local defaults = {
     fsGroup: 65534,
     runAsUser: 65534,
   },
+  serviceAccountAnnotations:: {}
 };
 
 function(params) {
@@ -91,6 +92,7 @@ function(params) {
       name: tq.config.name,
       namespace: tq.config.namespace,
       labels: tq.config.commonLabels,
+      annotations: tq.config.serviceAccountAnnotations,
     },
   },
 

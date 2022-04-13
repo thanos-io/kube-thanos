@@ -28,6 +28,7 @@ function(params)
         name: config.name,
         namespace: config.namespace,
         labels: config.commonLabels,
+        annotations: config.serviceAccountAnnotations,
       },
     },
     hashrings: {
