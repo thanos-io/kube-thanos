@@ -19,6 +19,9 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Added
 
+- [#263](https://github.com/thanos-io/kube-thanos/pull/263) Add support for stateless Rulers.
+- [#271](https://github.com/thanos-io/kube-thanos/pull/271) Add annotation support for ServiceAccount.
+
 ### Fixed
 
 
