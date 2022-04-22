@@ -11,6 +11,7 @@ local defaults = {
   replicas: error 'must provide replicas',
   replicaLabels: error 'must provide replicaLabels',
   stores: ['dnssrv+_grpc._tcp.thanos-store.%s.svc.cluster.local' % defaults.namespace],
+  rules: [],  // TODO(bwplotka): This is deprecated, switch to endpoints while ready.
   externalPrefix: '',
   prefixHeader: '',
   autoDownsampling: true,
@@ -112,6 +113,9 @@ function(params) {
         ] + [
           '--store=%s' % store
           for store in tq.config.stores
+        ] + [
+          '--rule=%s' % store
+          for store in tq.config.rules
         ] +
         (
           if tq.config.externalPrefix != '' then [
