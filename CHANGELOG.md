@@ -19,11 +19,15 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Added
 
-- [#263](https://github.com/thanos-io/kube-thanos/pull/263) Add support for stateless Rulers.
-
 ### Fixed
 
--
+
+## [v0.26.0](https://github.com/thanos-io/kube-thanos/tree/v0.26.0) (2022-06-13)
+
+### Added
+
+- [#263](https://github.com/thanos-io/kube-thanos/pull/263) Add support for stateless Rulers.
+
 
 ## [v0.24.0](https://github.com/thanos-io/kube-thanos/tree/v0.24.0) (2021-12-17)
 
@@ -43,7 +47,6 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 [Full Changelog](https://github.com/thanos-io/kube-thanos/compare/v0.22.0...v0.24.0)
 
--
 
 ## [v0.22.0](https://github.com/thanos-io/kube-thanos/tree/v0.22.0) (2021-08-17)
 
