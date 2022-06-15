@@ -6,7 +6,7 @@ local t = import 'kube-thanos/thanos.libsonnet';
 local commonConfig = {
   local cfg = self,
   namespace: 'thanos',
-  version: 'v0.24.0',
+  version: 'v0.26.0',
   image: 'quay.io/thanos/thanos:' + cfg.version,
   replicaLabels: ['prometheus_replica', 'rule_replica'],
   objectStorageConfig: {
