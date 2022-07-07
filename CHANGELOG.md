@@ -21,6 +21,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Fixed
 
+## [v0.27.0](https://github.com/thanos-io/kube-thanos/tree/v0.27.0) (2022-07-07)
+- (no changes from `v0.26.0`)
 
 ## [v0.26.0](https://github.com/thanos-io/kube-thanos/tree/v0.26.0) (2022-06-13)
 
