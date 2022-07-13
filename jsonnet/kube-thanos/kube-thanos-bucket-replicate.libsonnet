@@ -84,7 +84,7 @@ function(params) {
       name: tbr.config.name,
       namespace: tbr.config.namespace,
       labels: tbr.config.commonLabels,
-      annotations: tb.config.serviceAccountAnnotations,
+      annotations: tbr.config.serviceAccountAnnotations,
     },
   },
 
