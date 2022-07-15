@@ -6,7 +6,7 @@ local defaults = receiveConfigDefaults {
     hashring: 'default',
     tenants: [],
   }],
-  hashringConfigmapName: 'hashring-config',
+  hashringConfigMapName: 'hashring-config',
   routerReplicas: 1,
 };
 
