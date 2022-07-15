@@ -17,6 +17,8 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Changed
 
+- [#279](https://github.com/thanos-io/kube-thanos/pull/279) Change `hashringConfigmapName` to `hashringConfigMapName` in Receive configuration.
+
 ### Added
 
 ### Fixed

@@ -5,7 +5,7 @@ local defaults = receiveConfigDefaults {
     hashring: 'default',
     tenants: [],
   }],
-  hashringConfigmapName: 'hashring-config',
+  hashringConfigMapName: 'hashring-config',
   routerReplicas: 1,
   endpoints: error 'must provide ingestor endpoints object',
 };
@@ -46,7 +46,7 @@ function(params) {
     apiVersion: 'v1',
     kind: 'ConfigMap',
     metadata: {
-      name: tr.config.hashringConfigmapName,
+      name: tr.config.hashringConfigMapName,
       namespace: tr.config.namespace,
     },
     data: {
