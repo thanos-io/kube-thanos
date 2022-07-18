@@ -44,7 +44,7 @@ local defaults = {
     fsGroup: 65534,
     runAsUser: 65534,
   },
-  serviceAccountAnnotations:: {}
+  serviceAccountAnnotations:: {},
 };
 
 function(params) {

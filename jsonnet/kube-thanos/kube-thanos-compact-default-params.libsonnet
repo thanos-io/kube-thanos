@@ -46,5 +46,5 @@
     runAsUser: 65534,
   },
 
-  serviceAccountAnnotations:: {}
+  serviceAccountAnnotations:: {},
 }

@@ -65,7 +65,7 @@ local defaults = {
     runAsUser: 65534,
   },
 
-  serviceAccountAnnotations:: {}
+  serviceAccountAnnotations:: {},
 };
 
 function(params) {
