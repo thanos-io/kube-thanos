@@ -59,6 +59,7 @@ function(params) {
       name: ts.config.name,
       namespace: ts.config.namespace,
       labels: ts.config.commonLabels,
+      annotations: ts.config.serviceAccountAnnotations,
     },
   },
 

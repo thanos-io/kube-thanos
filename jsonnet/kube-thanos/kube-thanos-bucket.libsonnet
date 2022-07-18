@@ -35,6 +35,8 @@ local defaults = {
     fsGroup: 65534,
     runAsUser: 65534,
   },
+
+  serviceAccountAnnotations:: {},
 };
 
 function(params) {
@@ -77,6 +79,7 @@ function(params) {
       name: tb.config.name,
       namespace: tb.config.namespace,
       labels: tb.config.commonLabels,
+      annotations: tb.config.serviceAccountAnnotations,
     },
   },
 

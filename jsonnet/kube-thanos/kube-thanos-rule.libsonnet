@@ -50,6 +50,8 @@ local defaults = {
     fsGroup: 65534,
     runAsUser: 65534,
   },
+
+  serviceAccountAnnotations:: {},
 };
 
 function(params) {
@@ -103,6 +105,7 @@ function(params) {
       name: tr.config.name,
       namespace: tr.config.namespace,
       labels: tr.config.commonLabels,
+      annotations: tr.config.serviceAccountAnnotations,
     },
   },
 

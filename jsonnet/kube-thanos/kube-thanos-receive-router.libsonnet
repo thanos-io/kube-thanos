@@ -39,6 +39,7 @@ function(params) {
       name: tr.config.name + '-router',
       namespace: tr.config.namespace,
       labels: tr.routerLabels,
+      annotations: tr.config.serviceAccountAnnotations,
     },
   },
 

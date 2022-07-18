@@ -45,6 +45,7 @@ function(params) {
       name: tr.config.name,
       namespace: tr.config.namespace,
       labels: tr.config.commonLabels,
+      annotations: tr.config.serviceAccountAnnotations,
     },
   },
 

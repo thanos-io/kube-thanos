@@ -64,6 +64,8 @@ local defaults = {
     fsGroup: 65534,
     runAsUser: 65534,
   },
+
+  serviceAccountAnnotations:: {},
 };
 
 function(params) {
@@ -133,6 +135,7 @@ function(params) {
       name: tqf.config.name,
       namespace: tqf.config.namespace,
       labels: tqf.config.commonLabels,
+      annotations: tqf.config.serviceAccountAnnotations,
     },
   },
 

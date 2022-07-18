@@ -40,6 +40,8 @@ local defaults = {
     fsGroup: 65534,
     runAsUser: 65534,
   },
+
+  serviceAccountAnnotations:: {},
 };
 
 function(params) {
@@ -82,6 +84,7 @@ function(params) {
       name: tbr.config.name,
       namespace: tbr.config.namespace,
       labels: tbr.config.commonLabels,
+      annotations: tbr.config.serviceAccountAnnotations,
     },
   },
 
