@@ -25,9 +25,20 @@ function(params) {
     metadata: {
       name: tr.config.name + '-router',
       namespace: tr.config.namespace,
+      labels: tr.routerLabels,
     },
     spec: {
-      ports: [{ name: name, port: tr.config.ports[name] } for name in std.objectFields(tr.config.ports)],
+      ports: [
+        {
+          assert std.isString(name),
+          assert std.isNumber(tr.config.ports[name]),
+
+          name: name,
+          port: tr.config.ports[name],
+          targetPort: tr.config.ports[name],
+        }
+        for name in std.objectFields(tr.config.ports)
+      ],
       selector: tr.routerLabels,
     },
   },
