@@ -8,7 +8,7 @@ local commonConfig = {
   namespace: 'thanos',
   version: 'v0.26.0',
   image: 'quay.io/thanos/thanos:' + cfg.version,
-  replicaLabels: ['prometheus_replica', 'rule_replica'],
+  replicaLabels: ['prometheus_replica', 'receive_replica', 'rule_replica'],
   objectStorageConfig: {
     name: 'thanos-objectstorage',
     key: 'thanos.yaml',
