@@ -42,4 +42,5 @@ function(params) {
     for name in tr.config.hashrings
   },
   serviceAccount: ingestors.serviceAccount,
+  serviceMonitor: if tr.config.serviceMonitor then ingestors.serviceMonitor,
 }
