@@ -15,6 +15,7 @@ local defaults = {
   externalPrefix: '',
   prefixHeader: '',
   autoDownsampling: true,
+  useThanosEngine: false,
   resources: {},
   queryTimeout: '',
   lookbackDelta: '',
@@ -61,6 +62,7 @@ function(params) {
   assert std.isString(tq.config.queryTimeout),
   assert std.isBoolean(tq.config.serviceMonitor),
   assert std.isBoolean(tq.config.autoDownsampling),
+  assert std.isBoolean(tq.config.useThanosEngine),
 
   service: {
     apiVersion: 'v1',
@@ -147,6 +149,10 @@ function(params) {
         ) + (
           if tq.config.autoDownsampling then [
             '--query.auto-downsampling',
+          ] else []
+        ) + (
+          if tq.config.useThanosEngine then [
+            '--query.promql-engine=thanos',
           ] else []
         ),
       env: [
