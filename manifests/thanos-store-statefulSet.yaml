@@ -71,6 +71,7 @@ spec:
             port: 10902
             scheme: HTTP
           periodSeconds: 30
+          timeoutSeconds: 1
         name: thanos-store
         ports:
         - containerPort: 10901

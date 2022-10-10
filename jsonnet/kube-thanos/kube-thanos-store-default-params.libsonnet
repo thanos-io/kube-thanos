@@ -22,6 +22,9 @@
     grpc: 10901,
     http: 10902,
   },
+  livenessProbe: {
+    timeoutSeconds: 1,
+  },
   tracing: {},
   minTime: '',
   maxTime: '',
