@@ -24,6 +24,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 - [#263](https://github.com/thanos-io/kube-thanos/pull/263) Add support for stateless Rulers.
 - [#271](https://github.com/thanos-io/kube-thanos/pull/271) Add annotation support for ServiceAccount.
+- [#286](https://github.com/thanos-io/kube-thanos/pull/286) Store: make the liveness probe timeout configurable.
 
 ### Fixed
 

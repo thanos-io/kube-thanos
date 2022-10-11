@@ -135,11 +135,16 @@ function(params) {
           { name: 'tls-secret', mountPath: ts.config.objectStorageConfig.tlsSecretMountPath },
         ] else []
       ),
-      livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
-        scheme: 'HTTP',
-        port: ts.config.ports.http,
-        path: '/-/healthy',
-      } },
+      livenessProbe: {
+        failureThreshold: ts.config.livenessProbe.failureThreshold,
+        periodSeconds: ts.config.livenessProbe.periodSeconds,
+        timeoutSeconds: ts.config.livenessProbe.timeoutSeconds,
+        httpGet: {
+          scheme: 'HTTP',
+          port: ts.config.ports.http,
+          path: '/-/healthy',
+        },
+      },
       readinessProbe: { failureThreshold: 20, periodSeconds: 5, httpGet: {
         scheme: 'HTTP',
         port: ts.config.ports.http,
