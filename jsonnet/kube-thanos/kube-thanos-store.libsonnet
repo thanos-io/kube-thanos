@@ -136,8 +136,8 @@ function(params) {
         ] else []
       ),
       livenessProbe: {
-        failureThreshold: 8,
-        periodSeconds: 30,
+        failureThreshold: ts.config.livenessProbe.failureThreshold,
+        periodSeconds: ts.config.livenessProbe.periodSeconds,
         timeoutSeconds: ts.config.livenessProbe.timeoutSeconds,
         httpGet: {
           scheme: 'HTTP',
