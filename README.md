@@ -77,7 +77,7 @@ local commonConfig = {
   config+:: {
     local cfg = self,
     namespace: 'thanos',
-    version: 'v0.24.0',
+    version: 'v0.28.1',
     image: 'quay.io/thanos/thanos:' + cfg.version,
     imagePullPolicy: 'IfNotPresent',
     objectStorageConfig: {
@@ -104,6 +104,7 @@ local i = t.receiveIngestor(commonConfig.config {
   replicationFactor: 1,
   // Disable shipping to object storage for the purposes of this example
   objectStorageConfig: null,
+  serviceMonitor: true,
 });
 
 local r = t.receiveRouter(commonConfig.config {
