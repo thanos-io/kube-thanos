@@ -22,7 +22,7 @@ function(params) {
 
   // Safety checks for combined config of defaults and params
   assert std.isNumber(ts.config.replicas) && ts.config.replicas >= 0 : 'thanos store replicas has to be number >= 0',
-  assert std.isNumber(ts.config.limits.seriesTouched) && ts.config.limit.seriesTouched >= 0 : 'thanos store series touched limit has to be number >= 0',
+  assert std.isNumber(ts.config.limits.seriesTouched) && ts.config.limits.seriesTouched >= 0 : 'thanos store series touched limit has to be number >= 0',
   assert std.isObject(ts.config.resources),
   assert std.isBoolean(ts.config.serviceMonitor),
   assert std.isObject(ts.config.volumeClaimTemplate),
@@ -91,7 +91,7 @@ function(params) {
           '--min-time=' + ts.config.minTime,
         ] else []
       ) + (
-        if std.length(ts.config.limits.seriesTouched) > 0 then [
+        if ts.config.limits.seriesTouched > 0 then [
           '--store.grpc.touched-series-limit=' + ts.config.limits.seriesTouched,
         ] else []
       ) + (
