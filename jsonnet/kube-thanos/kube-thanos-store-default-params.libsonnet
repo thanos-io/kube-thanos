@@ -9,6 +9,11 @@
   image: error 'must provide image',
   imagePullPolicy: 'IfNotPresent',
   replicas: error 'must provide replicas',
+  limits: {
+    seriesTouched: 0,
+    seriesSample: 0,
+    downloadedBytes: 0,
+  },
   objectStorageConfig: error 'must provide objectStorageConfig',
   ignoreDeletionMarksDelay: '24h',
   logLevel: 'info',
