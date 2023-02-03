@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: query-cache
     app.kubernetes.io/instance: thanos-query-frontend
     app.kubernetes.io/name: thanos-query-frontend
-    app.kubernetes.io/version: v0.29.0
+    app.kubernetes.io/version: v0.30.2
   name: thanos-query-frontend
   namespace: thanos
 spec:
@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/component: query-cache
         app.kubernetes.io/instance: thanos-query-frontend
         app.kubernetes.io/name: thanos-query-frontend
-        app.kubernetes.io/version: v0.29.0
+        app.kubernetes.io/version: v0.30.2
     spec:
       affinity:
         podAntiAffinity:
@@ -85,7 +85,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: quay.io/thanos/thanos:v0.29.0
+        image: quay.io/thanos/thanos:v0.30.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 4
