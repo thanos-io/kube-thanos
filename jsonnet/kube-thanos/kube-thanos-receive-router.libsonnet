@@ -20,8 +20,8 @@ function(params) {
   },
 
   podLabelSelector:: {
-    [labelName]: defaults.commonLabels[labelName]
-    for labelName in std.objectFields(defaults.commonLabels)
+    [labelName]: tr.routerLabels[labelName]
+    for labelName in std.objectFields(tr.routerLabels)
     if labelName != 'app.kubernetes.io/version'
   },
 
