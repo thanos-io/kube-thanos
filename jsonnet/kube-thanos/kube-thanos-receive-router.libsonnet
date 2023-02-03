@@ -19,6 +19,12 @@ function(params) {
     'app.kubernetes.io/component': tr.config.name + '-router',
   },
 
+  podLabelSelector:: {
+    [labelName]: defaults.commonLabels[labelName]
+    for labelName in std.objectFields(defaults.commonLabels)
+    if labelName != 'app.kubernetes.io/version'
+  },
+
   service: {
     apiVersion: 'v1',
     kind: 'Service',
@@ -77,7 +83,7 @@ function(params) {
     },
     spec: {
       replicas: tr.config.routerReplicas,
-      selector: { matchLabels: tr.routerLabels },
+      selector: { matchLabels: tr.podLabelSelector },
       template: {
         metadata: {
           labels: tr.routerLabels,
