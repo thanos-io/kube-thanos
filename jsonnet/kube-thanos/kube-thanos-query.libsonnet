@@ -115,7 +115,7 @@ function(params) {
           '--query.replica-label=%s' % labelName
           for labelName in tq.config.replicaLabels
         ] + [
-          '--store=%s' % store
+          '--endpoint=%s' % store
           for store in tq.config.stores
         ] + [
           '--rule=%s' % store
