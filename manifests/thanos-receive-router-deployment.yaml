@@ -79,7 +79,7 @@ spec:
         - mountPath: /var/lib/thanos-receive
           name: hashring-config
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       securityContext:
         fsGroup: 65534
         runAsUser: 65534

@@ -30,6 +30,9 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 
 ### Fixed
 
+- [#298](https://github.com/thanos-io/kube-thanos/pull/298) Use `kubernetes.io/os` instead of `beta.kubernetes.io/os` which has been deprecated since Kubernetes v1.14.
+
+
 ## [v0.27.0](https://github.com/thanos-io/kube-thanos/tree/v0.27.0) (2022-07-07)
 - (no changes from `v0.26.0`)
 
