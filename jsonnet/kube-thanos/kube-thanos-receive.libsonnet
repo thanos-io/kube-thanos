@@ -245,6 +245,7 @@ function(params) {
         {
           port: 'http',
           relabelings: [{
+            action: 'replace',
             sourceLabels: ['namespace', 'pod'],
             separator: '/',
             targetLabel: 'instance',

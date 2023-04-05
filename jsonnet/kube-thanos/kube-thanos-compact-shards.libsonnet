@@ -89,11 +89,13 @@ function(params)
             port: 'http',
             relabelings: [
               {
+                action: 'replace',
                 sourceLabels: ['namespace', 'pod'],
                 separator: '/',
                 targetLabel: 'instance',
               },
               {
+                action: 'replace',
                 sourceLabels: ['__meta_kubernetes_service_label_compact_thanos_io_shard'],
                 regex: 'shard\\-(\\d+)',
                 replacement: '$1',
