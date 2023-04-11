@@ -18,7 +18,8 @@ spec:
       - namespace
       - pod
       targetLabel: instance
-    - sourceLabels:
+    - action: replace
+      sourceLabels:
       - __meta_kubernetes_service_label_controller_receive_thanos_io_shard
       targetLabel: hashring
   selector:
