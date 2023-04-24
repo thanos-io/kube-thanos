@@ -27,6 +27,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#271](https://github.com/thanos-io/kube-thanos/pull/271) Add annotation support for ServiceAccount.
 - [#286](https://github.com/thanos-io/kube-thanos/pull/286) Store: make the liveness probe timeout configurable.
 - [#292](https://github.com/thanos-io/kube-thanos/pull/292) Store: allow configuration of series, series sample, and downloaded bytes limits.
+- [#299](https://github.com/thanos-io/kube-thanos/pull/299) Query: allow configuration of telemetry.request options
 
 ### Fixed
 
