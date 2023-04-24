@@ -28,6 +28,9 @@ local defaults = {
   logFormat: 'logfmt',
   tracing: {},
   extraEnv: [],
+  telemetryDurationQuantiles: '',
+  telemetrySamplesQuantiles: '',
+  telemetrySeriesQuantiles: '',
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-query',
@@ -153,6 +156,21 @@ function(params) {
         ) + (
           if tq.config.useThanosEngine then [
             '--query.promql-engine=thanos',
+          ] else []
+        ) + (
+          if tq.config.telemetryDurationQuantiles != '' then [
+            '--query.telemetry.request-duration-seconds-quantiles=' + std.stripChars(quantile, ' ')
+            for quantile in std.split(tq.config.telemetryDurationQuantiles, ',')
+          ] else []
+        ) + (
+          if tq.config.telemetrySamplesQuantiles != '' then [
+            '--query.telemetry.request-samples-quantiles=' + std.stripChars(quantile, ' ')
+            for quantile in std.split(tq.config.telemetrySamplesQuantiles, ',')
+          ] else []
+        ) + (
+          if tq.config.telemetrySeriesQuantiles != '' then [
+            '--query.telemetry.request-series-seconds-quantiles=' + std.stripChars(quantile, ' ')
+            for quantile in std.split(tq.config.telemetrySeriesQuantiles, ',')
           ] else []
         ),
       env: [
