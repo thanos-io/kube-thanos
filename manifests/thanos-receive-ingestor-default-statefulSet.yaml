@@ -11,6 +11,7 @@ metadata:
   name: thanos-receive-ingestor-default
   namespace: thanos
 spec:
+  minReadySeconds: 0
   replicas: 1
   selector:
     matchLabels:

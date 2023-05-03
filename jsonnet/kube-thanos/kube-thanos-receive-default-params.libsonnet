@@ -9,6 +9,7 @@
   image: error 'must provide image',
   imagePullPolicy: 'IfNotPresent',
   replicas: error 'must provide replicas',
+  minReadySeconds: 0,
   replicationFactor: error 'must provide replication factor',
   objectStorageConfig: error 'must provide objectStorageConfig',
   podDisruptionBudgetMaxUnavailable: (std.floor(defaults.replicationFactor / 2)),
