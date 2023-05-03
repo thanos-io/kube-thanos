@@ -11,6 +11,7 @@ metadata:
   name: thanos-receive-default
   namespace: thanos
 spec:
+  minReadySeconds: 0
   replicas: 3
   selector:
     matchLabels:

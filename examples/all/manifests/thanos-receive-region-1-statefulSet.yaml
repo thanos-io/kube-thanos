@@ -11,6 +11,7 @@ metadata:
   name: thanos-receive-region-1
   namespace: thanos
 spec:
+  minReadySeconds: 0
   replicas: 3
   selector:
     matchLabels:

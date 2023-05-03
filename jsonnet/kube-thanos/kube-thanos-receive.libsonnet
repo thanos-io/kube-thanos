@@ -12,6 +12,7 @@ function(params) {
   assert std.isBoolean(tr.config.serviceMonitor),
   assert std.isObject(tr.config.volumeClaimTemplate),
   assert !std.objectHas(tr.config.volumeClaimTemplate, 'spec') || std.assertEqual(tr.config.volumeClaimTemplate.spec.accessModes, ['ReadWriteOnce']) : 'thanos receive PVC accessMode can only be ReadWriteOnce',
+  assert std.isNumber(tr.config.minReadySeconds),
 
   service: {
     apiVersion: 'v1',
@@ -164,6 +165,7 @@ function(params) {
       },
       spec: {
         replicas: tr.config.replicas,
+        minReadySeconds: tr.config.minReadySeconds,
         selector: { matchLabels: tr.config.podLabelSelector },
         serviceName: tr.service.metadata.name,
         template: {
