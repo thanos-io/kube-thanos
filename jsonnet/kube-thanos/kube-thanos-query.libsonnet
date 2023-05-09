@@ -16,6 +16,7 @@ local defaults = {
   prefixHeader: '',
   autoDownsampling: true,
   useThanosEngine: false,
+  useQueryPushdown: false,
   resources: {},
   queryTimeout: '',
   lookbackDelta: '',
@@ -66,6 +67,7 @@ function(params) {
   assert std.isBoolean(tq.config.serviceMonitor),
   assert std.isBoolean(tq.config.autoDownsampling),
   assert std.isBoolean(tq.config.useThanosEngine),
+  assert std.isBoolean(tq.config.useQueryPushdown),
 
   service: {
     apiVersion: 'v1',
@@ -171,6 +173,10 @@ function(params) {
           if tq.config.telemetrySeriesQuantiles != '' then [
             '--query.telemetry.request-series-seconds-quantiles=' + std.stripChars(quantile, ' ')
             for quantile in std.split(tq.config.telemetrySeriesQuantiles, ',')
+          ] else []
+        ) + (
+          if tq.config.useQueryPushdown then [
+            '--enable-feature=query-pushdown',
           ] else []
         ),
       env: [
