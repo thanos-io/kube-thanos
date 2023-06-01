@@ -197,10 +197,10 @@ function(params) {
                 secret: { secretName: tr.config.objectStorageConfig.tlsSecretName },
               }] else []
             ) + (
-                if tr.config.receiveLimitsConfigFile != {} then [{
-                  name: tr.config.receiveLimitsConfigFile.name,
-                  configMap: { name: tr.config.receiveLimitsConfigFile.name },
-                }] else []
+              if tr.config.receiveLimitsConfigFile != {} then [{
+                name: tr.config.receiveLimitsConfigFile.name,
+                configMap: { name: tr.config.receiveLimitsConfigFile.name },
+              }] else []
             ),
             terminationGracePeriodSeconds: 900,
             nodeSelector: {
