@@ -15,7 +15,6 @@ spec:
       app.kubernetes.io/component: thanos-receive-router
       app.kubernetes.io/instance: thanos-receive
       app.kubernetes.io/name: thanos-receive
-      app.kubernetes.io/version: v0.29.0
   template:
     metadata:
       labels:
