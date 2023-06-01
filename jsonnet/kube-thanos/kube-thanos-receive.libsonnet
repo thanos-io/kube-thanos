@@ -13,6 +13,7 @@ function(params) {
   assert std.isObject(tr.config.volumeClaimTemplate),
   assert !std.objectHas(tr.config.volumeClaimTemplate, 'spec') || std.assertEqual(tr.config.volumeClaimTemplate.spec.accessModes, ['ReadWriteOnce']) : 'thanos receive PVC accessMode can only be ReadWriteOnce',
   assert std.isNumber(tr.config.minReadySeconds),
+  assert std.isObject(tr.config.receiveLimitsConfigFile),
 
   service: {
     apiVersion: 'v1',
@@ -100,6 +101,11 @@ function(params) {
             { config+: { service_name: defaults.name } } + tr.config.tracing
           ),
         ] else []
+      ) + (
+        if tr.config.receiveLimitsConfigFile != {} then [
+          '--receive.limits-config-file=/etc/thanos/config/' + tr.config.receiveLimitsConfigFile.name + '/' + tr.config.receiveLimitsConfigFile.key,
+        ]
+        else []
       ),
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
@@ -139,6 +145,10 @@ function(params) {
       ) + (
         if tr.config.objectStorageConfig != null && std.objectHas(tr.config.objectStorageConfig, 'tlsSecretName') && std.length(tr.config.objectStorageConfig.tlsSecretName) > 0 then [
           { name: 'tls-secret', mountPath: tr.config.objectStorageConfig.tlsSecretMountPath },
+        ] else []
+      ) + (
+        if tr.config.receiveLimitsConfigFile != {} then [
+          { name: tr.config.receiveLimitsConfigFile.name, mountPath: '/etc/thanos/config/' + tr.config.receiveLimitsConfigFile.name, readOnly: true },
         ] else []
       ),
       livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
@@ -185,6 +195,11 @@ function(params) {
               if tr.config.objectStorageConfig != null && std.objectHas(tr.config.objectStorageConfig, 'tlsSecretName') && std.length(tr.config.objectStorageConfig.tlsSecretName) > 0 then [{
                 name: 'tls-secret',
                 secret: { secretName: tr.config.objectStorageConfig.tlsSecretName },
+              }] else []
+            ) + (
+              if tr.config.receiveLimitsConfigFile != {} then [{
+                name: tr.config.receiveLimitsConfigFile.name,
+                configMap: { name: tr.config.receiveLimitsConfigFile.name },
               }] else []
             ),
             terminationGracePeriodSeconds: 900,

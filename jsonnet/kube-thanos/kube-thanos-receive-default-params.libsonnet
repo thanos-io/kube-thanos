@@ -35,6 +35,7 @@
   tenantHeader: null,
   clusterDomain: 'cluster.local',
   extraEnv: [],
+  receiveLimitsConfigFile: {},
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-receive',
