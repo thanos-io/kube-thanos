@@ -1,4 +1,10 @@
 local t = import 'kube-thanos/thanos.libsonnet';
+local minio = (import 'github.com/observatorium/observatorium/configuration/components/minio.libsonnet')({
+  namespace: 'minio',
+  buckets: ['thanos'],
+  accessKey: 'minio',
+  secretKey: 'minio123',
+});
 
 // For an example with every option and component, please check all.jsonnet
 
@@ -6,7 +12,7 @@ local commonConfig = {
   config+:: {
     local cfg = self,
     namespace: 'thanos',
-    version: 'v0.29.0',
+    version: 'v0.31.0',
     image: 'quay.io/thanos/thanos:' + cfg.version,
     imagePullPolicy: 'IfNotPresent',
     objectStorageConfig: {
@@ -66,4 +72,29 @@ local q = t.query(commonConfig.config {
   for hashring in std.objectFields(i.ingestors)
   for resource in std.objectFields(i.ingestors[hashring])
   if i.ingestors[hashring][resource] != null
+} +
+{
+  'minio-deployment': minio.deployment,
+  'minio-pvc': minio.pvc,
+  'minio-service': minio.service,
+  'minio-secret-thanos': {
+    apiVersion: 'v1',
+    kind: 'Secret',
+    metadata: {
+      name: 'thanos-objectstorage',
+      namespace: commonConfig.config.namespace,
+    },
+    stringData: {
+      'thanos.yaml': |||
+        type: s3
+        config:
+          bucket: thanos
+          endpoint: %s.%s.svc.cluster.local:9000
+          insecure: true
+          access_key: minio
+          secret_key: minio123
+      ||| % [minio.service.metadata.name, minio.config.namespace],
+    },
+    type: 'Opaque',
+  },
 }

@@ -3,6 +3,16 @@
   "dependencies": [
     {
       "source": {
+        "git": {
+          "remote": "https://github.com/observatorium/observatorium.git",
+          "subdir": ""
+        }
+      },
+      "version": "c46a9f03e020eaef452747bc8ae7257d93bfbcd1",
+      "sum": "lVxa5WmOSwbQYCyTrSqbCKj3Y3Zxs1C4LiXNLLYmvlk="
+    },
+    {
+      "source": {
         "local": {
           "directory": "jsonnet/kube-thanos"
         }
