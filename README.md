@@ -69,12 +69,6 @@ Here's [example.jsonnet](example.jsonnet):
 [embedmd]:# (example.jsonnet)
 ```jsonnet
 local t = import 'kube-thanos/thanos.libsonnet';
-local minio = (import 'github.com/observatorium/observatorium/configuration/components/minio.libsonnet')({
-  namespace: 'minio',
-  buckets: ['thanos'],
-  accessKey: 'minio',
-  secretKey: 'minio123',
-});
 
 // For an example with every option and component, please check all.jsonnet
 
@@ -142,31 +136,6 @@ local q = t.query(commonConfig.config {
   for hashring in std.objectFields(i.ingestors)
   for resource in std.objectFields(i.ingestors[hashring])
   if i.ingestors[hashring][resource] != null
-} +
-{
-  'minio-deployment': minio.deployment,
-  'minio-pvc': minio.pvc,
-  'minio-service': minio.service,
-  'minio-secret-thanos': {
-    apiVersion: 'v1',
-    kind: 'Secret',
-    metadata: {
-      name: 'thanos-objectstorage',
-      namespace: commonConfig.config.namespace,
-    },
-    stringData: {
-      'thanos.yaml': |||
-        type: s3
-        config:
-          bucket: thanos
-          endpoint: %s.%s.svc.cluster.local:9000
-          insecure: true
-          access_key: minio
-          secret_key: minio123
-      ||| % [minio.service.metadata.name, minio.config.namespace],
-    },
-    type: 'Opaque',
-  },
 }
 ```
 
@@ -197,10 +166,15 @@ find manifests -type f ! -name '*.yaml' -delete
 # The following script generates all components, mostly used for testing
 
 rm -rf examples/all/manifests
+rm -rf examples/development-minio
 mkdir examples/all/manifests
+mkdir examples/development-minio
 
 ${JSONNET} -J vendor -m examples/all/manifests "${1-all.jsonnet}" | xargs -I{} sh -c "cat {} | ${GOJSONTOYAML} > {}.yaml; rm -f {}" -- {}
 find examples/all/manifests -type f ! -name '*.yaml' -delete
+
+${JSONNET} -J vendor -m examples/development-minio "${1-minio.jsonnet}" | xargs -I{} sh -c "cat {} | ${GOJSONTOYAML} > {}.yaml; rm -f {}" -- {}
+find examples/development-minio -type f ! -name '*.yaml' -delete
 ```
 
 > Note you need `jsonnet` (`go get github.com/google/go-jsonnet/cmd/jsonnet`) and `gojsontoyaml` (`go get github.com/brancz/gojsontoyaml`) installed to run `build.sh`. If you just want json output, not yaml, then you can skip the pipe and everything afterwards.

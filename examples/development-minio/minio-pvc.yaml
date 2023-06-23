@@ -4,10 +4,10 @@ metadata:
   labels:
     app.kubernetes.io/name: minio
   name: minio
-  namespace: minio
+  namespace: thanos
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 5Gi

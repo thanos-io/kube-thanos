@@ -47,10 +47,12 @@ deploy:
 	kubectl create ns thanos
 	kubectl create ns minio
 	kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v$(PROM_OPERATOR_VERSION)/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+	kubectl create -f examples/development-minio/
 	kubectl create -f manifests/
 
 .PHONY: teardown
 teardown:
+	kubectl delete -f examples/development-minio/
 	kubectl delete -f manifests/
 	kubectl delete ns thanos
 	kubectl delete ns minio
