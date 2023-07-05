@@ -14,6 +14,7 @@ function(params) {
   assert !std.objectHas(tr.config.volumeClaimTemplate, 'spec') || std.assertEqual(tr.config.volumeClaimTemplate.spec.accessModes, ['ReadWriteOnce']) : 'thanos receive PVC accessMode can only be ReadWriteOnce',
   assert std.isNumber(tr.config.minReadySeconds),
   assert std.isObject(tr.config.receiveLimitsConfigFile),
+  assert std.isObject(tr.config.storeLimits),
 
   service: {
     apiVersion: 'v1',
@@ -94,6 +95,14 @@ function(params) {
       ) + (
         if tr.config.hashringConfigMapName != '' then [
           '--receive.hashrings-file=/var/lib/thanos-receive/hashrings.json',
+        ] else []
+      ) + (
+        if std.objectHas(tr.config.storeLimits, 'requestSamples') then [
+          '--store.limits.request-samples=%d' % tr.config.storeLimits.requestSamples,
+        ] else []
+      ) + (
+        if std.objectHas(tr.config.storeLimits, 'requestSeries') then [
+          '--store.limits.request-series=%d' % tr.config.storeLimits.requestSeries,
         ] else []
       ) + (
         if std.length(tr.config.tracing) > 0 then [

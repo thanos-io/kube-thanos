@@ -36,6 +36,7 @@
   clusterDomain: 'cluster.local',
   extraEnv: [],
   receiveLimitsConfigFile: {},
+  storeLimits: {},
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-receive',
