@@ -98,11 +98,11 @@ function(params) {
         ] else []
       ) + (
         if std.objectHas(tr.config.storeLimits, 'requestSamples') then [
-          '--store.limits.request-samples=%d' % tr.config.storeLimits.requestSamples,
+          '--store.limits.request-samples=%s' % tr.config.storeLimits.requestSamples,
         ] else []
       ) + (
         if std.objectHas(tr.config.storeLimits, 'requestSeries') then [
-          '--store.limits.request-series=%d' % tr.config.storeLimits.requestSeries,
+          '--store.limits.request-series=%s' % tr.config.storeLimits.requestSeries,
         ] else []
       ) + (
         if std.length(tr.config.tracing) > 0 then [
