@@ -30,6 +30,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#299](https://github.com/thanos-io/kube-thanos/pull/299) Query: allow configuration of telemetry.request options
 - [#301](https://github.com/thanos-io/kube-thanos/pull/301) Receive: allow configuration of `minReadySeconds` for StatefulSet
 - [#305](https://github.com/thanos-io/kube-thanos/pull/305) Receive: allow configuration of limits-config-file
+- [#308](https://github.com/thanos-io/kube-thanos/pull/308) Recive: add store limits flags
 
 ### Fixed
 
