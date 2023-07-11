@@ -328,6 +328,27 @@ function(params) {
             nodeSelector: {
               'kubernetes.io/os': 'linux',
             },
+            affinity: { podAntiAffinity: {
+              local labelSelector = { matchExpressions: [{
+                key: 'app.kubernetes.io/name',
+                operator: 'In',
+                values: [tr.statefulSet.metadata.labels['app.kubernetes.io/name']],
+              }, {
+                key: 'app.kubernetes.io/instance',
+                operator: 'In',
+                values: [tr.statefulSet.metadata.labels['app.kubernetes.io/instance']],
+              }] },
+              preferredDuringSchedulingIgnoredDuringExecution: [
+                {
+                  podAffinityTerm: {
+                    namespaces: [tr.config.namespace],
+                    topologyKey: 'kubernetes.io/hostname',
+                    labelSelector: labelSelector,
+                  },
+                  weight: 100,
+                },
+              ],
+            } },
           },
         },
         volumeClaimTemplates: if std.length(tr.config.volumeClaimTemplate) > 0 then [tr.config.volumeClaimTemplate {
