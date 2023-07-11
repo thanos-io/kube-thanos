@@ -31,6 +31,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#301](https://github.com/thanos-io/kube-thanos/pull/301) Receive: allow configuration of `minReadySeconds` for StatefulSet
 - [#305](https://github.com/thanos-io/kube-thanos/pull/305) Receive: allow configuration of limits-config-file
 - [#308](https://github.com/thanos-io/kube-thanos/pull/308) Recive: add store limits flags
+- [#310](https://github.com/thanos-io/kube-thanos/pull/310) Ruler: Add host anti-affinity to ruler
 
 ### Fixed
 
