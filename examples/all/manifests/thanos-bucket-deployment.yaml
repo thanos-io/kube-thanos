@@ -76,13 +76,28 @@ spec:
           requests:
             cpu: 0.123
             memory: 123Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsNonRoot: true
+          runAsUser: 65534
+          seccompProfile:
+            type: RuntimeDefault
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts: []
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
         fsGroup: 65534
+        runAsGroup: 65532
+        runAsNonRoot: true
         runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: thanos-bucket
       terminationGracePeriodSeconds: 120
       volumes: []

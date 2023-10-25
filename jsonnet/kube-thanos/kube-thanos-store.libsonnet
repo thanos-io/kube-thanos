@@ -167,6 +167,7 @@ function(params) {
         path: '/-/ready',
       } },
       resources: if ts.config.resources != {} then ts.config.resources else {},
+      securityContext: ts.config.securityContextContainer,
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 

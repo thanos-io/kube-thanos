@@ -9,7 +9,7 @@ MANIFESTS := manifests
 CRDSCHEMAS := .crdschemas
 TMP := tmp
 
-K8S_VERSION := 1.21.0
+K8S_VERSION := 1.27.0
 PROM_OPERATOR_VERSION := 0.46.0
 
 PIP  := pip3

@@ -34,6 +34,18 @@ local defaults = {
   securityContext:: {
     fsGroup: 65534,
     runAsUser: 65534,
+    runAsGroup: 65532,
+    runAsNonRoot: true,
+    seccompProfile: { type: 'RuntimeDefault' },
+  },
+  securityContextContainer:: {
+    runAsUser: defaults.securityContext.runAsUser,
+    runAsGroup: defaults.securityContext.runAsGroup,
+    runAsNonRoot: defaults.securityContext.runAsNonRoot,
+    seccompProfile: defaults.securityContext.seccompProfile,
+    allowPrivilegeEscalation: false,
+    readOnlyRootFilesystem: true,
+    capabilities: { drop: ['ALL'] },
   },
 
   serviceAccountAnnotations:: {},
@@ -142,6 +154,7 @@ function(params) {
         path: '/-/ready',
       } },
       resources: if tb.config.resources != {} then tb.config.resources else {},
+      securityContext: tb.config.securityContextContainer,
       terminationMessagePolicy: 'FallbackToLogsOnError',
       volumeMounts: if std.objectHas(tb.config.objectStorageConfig, 'tlsSecretName') && std.length(tb.config.objectStorageConfig.tlsSecretName) > 0 then [
         { name: 'tls-secret', mountPath: tb.config.objectStorageConfig.tlsSecretMountPath },
