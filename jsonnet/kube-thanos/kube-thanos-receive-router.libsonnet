@@ -140,6 +140,7 @@ function(params) {
               path: '/-/ready',
             } },
             resources: if tr.config.resources != {} then tr.config.resources else {},
+            securityContext: tr.config.securityContextContainer,
             terminationMessagePolicy: 'FallbackToLogsOnError',
           }],
           volumes: [{
