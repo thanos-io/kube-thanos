@@ -8,6 +8,7 @@
   version: error 'must provide version',
   image: error 'must provide image',
   imagePullPolicy: 'IfNotPresent',
+  replicas: 1,
   objectStorageConfig: error 'must provide objectStorageConfig',
   resources: {},
   logLevel: 'info',
