@@ -85,6 +85,37 @@ function(params) {
   assert std.isObject(tr.config.volumeClaimTemplate),
   assert !std.objectHas(tr.config.volumeClaimTemplate, 'spec') || std.assertEqual(tr.config.volumeClaimTemplate.spec.accessModes, ['ReadWriteOnce']) : 'thanos rule PVC accessMode can only be ReadWriteOnce',
 
+  networkPolicy: {
+    kind: 'NetworkPolicy',
+    apiVersion: 'networking.k8s.io/v1',
+    metadata: {
+      name: 'thanos-rule',
+      namespace: cfg.namespace,
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          'app.kubernetes.io/name': 'thanos-rule',
+        },
+      },
+      egress: [{}],  // Allow all outside egress to connect
+      ingress: [{
+        from: [{
+          namespaceSelector: {
+            matchLabels: {
+              'kubernetes.io/metadata.name': cfg.namespace,
+            },
+          },
+          podSelector: {
+            matchLabels: {
+              'app.kubernetes.io/name': 'thanos-query',
+            },
+          },
+        }],
+      }],
+      policyTypes: ['Egress'],
+    },
+  }
 
   service: {
     apiVersion: 'v1',

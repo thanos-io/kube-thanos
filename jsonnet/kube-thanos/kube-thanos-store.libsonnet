@@ -31,6 +31,38 @@ function(params) {
   assert std.isObject(ts.config.volumeClaimTemplate),
   assert !std.objectHas(ts.config.volumeClaimTemplate, 'spec') || std.assertEqual(ts.config.volumeClaimTemplate.spec.accessModes, ['ReadWriteOnce']) : 'thanos store PVC accessMode can only be ReadWriteOnce',
 
+  networkPolicy: {
+    kind: 'NetworkPolicy',
+    apiVersion: 'networking.k8s.io/v1',
+    metadata: {
+      name: 'thanos-store',
+      namespace: cfg.namespace,
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          'app.kubernetes.io/name': 'thanos-store',
+        },
+      },
+      egress: [{}],  // Allow all outside egress to connect to object storage
+      ingress: [{
+        from: [{
+          namespaceSelector: {
+            matchLabels: {
+              'kubernetes.io/metadata.name': cfg.namespace,
+            },
+          },
+          podSelector: {
+            matchLabels: {
+              'app.kubernetes.io/name': 'thanos-query',
+            },
+          },
+        }],
+      }],
+      policyTypes: ['Egress'],
+    },
+  },
+
   service: {
     apiVersion: 'v1',
     kind: 'Service',
