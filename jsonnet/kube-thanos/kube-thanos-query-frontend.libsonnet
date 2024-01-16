@@ -147,7 +147,7 @@ function(params) {
       }],
       policyTypes: ['Egress'],
     },
-  }
+  },
 
   service: {
     apiVersion: 'v1',
