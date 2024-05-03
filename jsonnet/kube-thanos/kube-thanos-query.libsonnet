@@ -28,6 +28,9 @@ local defaults = {
   logFormat: 'logfmt',
   tracing: {},
   extraEnv: [],
+  telemetryDurationQuantiles: '',
+  telemetrySamplesQuantiles: '',
+  telemetrySeriesQuantiles: '',
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-query',
@@ -45,7 +48,21 @@ local defaults = {
   securityContext:: {
     fsGroup: 65534,
     runAsUser: 65534,
+    runAsGroup: 65532,
+    runAsNonRoot: true,
+    seccompProfile: { type: 'RuntimeDefault' },
   },
+
+  securityContextContainer:: {
+    runAsUser: defaults.securityContext.runAsUser,
+    runAsGroup: defaults.securityContext.runAsGroup,
+    runAsNonRoot: defaults.securityContext.runAsNonRoot,
+    seccompProfile: defaults.securityContext.seccompProfile,
+    allowPrivilegeEscalation: false,
+    readOnlyRootFilesystem: true,
+    capabilities: { drop: ['ALL'] },
+  },
+
   serviceAccountAnnotations:: {},
 };
 
@@ -115,7 +132,7 @@ function(params) {
           '--query.replica-label=%s' % labelName
           for labelName in tq.config.replicaLabels
         ] + [
-          '--store=%s' % store
+          '--endpoint=%s' % store
           for store in tq.config.stores
         ] + [
           '--rule=%s' % store
@@ -154,6 +171,21 @@ function(params) {
           if tq.config.useThanosEngine then [
             '--query.promql-engine=thanos',
           ] else []
+        ) + (
+          if tq.config.telemetryDurationQuantiles != '' then [
+            '--query.telemetry.request-duration-seconds-quantiles=' + std.stripChars(quantile, ' ')
+            for quantile in std.split(tq.config.telemetryDurationQuantiles, ',')
+          ] else []
+        ) + (
+          if tq.config.telemetrySamplesQuantiles != '' then [
+            '--query.telemetry.request-samples-quantiles=' + std.stripChars(quantile, ' ')
+            for quantile in std.split(tq.config.telemetrySamplesQuantiles, ',')
+          ] else []
+        ) + (
+          if tq.config.telemetrySeriesQuantiles != '' then [
+            '--query.telemetry.request-series-seconds-quantiles=' + std.stripChars(quantile, ' ')
+            for quantile in std.split(tq.config.telemetrySeriesQuantiles, ',')
+          ] else []
         ),
       env: [
         {
@@ -183,6 +215,7 @@ function(params) {
         path: '/-/ready',
       } },
       resources: if tq.config.resources != {} then tq.config.resources else {},
+      securityContext: tq.config.securityContextContainer,
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
@@ -244,6 +277,7 @@ function(params) {
         {
           port: 'http',
           relabelings: [{
+            action: 'replace',
             sourceLabels: ['namespace', 'pod'],
             separator: '/',
             targetLabel: 'instance',

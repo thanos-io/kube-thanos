@@ -12,12 +12,14 @@ spec:
   endpoints:
   - port: http
     relabelings:
-    - separator: /
+    - action: replace
+      separator: /
       sourceLabels:
       - namespace
       - pod
       targetLabel: instance
-    - regex: shard\-(\d+)
+    - action: replace
+      regex: shard\-(\d+)
       replacement: $1
       sourceLabels:
       - __meta_kubernetes_service_label_store_thanos_io_shard

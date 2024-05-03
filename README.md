@@ -23,13 +23,12 @@ This project is intended to be used as a library (i.e. the intent is not for you
 Though for a quickstart a compiled version of the Kubernetes [manifests](manifests) generated with this library (specifically with `example.jsonnet`) is checked into this repository in order to try the content out quickly. To try out the stack un-customized run:
  * Simply create the stack:
 ```shell
-$ kubectl create ns thanos
-$ kubectl create -f manifests/
+$ make deploy
 ```
 
  * And to teardown the stack:
 ```shell
-$ kubectl delete -f manifests/
+$ make teardown
 ```
 
 ## Customizing kube-thanos
@@ -77,7 +76,7 @@ local commonConfig = {
   config+:: {
     local cfg = self,
     namespace: 'thanos',
-    version: 'v0.29.0',
+    version: 'v0.31.0',
     image: 'quay.io/thanos/thanos:' + cfg.version,
     imagePullPolicy: 'IfNotPresent',
     objectStorageConfig: {
@@ -167,10 +166,15 @@ find manifests -type f ! -name '*.yaml' -delete
 # The following script generates all components, mostly used for testing
 
 rm -rf examples/all/manifests
+rm -rf examples/development-minio
 mkdir examples/all/manifests
+mkdir examples/development-minio
 
 ${JSONNET} -J vendor -m examples/all/manifests "${1-all.jsonnet}" | xargs -I{} sh -c "cat {} | ${GOJSONTOYAML} > {}.yaml; rm -f {}" -- {}
 find examples/all/manifests -type f ! -name '*.yaml' -delete
+
+${JSONNET} -J vendor -m examples/development-minio "${1-minio.jsonnet}" | xargs -I{} sh -c "cat {} | ${GOJSONTOYAML} > {}.yaml; rm -f {}" -- {}
+find examples/development-minio -type f ! -name '*.yaml' -delete
 ```
 
 > Note you need `jsonnet` (`go get github.com/google/go-jsonnet/cmd/jsonnet`) and `gojsontoyaml` (`go get github.com/brancz/gojsontoyaml`) installed to run `build.sh`. If you just want json output, not yaml, then you can skip the pipe and everything afterwards.

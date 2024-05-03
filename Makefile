@@ -9,7 +9,7 @@ MANIFESTS := manifests
 CRDSCHEMAS := .crdschemas
 TMP := tmp
 
-K8S_VERSION := 1.21.0
+K8S_VERSION := 1.27.0
 PROM_OPERATOR_VERSION := 0.46.0
 
 PIP  := pip3
@@ -41,6 +41,21 @@ lint: $(JSONNET_LINT) vendor
 .PHONY: vendor
 vendor: | $(JB) jsonnetfile.json jsonnetfile.lock.json
 	$(JB) install
+
+.PHONY: deploy
+deploy:
+	kubectl create ns thanos
+	kubectl create ns minio
+	kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v$(PROM_OPERATOR_VERSION)/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
+	kubectl create -f examples/development-minio/
+	kubectl create -f manifests/
+
+.PHONY: teardown
+teardown:
+	kubectl delete -f examples/development-minio/
+	kubectl delete -f manifests/
+	kubectl delete ns thanos
+	kubectl delete ns minio
 
 .PHONY: clean
 clean:

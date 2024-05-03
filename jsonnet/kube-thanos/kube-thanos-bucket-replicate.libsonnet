@@ -39,6 +39,18 @@ local defaults = {
   securityContext:: {
     fsGroup: 65534,
     runAsUser: 65534,
+    runAsGroup: 65532,
+    runAsNonRoot: true,
+    seccompProfile: { type: 'RuntimeDefault' },
+  },
+  securityContextContainer:: {
+    runAsUser: defaults.securityContext.runAsUser,
+    runAsGroup: defaults.securityContext.runAsGroup,
+    runAsNonRoot: defaults.securityContext.runAsNonRoot,
+    seccompProfile: defaults.securityContext.seccompProfile,
+    allowPrivilegeEscalation: false,
+    readOnlyRootFilesystem: true,
+    capabilities: { drop: ['ALL'] },
   },
 
   serviceAccountAnnotations:: {},
@@ -191,7 +203,7 @@ function(params) {
             }] else [],
             terminationGracePeriodSeconds: 120,
             nodeSelector: {
-              'beta.kubernetes.io/os': 'linux',
+              'kubernetes.io/os': 'linux',
             },
           },
         },

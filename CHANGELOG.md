@@ -27,8 +27,17 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#271](https://github.com/thanos-io/kube-thanos/pull/271) Add annotation support for ServiceAccount.
 - [#286](https://github.com/thanos-io/kube-thanos/pull/286) Store: make the liveness probe timeout configurable.
 - [#292](https://github.com/thanos-io/kube-thanos/pull/292) Store: allow configuration of series, series sample, and downloaded bytes limits.
+- [#299](https://github.com/thanos-io/kube-thanos/pull/299) Query: allow configuration of telemetry.request options
+- [#301](https://github.com/thanos-io/kube-thanos/pull/301) Receive: allow configuration of `minReadySeconds` for StatefulSet
+- [#305](https://github.com/thanos-io/kube-thanos/pull/305) Receive: allow configuration of limits-config-file
+- [#308](https://github.com/thanos-io/kube-thanos/pull/308) Recive: add store limits flags
+- [#310](https://github.com/thanos-io/kube-thanos/pull/310) Ruler: Add host anti-affinity to ruler
+- [#313](https://github.com/thanos-io/kube-thanos/pull/313) Add per-container SecurityContext
 
 ### Fixed
+
+- [#298](https://github.com/thanos-io/kube-thanos/pull/298) Use `kubernetes.io/os` instead of `beta.kubernetes.io/os` which has been deprecated since Kubernetes v1.14.
+
 
 ## [v0.27.0](https://github.com/thanos-io/kube-thanos/tree/v0.27.0) (2022-07-07)
 - (no changes from `v0.26.0`)

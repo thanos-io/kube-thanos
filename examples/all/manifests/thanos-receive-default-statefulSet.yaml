@@ -11,6 +11,7 @@ metadata:
   name: thanos-receive-default
   namespace: thanos
 spec:
+  minReadySeconds: 0
   replicas: 3
   selector:
     matchLabels:
@@ -143,7 +144,11 @@ spec:
         kubernetes.io/os: linux
       securityContext:
         fsGroup: 65534
+        runAsGroup: 65532
+        runAsNonRoot: true
         runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: thanos-receive
       terminationGracePeriodSeconds: 900
       volumes:

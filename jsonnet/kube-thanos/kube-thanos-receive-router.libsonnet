@@ -146,6 +146,7 @@ function(params) {
               path: '/-/ready',
             } },
             resources: if tr.config.resources != {} then tr.config.resources else {},
+            securityContext: tr.config.securityContextContainer,
             terminationMessagePolicy: 'FallbackToLogsOnError',
           }],
           volumes: [{
@@ -154,7 +155,7 @@ function(params) {
           }],
           terminationGracePeriodSeconds: 30,
           nodeSelector: {
-            'beta.kubernetes.io/os': 'linux',
+            'kubernetes.io/os': 'linux',
           },
         },
       },

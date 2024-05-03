@@ -49,6 +49,19 @@ local defaults = {
   securityContext:: {
     fsGroup: 65534,
     runAsUser: 65534,
+    runAsGroup: 65532,
+    runAsNonRoot: true,
+    seccompProfile: { type: 'RuntimeDefault' },
+  },
+
+  securityContextContainer:: {
+    runAsUser: defaults.securityContext.runAsUser,
+    runAsGroup: defaults.securityContext.runAsGroup,
+    runAsNonRoot: defaults.securityContext.runAsNonRoot,
+    seccompProfile: defaults.securityContext.seccompProfile,
+    allowPrivilegeEscalation: false,
+    readOnlyRootFilesystem: true,
+    capabilities: { drop: ['ALL'] },
   },
 
   serviceAccountAnnotations:: {},
@@ -215,6 +228,7 @@ function(params) {
 
       } },
       resources: if tr.config.resources != {} then tr.config.resources else {},
+      securityContext: tr.config.securityContextContainer,
       terminationMessagePolicy: 'FallbackToLogsOnError',
     };
 
@@ -328,6 +342,27 @@ function(params) {
             nodeSelector: {
               'kubernetes.io/os': 'linux',
             },
+            affinity: { podAntiAffinity: {
+              local labelSelector = { matchExpressions: [{
+                key: 'app.kubernetes.io/name',
+                operator: 'In',
+                values: [tr.statefulSet.metadata.labels['app.kubernetes.io/name']],
+              }, {
+                key: 'app.kubernetes.io/instance',
+                operator: 'In',
+                values: [tr.statefulSet.metadata.labels['app.kubernetes.io/instance']],
+              }] },
+              preferredDuringSchedulingIgnoredDuringExecution: [
+                {
+                  podAffinityTerm: {
+                    namespaces: [tr.config.namespace],
+                    topologyKey: 'kubernetes.io/hostname',
+                    labelSelector: labelSelector,
+                  },
+                  weight: 100,
+                },
+              ],
+            } },
           },
         },
         volumeClaimTemplates: if std.length(tr.config.volumeClaimTemplate) > 0 then [tr.config.volumeClaimTemplate {
@@ -355,6 +390,7 @@ function(params) {
         {
           port: 'http',
           relabelings: [{
+            action: 'replace',
             sourceLabels: ['namespace', 'pod'],
             separator: '/',
             targetLabel: 'instance',

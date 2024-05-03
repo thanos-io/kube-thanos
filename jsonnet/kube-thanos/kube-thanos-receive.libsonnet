@@ -12,6 +12,9 @@ function(params) {
   assert std.isBoolean(tr.config.serviceMonitor),
   assert std.isObject(tr.config.volumeClaimTemplate),
   assert !std.objectHas(tr.config.volumeClaimTemplate, 'spec') || std.assertEqual(tr.config.volumeClaimTemplate.spec.accessModes, ['ReadWriteOnce']) : 'thanos receive PVC accessMode can only be ReadWriteOnce',
+  assert std.isNumber(tr.config.minReadySeconds),
+  assert std.isObject(tr.config.receiveLimitsConfigFile),
+  assert std.isObject(tr.config.storeLimits),
 
   service: {
     apiVersion: 'v1',
@@ -94,11 +97,24 @@ function(params) {
           '--receive.hashrings-file=/var/lib/thanos-receive/hashrings.json',
         ] else []
       ) + (
+        if std.objectHas(tr.config.storeLimits, 'requestSamples') then [
+          '--store.limits.request-samples=%s' % tr.config.storeLimits.requestSamples,
+        ] else []
+      ) + (
+        if std.objectHas(tr.config.storeLimits, 'requestSeries') then [
+          '--store.limits.request-series=%s' % tr.config.storeLimits.requestSeries,
+        ] else []
+      ) + (
         if std.length(tr.config.tracing) > 0 then [
           '--tracing.config=' + std.manifestYamlDoc(
             { config+: { service_name: defaults.name } } + tr.config.tracing
           ),
         ] else []
+      ) + (
+        if tr.config.receiveLimitsConfigFile != {} then [
+          '--receive.limits-config-file=/etc/thanos/config/' + tr.config.receiveLimitsConfigFile.name + '/' + tr.config.receiveLimitsConfigFile.key,
+        ]
+        else []
       ),
       env: [
         { name: 'NAME', valueFrom: { fieldRef: { fieldPath: 'metadata.name' } } },
@@ -139,6 +155,10 @@ function(params) {
         if tr.config.objectStorageConfig != null && std.objectHas(tr.config.objectStorageConfig, 'tlsSecretName') && std.length(tr.config.objectStorageConfig.tlsSecretName) > 0 then [
           { name: 'tls-secret', mountPath: tr.config.objectStorageConfig.tlsSecretMountPath },
         ] else []
+      ) + (
+        if tr.config.receiveLimitsConfigFile != {} then [
+          { name: tr.config.receiveLimitsConfigFile.name, mountPath: '/etc/thanos/config/' + tr.config.receiveLimitsConfigFile.name, readOnly: true },
+        ] else []
       ),
       livenessProbe: { failureThreshold: 8, periodSeconds: 30, httpGet: {
         scheme: 'HTTP',
@@ -164,6 +184,7 @@ function(params) {
       },
       spec: {
         replicas: tr.config.replicas,
+        minReadySeconds: tr.config.minReadySeconds,
         selector: { matchLabels: tr.config.podLabelSelector },
         serviceName: tr.service.metadata.name,
         template: {
@@ -183,6 +204,11 @@ function(params) {
               if tr.config.objectStorageConfig != null && std.objectHas(tr.config.objectStorageConfig, 'tlsSecretName') && std.length(tr.config.objectStorageConfig.tlsSecretName) > 0 then [{
                 name: 'tls-secret',
                 secret: { secretName: tr.config.objectStorageConfig.tlsSecretName },
+              }] else []
+            ) + (
+              if tr.config.receiveLimitsConfigFile != {} then [{
+                name: tr.config.receiveLimitsConfigFile.name,
+                configMap: { name: tr.config.receiveLimitsConfigFile.name },
               }] else []
             ),
             terminationGracePeriodSeconds: 900,
@@ -245,6 +271,7 @@ function(params) {
         {
           port: 'http',
           relabelings: [{
+            action: 'replace',
             sourceLabels: ['namespace', 'pod'],
             separator: '/',
             targetLabel: 'instance',

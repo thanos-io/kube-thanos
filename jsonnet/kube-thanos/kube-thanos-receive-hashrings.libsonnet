@@ -91,11 +91,13 @@ function(params)
             port: 'http',
             relabelings: [
               {
+                action: 'replace',
                 sourceLabels: ['namespace', 'pod'],
                 separator: '/',
                 targetLabel: 'instance',
               },
               {
+                action: 'replace',
                 sourceLabels: ['__meta_kubernetes_service_label_controller_receive_thanos_io_shard'],
                 targetLabel: 'hashring',
               },

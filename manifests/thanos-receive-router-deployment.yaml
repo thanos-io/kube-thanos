@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: thanos-receive-router
     app.kubernetes.io/instance: thanos-receive
     app.kubernetes.io/name: thanos-receive
-    app.kubernetes.io/version: v0.29.0
+    app.kubernetes.io/version: v0.31.0
   name: thanos-receive-router
   namespace: thanos
 spec:
@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/component: thanos-receive-router
         app.kubernetes.io/instance: thanos-receive
         app.kubernetes.io/name: thanos-receive
-        app.kubernetes.io/version: v0.29.0
+        app.kubernetes.io/version: v0.31.0
     spec:
       containers:
       - args:
@@ -48,7 +48,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: quay.io/thanos/thanos:v0.29.0
+        image: quay.io/thanos/thanos:v0.31.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 8
@@ -73,15 +73,30 @@ spec:
             scheme: HTTP
           periodSeconds: 5
         resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsNonRoot: true
+          runAsUser: 65534
+          seccompProfile:
+            type: RuntimeDefault
         terminationMessagePolicy: FallbackToLogsOnError
         volumeMounts:
         - mountPath: /var/lib/thanos-receive
           name: hashring-config
       nodeSelector:
-        beta.kubernetes.io/os: linux
+        kubernetes.io/os: linux
       securityContext:
         fsGroup: 65534
+        runAsGroup: 65532
+        runAsNonRoot: true
         runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: thanos-receive-router
       terminationGracePeriodSeconds: 30
       volumes:

@@ -9,6 +9,7 @@
   image: error 'must provide image',
   imagePullPolicy: 'IfNotPresent',
   replicas: error 'must provide replicas',
+  minReadySeconds: 0,
   replicationFactor: error 'must provide replication factor',
   objectStorageConfig: error 'must provide objectStorageConfig',
   podDisruptionBudgetMaxUnavailable: (std.floor(defaults.replicationFactor / 2)),
@@ -34,6 +35,8 @@
   tenantHeader: null,
   clusterDomain: 'cluster.local',
   extraEnv: [],
+  receiveLimitsConfigFile: {},
+  storeLimits: {},
 
   commonLabels:: {
     'app.kubernetes.io/name': 'thanos-receive',
@@ -51,6 +54,19 @@
   securityContext:: {
     fsGroup: 65534,
     runAsUser: 65534,
+    runAsGroup: 65532,
+    runAsNonRoot: true,
+    seccompProfile: { type: 'RuntimeDefault' },
+  },
+
+  securityContextContainer:: {
+    runAsUser: defaults.securityContext.runAsUser,
+    runAsGroup: defaults.securityContext.runAsGroup,
+    runAsNonRoot: defaults.securityContext.runAsNonRoot,
+    seccompProfile: defaults.securityContext.seccompProfile,
+    allowPrivilegeEscalation: false,
+    readOnlyRootFilesystem: true,
+    capabilities: { drop: ['ALL'] },
   },
 
   serviceAccountAnnotations:: {},

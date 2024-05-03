@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: query-layer
     app.kubernetes.io/instance: thanos-query
     app.kubernetes.io/name: thanos-query
-    app.kubernetes.io/version: v0.29.0
+    app.kubernetes.io/version: v0.31.0
   name: thanos-query
   namespace: thanos
 spec:
@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/component: query-layer
         app.kubernetes.io/instance: thanos-query
         app.kubernetes.io/name: thanos-query
-        app.kubernetes.io/version: v0.29.0
+        app.kubernetes.io/version: v0.31.0
     spec:
       affinity:
         podAntiAffinity:
@@ -46,15 +46,15 @@ spec:
         - --log.format=logfmt
         - --query.replica-label=prometheus_replica
         - --query.replica-label=rule_replica
-        - --store=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local:10901
-        - --store=dnssrv+_grpc._tcp.thanos-receive-ingestor-default.thanos.svc.cluster.local:10901
+        - --endpoint=dnssrv+_grpc._tcp.thanos-store.thanos.svc.cluster.local:10901
+        - --endpoint=dnssrv+_grpc._tcp.thanos-receive-ingestor-default.thanos.svc.cluster.local:10901
         - --query.auto-downsampling
         env:
         - name: HOST_IP_ADDRESS
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: quay.io/thanos/thanos:v0.29.0
+        image: quay.io/thanos/thanos:v0.31.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 4
@@ -77,11 +77,26 @@ spec:
             scheme: HTTP
           periodSeconds: 5
         resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 65532
+          runAsNonRoot: true
+          runAsUser: 65534
+          seccompProfile:
+            type: RuntimeDefault
         terminationMessagePolicy: FallbackToLogsOnError
       nodeSelector:
         kubernetes.io/os: linux
       securityContext:
         fsGroup: 65534
+        runAsGroup: 65532
+        runAsNonRoot: true
         runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: thanos-query
       terminationGracePeriodSeconds: 120
