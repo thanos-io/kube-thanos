@@ -16,6 +16,38 @@ function(params) {
   assert std.isObject(tr.config.receiveLimitsConfigFile),
   assert std.isObject(tr.config.storeLimits),
 
+  networkPolicy: {
+    kind: 'NetworkPolicy',
+    apiVersion: 'networking.k8s.io/v1',
+    metadata: {
+      name: 'thanos-receive',
+      namespace: cfg.namespace,
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          'app.kubernetes.io/name': 'thanos-receive',
+        },
+      },
+      egress: [{}],  // Allow all outside egress to connect
+      ingress: [{
+        from: [{
+          namespaceSelector: {
+            matchLabels: {
+              'kubernetes.io/metadata.name': cfg.namespace,
+            },
+          },
+          podSelector: {
+            matchLabels: {
+              'app.kubernetes.io/name': 'thanos-query',
+            },
+          },
+        }],
+      }],
+      policyTypes: ['Egress'],
+    },
+  },
+
   service: {
     apiVersion: 'v1',
     kind: 'Service',

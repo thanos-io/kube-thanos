@@ -15,6 +15,38 @@ function(params) {
   assert std.isBoolean(tc.config.serviceMonitor),
   assert std.isArray(tc.config.deduplicationReplicaLabels),
 
+  networkPolicy: {
+    kind: 'NetworkPolicy',
+    apiVersion: 'networking.k8s.io/v1',
+    metadata: {
+      name: 'thanos-compact',
+      namespace: cfg.namespace,
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          'app.kubernetes.io/name': 'thanos-compact',
+        },
+      },
+      egress: [{}],  // Allow all outside egress to connect to object storage
+      ingress: [{
+        from: [{
+          namespaceSelector: {
+            matchLabels: {
+              'kubernetes.io/metadata.name': cfg.namespace,
+            },
+          },
+          podSelector: {
+            matchLabels: {
+              'app.kubernetes.io/name': 'thanos-query',
+            },
+          },
+        }],
+      }],
+      policyTypes: ['Egress'],
+    },
+  },
+
   service: {
     apiVersion: 'v1',
     kind: 'Service',

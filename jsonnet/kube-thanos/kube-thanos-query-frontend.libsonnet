@@ -117,6 +117,38 @@ function(params) {
   assert std.isBoolean(tqf.config.serviceMonitor),
   assert std.isNumber(tqf.config.maxRetries) && tqf.config.maxRetries >= 0 : 'thanos query frontend maxRetries has to be number >= 0',
 
+  networkPolicy: {
+    kind: 'NetworkPolicy',
+    apiVersion: 'networking.k8s.io/v1',
+    metadata: {
+      name: 'thanos-query-frontend',
+      namespace: cfg.namespace,
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          'app.kubernetes.io/name': 'thanos-query-frontend',
+        },
+      },
+      egress: [{}],  // Allow all outside egress to connect
+      ingress: [{
+        from: [{
+          namespaceSelector: {
+            matchLabels: {
+              'kubernetes.io/metadata.name': cfg.namespace,
+            },
+          },
+          podSelector: {
+            matchLabels: {
+              'app.kubernetes.io/name': 'thanos-query',
+            },
+          },
+        }],
+      }],
+      policyTypes: ['Egress'],
+    },
+  },
+
   service: {
     apiVersion: 'v1',
     kind: 'Service',

@@ -81,6 +81,38 @@ function(params) {
   assert std.isBoolean(tq.config.autoDownsampling),
   assert std.isBoolean(tq.config.useThanosEngine),
 
+  networkPolicy: {
+    kind: 'NetworkPolicy',
+    apiVersion: 'networking.k8s.io/v1',
+    metadata: {
+      name: 'thanos-query',
+      namespace: cfg.namespace,
+    },
+    spec: {
+      podSelector: {
+        matchLabels: {
+          'app.kubernetes.io/name': 'thanos-store',
+        },
+      },
+      egress: [{}],  // Allow all outside egress to connect to object storage
+      ingress: [{
+        from: [{
+          namespaceSelector: {
+            matchLabels: {
+              'kubernetes.io/metadata.name': cfg.namespace,
+            },
+          },
+          podSelector: {
+            matchLabels: {
+              'app.kubernetes.io/name': 'thanos-store',
+            },
+          },
+        }],
+      }],
+      policyTypes: ['Egress'],
+    },
+  },
+
   service: {
     apiVersion: 'v1',
     kind: 'Service',
