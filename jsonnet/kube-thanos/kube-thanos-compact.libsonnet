@@ -138,7 +138,7 @@ function(params) {
         labels: tc.config.commonLabels,
       },
       spec: {
-        replicas: 1,
+        replicas: tc.config.replicas,
         selector: { matchLabels: tc.config.podLabelSelector },
         serviceName: tc.service.metadata.name,
         template: {
