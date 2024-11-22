@@ -10,7 +10,7 @@ local defaults = {
   imagePullPolicy: 'IfNotPresent',
   replicas: error 'must provide replicas',
   replicaLabels: error 'must provide replicaLabels',
-  stores: ['dnssrv+_grpc._tcp.thanos-store.%s.svc.cluster.local' % defaults.namespace],
+  stores: ['dnssrv+_grpc._tcp.thanos-store.%s' % defaults.namespace],
   rules: [],  // TODO(bwplotka): This is deprecated, switch to endpoints while ready.
   externalPrefix: '',
   prefixHeader: '',
