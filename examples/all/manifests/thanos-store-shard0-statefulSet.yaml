@@ -58,7 +58,7 @@ spec:
         - |-
           --index-cache.config="config":
             "addresses":
-            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos.svc.cluster.local"
+            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20
@@ -75,7 +75,7 @@ spec:
           "chunk_subrange_ttl": "24h"
           "config":
             "addresses":
-            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos.svc.cluster.local"
+            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20
