@@ -23,13 +23,13 @@ function(params) {
   },
 
   storeEndpoints:: [
-    'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local:%d' % [ingestors.hashrings[name.hashring].service.metadata.name, tr.config.namespace, tr.config.ports.grpc]
+    'dnssrv+_grpc._tcp.%s.%s:%d' % [ingestors.hashrings[name.hashring].service.metadata.name, tr.config.namespace, tr.config.ports.grpc]
     for name in tr.config.hashrings
   ],
 
   endpoints:: {
     [name.hashring]: [
-      '%s-%d.%s.%s.svc.cluster.local:%d' % [
+      '%s-%d.%s.%s:%d' % [
         ingestors.hashrings[name.hashring].service.metadata.name,
         i,
         ingestors.hashrings[name.hashring].service.metadata.name,
