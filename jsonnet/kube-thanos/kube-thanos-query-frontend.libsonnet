@@ -31,6 +31,8 @@ local defaults = {
   },
   tracing: {},
   extraEnv: [],
+  labelsMaxQueryParallelism: 14,
+  queryRangeMaxQueryParallelism: 14,
 
   memcachedDefaults+:: {
     config+: {
@@ -169,6 +171,8 @@ function(params) {
         '--query-range.max-retries-per-request=%d' % tqf.config.maxRetries,
         '--labels.max-retries-per-request=%d' % tqf.config.maxRetries,
         '--query-frontend.log-queries-longer-than=%s' % tqf.config.logQueriesLongerThan,
+        '--labels.max-query-parallelism=%d' % tqf.config.labelsMaxQueryParallelism,
+        '--query-range.max-query-parallelism=%d' % tqf.config.queryRangeMaxQueryParallelism,
       ] + (
         if std.length(tqf.config.queryRangeCache) > 0 then [
           '--query-range.response-cache-config=' + std.manifestYamlDoc(

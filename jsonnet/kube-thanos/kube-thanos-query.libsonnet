@@ -19,6 +19,8 @@ local defaults = {
   resources: {},
   queryTimeout: '',
   lookbackDelta: '',
+  maxConcurrent: 20,
+  maxConcurrentSelect: 4,
   ports: {
     grpc: 10901,
     http: 9090,
@@ -128,6 +130,8 @@ function(params) {
           '--http-address=0.0.0.0:%d' % tq.config.ports.http,
           '--log.level=' + tq.config.logLevel,
           '--log.format=' + tq.config.logFormat,
+          '--query.max-concurrent=%d' % tq.config.maxConcurrent,
+          '--query.max-concurrent-select=%d' % tq.config.maxConcurrentSelect,
         ] + [
           '--query.replica-label=%s' % labelName
           for labelName in tq.config.replicaLabels
