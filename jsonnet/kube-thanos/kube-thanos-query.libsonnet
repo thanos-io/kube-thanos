@@ -13,6 +13,7 @@ local defaults = {
   stores: ['dnssrv+_grpc._tcp.thanos-store.%s.svc.cluster.local' % defaults.namespace],
   rules: [],  // TODO(bwplotka): This is deprecated, switch to endpoints while ready.
   externalPrefix: '',
+  queryUrl: '',
   prefixHeader: '',
   autoDownsampling: true,
   useThanosEngine: false,
@@ -185,6 +186,10 @@ function(params) {
           if tq.config.telemetrySeriesQuantiles != '' then [
             '--query.telemetry.request-series-seconds-quantiles=' + std.stripChars(quantile, ' ')
             for quantile in std.split(tq.config.telemetrySeriesQuantiles, ',')
+          ] else []
+        ) + (
+          if tq.config.queryUrl != '' then [
+            '--alert.query-url=' + tq.config.queryUrl,
           ] else []
         ),
       env: [
