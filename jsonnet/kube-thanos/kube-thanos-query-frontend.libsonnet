@@ -21,6 +21,7 @@ local defaults = {
     },
   },
   queryRangeCache: {},
+  queryUrl: '',
   labelsCache: {},
   logLevel: 'info',
   logFormat: 'logfmt',
@@ -186,6 +187,10 @@ function(params) {
           '--tracing.config=' + std.manifestYamlDoc(
             { config+: { service_name: defaults.name } } + tqf.config.tracing
           ),
+        ] else []
+      ) + (
+        if tqf.config.queryUrl != '' then [
+          '--alert.query-url=' + tqf.config.queryUrl,
         ] else []
       ),
       env: [
