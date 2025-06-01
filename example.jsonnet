@@ -28,8 +28,10 @@ local commonConfig = {
 };
 
 local i = t.receiveIngestor(commonConfig.config {
+  labels: [
+    'receive_replica="$(POD_NAME)"',
+  ],
   replicas: 1,
-  replicaLabels: ['receive_replica'],
   replicationFactor: 1,
   // Disable shipping to object storage for the purposes of this example
   objectStorageConfig: null,
@@ -38,7 +40,6 @@ local i = t.receiveIngestor(commonConfig.config {
 
 local r = t.receiveRouter(commonConfig.config {
   replicas: 1,
-  replicaLabels: ['receive_replica'],
   replicationFactor: 1,
   // Disable shipping to object storage for the purposes of this example
   objectStorageConfig: null,
@@ -52,7 +53,7 @@ local s = t.store(commonConfig.config {
 
 local q = t.query(commonConfig.config {
   replicas: 1,
-  replicaLabels: ['prometheus_replica', 'rule_replica'],
+  replicaLabels: ['prometheus_replica', 'receive_replica', 'rule_replica'],
   serviceMonitor: true,
   stores: [s.storeEndpoint] + i.storeEndpoints,
 });

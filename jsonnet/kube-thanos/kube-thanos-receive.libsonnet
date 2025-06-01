@@ -7,7 +7,6 @@ function(params) {
   config:: defaults + params,
   // Safety checks for combined config of defaults and params
   assert std.isNumber(tr.config.replicas) && tr.config.replicas >= 0 : 'thanos receive replicas has to be number >= 0',
-  assert std.isArray(tr.config.replicaLabels),
   assert std.isObject(tr.config.resources),
   assert std.isBoolean(tr.config.serviceMonitor),
   assert std.isObject(tr.config.volumeClaimTemplate),
