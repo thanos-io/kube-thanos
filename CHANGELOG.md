@@ -34,6 +34,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#310](https://github.com/thanos-io/kube-thanos/pull/310) Ruler: Add host anti-affinity to ruler
 - [#313](https://github.com/thanos-io/kube-thanos/pull/313) Add per-container SecurityContext
 - [#330](https://github.com/thanos-io/kube-thanos/pull/330) Query: Add query url support to jsonnet library
+- [#333](https://github.com/thanos-io/kube-thanos/pull/333) Compact: Add securityContext to Thanos compact container
 
 ### Fixed
 
