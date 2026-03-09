@@ -43,8 +43,6 @@ spec:
                   operator: In
                   values:
                   - thanos-receive-default
-              namespaces:
-              - thanos
               topologyKey: kubernetes.io/hostname
             weight: 100
           - podAffinityTerm:
@@ -58,8 +56,6 @@ spec:
                   operator: In
                   values:
                   - thanos-receive-default
-              namespaces:
-              - thanos
               topologyKey: topology.kubernetes.io/zone
             weight: 100
       containers:
