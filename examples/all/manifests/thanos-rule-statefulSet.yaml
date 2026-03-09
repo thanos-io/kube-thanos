@@ -55,7 +55,7 @@ spec:
         - --alert.label-drop=rule_replica
         - --tsdb.retention=48h
         - --tsdb.block-duration=2h
-        - --query=dnssrv+_http._tcp.thanos-query.thanos.svc.cluster.local
+        - --query=dnssrv+_http._tcp.thanos-query.thanos
         - --alertmanagers.url=alertmanager:9093
         - --alertmanagers.config-file=/etc/thanos/config/thanos-ruler-config/config.yaml
         - --rule-file=/etc/thanos/rules/test/test

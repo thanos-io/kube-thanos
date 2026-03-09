@@ -121,7 +121,7 @@ local s = t.store(commonConfig {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
-      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s' % commonConfig.namespace],
     },
   },
   indexCache: {
@@ -130,7 +130,7 @@ local s = t.store(commonConfig {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
-      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s' % commonConfig.namespace],
     },
   },
 });
@@ -152,12 +152,12 @@ local q = t.query(commonConfig {
 });
 
 local finalRu = t.rule(ru.config {
-  queriers: ['dnssrv+_http._tcp.%s.%s.svc.cluster.local' % [q.service.metadata.name, q.service.metadata.namespace]],
+  queriers: ['dnssrv+_http._tcp.%s.%s' % [q.service.metadata.name, q.service.metadata.namespace]],
 });
 
 local qf = t.queryFrontend(commonConfig {
   replicas: 1,
-  downstreamURL: 'http://%s.%s.svc.cluster.local.:%d' % [
+  downstreamURL: 'http://%s.%s:%d' % [
     q.service.metadata.name,
     q.service.metadata.namespace,
     q.service.spec.ports[1].port,
@@ -172,7 +172,7 @@ local qf = t.queryFrontend(commonConfig {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
-      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s' % commonConfig.namespace],
     },
   },
   labelsCache: {
@@ -181,7 +181,7 @@ local qf = t.queryFrontend(commonConfig {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
-      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s' % commonConfig.namespace],
     },
   },
 });
@@ -213,7 +213,7 @@ local strs = t.storeShards(commonConfig {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
-      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s' % commonConfig.namespace],
     },
   },
   indexCache: {
@@ -222,14 +222,14 @@ local strs = t.storeShards(commonConfig {
       // NOTICE: <MEMCACHED_SERVICE> is a placeholder to generate examples.
       // List of memcached addresses, that will get resolved with the DNS service discovery provider.
       // For DNS service discovery reference https://thanos.io/tip/thanos/service-discovery.md/#dns-service-discovery
-      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s.svc.cluster.local' % commonConfig.namespace],
+      addresses: ['dnssrv+_client._tcp.<MEMCACHED_SERVICE>.%s' % commonConfig.namespace],
     },
   },
 });
 
 local finalQ = t.query(q.config {
   stores: [
-    'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local' % [service.metadata.name, service.metadata.namespace]
+    'dnssrv+_grpc._tcp.%s.%s' % [service.metadata.name, service.metadata.namespace]
     for service in [re.service, ru.service, sc.service, s.service] +
                    [rcvs.hashrings[hashring].service for hashring in std.objectFields(rcvs.hashrings)] +
                    [strs.shards[shard].service for shard in std.objectFields(strs.shards)]

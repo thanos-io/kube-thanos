@@ -253,5 +253,5 @@ function(params) {
       ],
     },
   },
-  storeEndpoint:: 'dnssrv+_grpc._tcp.%s.%s.svc.cluster.local:%d' % [ts.service.metadata.name, ts.config.namespace, ts.config.ports.grpc],
+  storeEndpoint:: 'dnssrv+_grpc._tcp.%s.%s:%d' % [ts.service.metadata.name, ts.config.namespace, ts.config.ports.grpc],
 }

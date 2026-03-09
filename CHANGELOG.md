@@ -20,6 +20,7 @@ We use *breaking* word for marking changes that are not backward compatible (rel
 - [#279](https://github.com/thanos-io/kube-thanos/pull/279) Change `hashringConfigmapName` to `hashringConfigMapName` in Receive configuration.
 - [#284](https://github.com/thanos-io/kube-thanos/pull/284) Change Receive `PodDisruptionBudget` api version to `policy/v1`
 - [#293](https://github.com/thanos-io/kube-thanos/pull/293) Upgrade to Thanos v0.30.2
+- [#325](https://github.com/thanos-io/kube-thanos/pull/325) Do not depend on Kubernetes cluster DNS domain to be 'cluster.local'.
 
 ### Added
 

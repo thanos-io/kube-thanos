@@ -21,7 +21,7 @@ local minio = (import 'jsonnet/minio/minio.libsonnet')({
         type: s3
         config:
           bucket: thanos
-          endpoint: %s.%s.svc.cluster.local:9000
+          endpoint: %s.%s:9000
           insecure: true
           access_key: minio
           secret_key: minio123

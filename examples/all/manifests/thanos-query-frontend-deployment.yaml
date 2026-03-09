@@ -44,7 +44,7 @@ spec:
         - --log.format=logfmt
         - --query-frontend.compress-responses
         - --http-address=0.0.0.0:9090
-        - --query-frontend.downstream-url=http://thanos-query.thanos.svc.cluster.local.:9090
+        - --query-frontend.downstream-url=http://thanos-query.thanos:9090
         - --query-range.split-interval=12h
         - --labels.split-interval=12h
         - --query-range.max-retries-per-request=10
@@ -53,7 +53,7 @@ spec:
         - |-
           --query-range.response-cache-config="config":
             "addresses":
-            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos.svc.cluster.local"
+            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20
@@ -65,7 +65,7 @@ spec:
         - |-
           --labels.response-cache-config="config":
             "addresses":
-            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos.svc.cluster.local"
+            - "dnssrv+_client._tcp.<MEMCACHED_SERVICE>.thanos"
             "dns_provider_update_interval": "10s"
             "max_async_buffer_size": 10000
             "max_async_concurrency": 20

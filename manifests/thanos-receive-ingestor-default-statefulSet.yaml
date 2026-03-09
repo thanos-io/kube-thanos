@@ -75,7 +75,7 @@ spec:
         - --tsdb.retention=15d
         - --label=replica="$(NAME)"
         - --label=receive="true"
-        - --receive.local-endpoint=$(NAME).thanos-receive-ingestor-default.$(NAMESPACE).svc.cluster.local:10901
+        - --receive.local-endpoint=$(NAME).thanos-receive-ingestor-default.$(NAMESPACE):10901
         - --receive.hashrings-file=/var/lib/thanos-receive/hashrings.json
         env:
         - name: NAME
