@@ -41,8 +41,6 @@ spec:
                   operator: In
                   values:
                   - thanos-compact-0
-              namespaces:
-              - thanos
               topologyKey: kubernetes.io/hostname
             weight: 100
       containers:
