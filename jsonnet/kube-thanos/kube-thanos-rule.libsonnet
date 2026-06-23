@@ -355,7 +355,6 @@ function(params) {
               preferredDuringSchedulingIgnoredDuringExecution: [
                 {
                   podAffinityTerm: {
-                    namespaces: [tr.config.namespace],
                     topologyKey: 'kubernetes.io/hostname',
                     labelSelector: labelSelector,
                   },

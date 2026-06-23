@@ -250,7 +250,6 @@ function(params) {
             affinity: { podAntiAffinity: {
               preferredDuringSchedulingIgnoredDuringExecution: [{
                 podAffinityTerm: {
-                  namespaces: [tq.config.namespace],
                   topologyKey: 'kubernetes.io/hostname',
                   labelSelector: { matchExpressions: [{
                     key: 'app.kubernetes.io/name',

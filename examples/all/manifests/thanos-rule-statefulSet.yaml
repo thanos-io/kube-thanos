@@ -38,8 +38,6 @@ spec:
                   operator: In
                   values:
                   - thanos-rule
-              namespaces:
-              - thanos
               topologyKey: kubernetes.io/hostname
             weight: 100
       containers:

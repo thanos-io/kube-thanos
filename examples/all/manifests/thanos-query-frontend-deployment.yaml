@@ -33,8 +33,6 @@ spec:
                   operator: In
                   values:
                   - thanos-query-frontend
-              namespaces:
-              - thanos
               topologyKey: kubernetes.io/hostname
             weight: 100
       containers:
