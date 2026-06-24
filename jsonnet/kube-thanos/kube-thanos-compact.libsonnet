@@ -127,6 +127,7 @@ function(params) {
       ),
       resources: if tc.config.resources != {} then tc.config.resources else {},
       terminationMessagePolicy: 'FallbackToLogsOnError',
+      securityContext: tc.config.securityContextContainer,
     };
 
     {
