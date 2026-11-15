@@ -30,6 +30,7 @@ function(params) {
   assert std.isBoolean(ts.config.serviceMonitor),
   assert std.isObject(ts.config.volumeClaimTemplate),
   assert !std.objectHas(ts.config.volumeClaimTemplate, 'spec') || std.assertEqual(ts.config.volumeClaimTemplate.spec.accessModes, ['ReadWriteOnce']) : 'thanos store PVC accessMode can only be ReadWriteOnce',
+  assert std.isObject(ts.config.emptyDir),
 
   service: {
     apiVersion: 'v1',
@@ -194,7 +195,12 @@ function(params) {
             volumes: if std.objectHas(ts.config.objectStorageConfig, 'tlsSecretName') && std.length(ts.config.objectStorageConfig.tlsSecretName) > 0 then [{
               name: 'tls-secret',
               secret: { secretName: ts.config.objectStorageConfig.tlsSecretName },
-            }] else [],
+            }] else [] + (
+              if std.length(ts.config.volumeClaimTemplate) == 0 then [{
+                name: 'data',
+                emptyDir: ts.config.emptyDir,
+              }] else []
+            ),
             terminationGracePeriodSeconds: 120,
             nodeSelector: {
               'kubernetes.io/os': 'linux',

@@ -115,6 +115,9 @@ local sc = t.sidecar(commonConfig {
 local s = t.store(commonConfig {
   replicas: 1,
   serviceMonitor: true,
+  // When volumeClaimTemplate is not specified, an emptyDir is used.
+  // You can configure that emptyDir with this key.
+  emptyDir: {},
   bucketCache: {
     type: 'memcached',
     config+: {

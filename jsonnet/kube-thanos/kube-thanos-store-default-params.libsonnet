@@ -20,6 +20,7 @@
   logFormat: 'logfmt',
   resources: {},
   volumeClaimTemplate: {},
+  emptyDir: {},
   serviceMonitor: false,
   bucketCache: {},
   indexCache: {},
